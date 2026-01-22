@@ -3,21 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Versus Revise - Pro Logic Integrator</title>
+    <title>Versus Revise - Pro Auditor (Logic Fix)</title>
     <style>
         * { box-sizing: border-box; }
         html, body { width: 100%; height: 100%; margin: 0; padding: 0; background: #000; color: #fff; font-family: sans-serif; overflow: hidden; display: flex; flex-direction: column; }
-        
-        /* リール選択ボタン（パステル＆極太） */
-        .stop-tabs { display: flex; width: 100%; background: #000; border: 1px solid #444; border-radius: 8px; margin: 5px; flex-shrink: 0; overflow: hidden; width: calc(100% - 10px); }
+        .stop-tabs { display: flex; width: calc(100% - 10px); background: #000; border: 1px solid #444; border-radius: 8px; margin: 5px; flex-shrink: 0; overflow: hidden; }
         .stop-tab { flex: 1; text-align: center; padding: 12px 0; font-size: 13px; font-weight: 900; cursor: pointer; border-right: 1px solid #222; transition: 0.3s; opacity: 0.35; filter: grayscale(0.5); }
         .stop-tab:last-child { border-right: none; }
         #stop-left { background: #ffb7ce; color: #a01040; }   
         #stop-middle { background: #b3e5fc; color: #01579b; } 
         #stop-right { background: #c8e6c9; color: #1b5e20; }  
         .stop-tab.active { opacity: 1; filter: grayscale(0); box-shadow: inset 0 0 12px rgba(255,255,255,0.5); z-index: 1; }
-
-        /* 成立状態タブ */
         .state-tabs { display: flex; width: calc(100% - 10px); height: 55px; flex-shrink: 0; background: #222; border: 1px solid #444; border-radius: 4px; overflow: hidden; margin: 0 5px 5px 5px; }
         .state-tab { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; cursor: pointer; opacity: 0.6; transition: 0.2s; text-align: center; line-height: 1.2; }
         .state-tab.active { opacity: 1; border-bottom: 4px solid #fff; }
@@ -25,21 +21,17 @@
         #tab-x_flag { background: #304ffe; color: #fff; }
         #tab-seven_flag { background: #d50000; color: #fff; }
         #tab-bar_flag { background: #111; color: #fff; border-bottom: 3px solid #777; }
-
         .main-content { display: flex; flex-direction: row-reverse; flex: 1; overflow: hidden; gap: 4px; padding: 0 5px 5px 5px; }
         .reel-frame { width: 100px; height: 490px; background: #000; border: 2px solid #444; border-radius: 8px; overflow: hidden; flex-shrink: 0; position: relative; touch-action: none; }
         #reel-window { position: absolute; width: 100%; top: 0; left: 0; pointer-events: none; will-change: transform; }
         .symbol { height: 70px; display: flex; border-bottom: 1px solid #1a1a1a; width: 100%; box-sizing: border-box; }
         .index-num { width: 20px; color: #ffd700; text-align: center; font-size: 9px; font-weight: bold; display: flex; align-items: center; justify-content: center; }
         .symbol-image { flex: 1; height: 100%; background-size: 100% 2100%; background-repeat: repeat-y; }
-        /* 赤枠ガイド（140pxから210px分 = 2〜5コマ目） */
         .guide-box { position: absolute; top: 140px; left: 0; width: 100%; height: 210px; border: 3px solid #ff0000; background: rgba(255, 0, 0, 0.05); pointer-events: none; z-index: 10; box-shadow: inset 0 0 10px rgba(255, 0, 0, 0.3); }
-
         .result-area { flex: 1; background: #1a1a1a; border: 1px solid #333; border-radius: 4px; overflow-y: auto; display: flex; flex-direction: column; }
         .flag-item { display: flex; align-items: center; min-height: 42px; padding: 0 6px; border-bottom: 1px solid #222; border-left: 5px solid rgba(0,0,0,0.5); }
         .flag-name { font-size: 13px; font-weight: bold; width: 75px; flex-shrink: 0; }
         .flag-data { font-size: 15px; color: #fff; font-family: monospace; text-align: right; flex: 1; }
-
         .c-rep { border-left-color: #00ccff; color: #00ccff; background: rgba(0, 204, 255, 0.08); } 
         .c-bell { border-left-color: #eeee00; color: #eeee00; background: rgba(238, 238, 0, 0.08); } 
         .c-suika { border-left-color: #00ff66; color: #00ff66; background: rgba(0, 255, 102, 0.08); } 
@@ -82,7 +74,7 @@ const MASTER_STORE = {
 };
 
 // ==========================================
-// 3. アプリケーションロジック
+// 3. アプリケーションロジック (Coordinate Isolation)
 // ==========================================
 const FLAGS = [
     {k:"hz",n:"ハズレ",c:"hazure"},{k:"nr",n:"通常リプ",c:"rep"},{k:"jr",n:"JACリプ",c:"rep"},{k:"rr",n:"RTリプ",c:"rep"},
@@ -93,61 +85,67 @@ const FLAGS = [
 const mod = (n, m) => ((n % m) + m) % m;
 const REEL_LEN = 21;
 
-// 初期表示設定：左・ハズレ・543 (内部的に Reel 3 を底に置く)
 let currentStop = 'left', currentState = 'hazure', currentBottomIdx = 18; 
 let solvedTable = {};
 
+/**
+ * 逆引きテーブル構築
+ * 各リール固有の「神のロジック」をそのまま適用。
+ */
 function buildTable() {
     solvedTable = {};
     const side = MASTER_STORE[currentStop];
     for (const state in side.data) {
-        solvedTable[state] = Array.from({length: REEL_LEN + 1}, () => ({})); 
+        // キーの衝突を防ぐため、常に十分な容量(21)を確保
+        solvedTable[state] = Array.from({length: REEL_LEN}, () => ({})); 
         FLAGS.forEach(f => {
             const rawData = side.data[state][f.k];
             if (!rawData) return;
-            
             rawData.forEach((slip, i) => {
                 if (slip === null) return;
                 let key;
-                
-                // --- 重要：提供された個別の逆引きロジックを忠実に適用 ---
                 if (currentStop === 'left') {
-                    // 左リール公式
+                    // 左リール公式：low + slip + 1
                     let nNum = 21 - i;
                     let low = (nNum === 1) ? 21 : nNum - 1;
-                    key = (low + slip + 1) % 21; 
+                    key = (low + slip + 1) % 21; // これはリール番号ベースのキー
                 } else if (currentStop === 'middle') {
-                    // 中リール公式
-                    key = mod(i - slip - 1, REEL_LEN); 
+                    // 中リール公式：i - slip - 1
+                    key = mod(i - slip - 1, REEL_LEN); // これはインデックスベース
                 } else {
-                    // 右リール公式
-                    key = mod(i - slip, REEL_LEN); 
+                    // 右リール公式：i - slip
+                    key = mod(i - slip, REEL_LEN); // これはインデックスベース
                 }
-                
                 if (!solvedTable[state][key][f.k]) solvedTable[state][key][f.k] = [];
-                solvedTable[state][stopIdx = key][f.k].push(slip);
+                solvedTable[state][key][f.k].push(slip);
             });
         });
     }
 }
 
+/**
+ * UI表示更新
+ * 見えているリール位置に合わせて、適切なキーでデータを引き抜く。
+ */
 function update() {
     const list = document.getElementById('flag-list');
     list.innerHTML = '';
     
-    // 表示座標から計算用キーを特定
+    // 現在の「下段のインデックス」を、リールごとのデータキーに翻訳
     let lookupKey;
     if (currentStop === 'left') {
-        lookupKey = (21 - currentBottomIdx) % 21; // 左リールのリール番号ベース
+        // 左リールはリール番号(1-21)ベースなので翻訳が必要
+        lookupKey = (21 - currentBottomIdx) % 21;
     } else {
-        lookupKey = currentBottomIdx; // 中・右のインデックスベース
+        // 中・右はインデックス(0-20)ベースなのでそのまま
+        lookupKey = currentBottomIdx;
     }
 
-    const items = solvedTable[currentState] ? solvedTable[currentState][lookupKey] : null;
-    if (items) {
+    const flagsAtPos = solvedTable[currentState] ? solvedTable[currentState][lookupKey] : null;
+    if (flagsAtPos) {
         FLAGS.forEach(f => {
-            if (items[f.k]) {
-                const uniqueSlips = [...new Set(items[f.k])].sort((a,b)=>b-a);
+            if (flagsAtPos[f.k]) {
+                const uniqueSlips = [...new Set(flagsAtPos[f.k])].sort((a,b)=>b-a);
                 const row = document.createElement('div');
                 row.className = `flag-item c-${f.c}`;
                 row.innerHTML = `<div class="flag-name">${f.n}</div><div class="flag-data">${uniqueSlips.map(s=>`[${s}]`).join('')}</div>`;
@@ -156,9 +154,8 @@ function update() {
         });
     }
     
+    // リール画像位置の同期（赤枠基準）
     const win = document.getElementById('reel-window');
-    // 赤枠(140px-350px)の中に 5(140px) 4(210px) 3(280px) を並べるためのオフセット
-    // Symbol Index currentBottomIdx (Reel 3) を赤枠の3段目(280px)に固定
     const visualOffset = (currentBottomIdx - 4) * 70;
     win.style.transform = `translate3d(0, -${(visualOffset + REEL_LEN * 70)}px, 0)`;
 }
@@ -192,22 +189,12 @@ function init() {
     }
     const area = document.getElementById('reel-touch-area'); 
     let isDragging = false, startY = 0, initialIdx = 0;
-    
     const onStart = (y) => { isDragging = true; startY = y; initialIdx = currentBottomIdx; };
-    const onMove = (y) => { 
-        if (!isDragging) return; 
-        const delta = Math.round((y - startY) / 70);
-        currentBottomIdx = mod(initialIdx - delta, REEL_LEN); 
-        update(); 
-    };
-    const onEnd = () => { isDragging = false; };
-    
-    area.onmousedown = e => onStart(e.pageY);
-    window.onmousemove = e => onMove(e.pageY);
-    window.onmouseup = onEnd;
+    const onMove = (y) => { if (!isDragging) return; const delta = Math.round((y - startY) / 70); currentBottomIdx = mod(initialIdx - delta, REEL_LEN); update(); };
+    area.onmousedown = e => onStart(e.pageY); window.onmousemove = e => onMove(e.pageY); window.onmouseup = () => isDragging = false;
     area.addEventListener('touchstart', e => { onStart(e.touches[0].pageY); e.preventDefault(); }, {passive: false});
     area.addEventListener('touchmove', e => { onMove(e.touches[0].pageY); e.preventDefault(); }, {passive: false});
-    area.addEventListener('touchend', onEnd);
+    area.addEventListener('touchend', () => isDragging = false);
 
     switchStop('left'); 
 }
