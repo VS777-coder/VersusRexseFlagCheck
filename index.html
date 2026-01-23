@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Versus Revise - Absolute Reverse Auditor (Reverse Shift Fix)</title>
+    <title>Versus Revise - Absolute Reverse Auditor (Rebuilt & #14 Suika)</title>
     <style>
         :root { --c-bg: #111; --c-text: #eee; --c-accent: #ffd700; }
         * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
@@ -181,10 +181,12 @@ const FLAG_INFO = {
     special_a: { n: "特殊役Ａ", c: "tok" }, special_b: { n: "特殊役Ｂ", c: "tok" }, special_c: { n: "特殊役Ｃ", c: "tok" }, special_d: { n: "特殊役Ｄ", c: "tok" }, special_e: { n: "特殊役Ｅ", c: "tok" }
 };
 
+// ★リール配列: 画像(s_versus_rexse-reel.gif)に完全準拠
+// 中リール#14は「スイカ」に修正。
 const REEL_SYMBOLS = {
     left: ["Rep","Cher","X","Bell","Sui","Rep","Bell","Sui","Seven","Bell","Rep","Cher","Bar","Bell","Sui","Rep","X","X","X","Sui","Bell"],
-    // #14=Rep (Corrected)
-    middle: ["Bell","Cher","Rep","Bell","Cher","Sui","Seven","Rep","Bell","Bar","Cher","Rep","Bell","Cher","X","Rep","Bell","Cher","Sui","Cher","Rep"],
+    // #14=Sui, #21=Bell, #1=Rep (画像完全準拠)
+    middle: ["Bell","Cher","Rep","Bell","Cher","Sui","Seven","Sui","Bell","Bar","Cher","Rep","Bell","Cher","X","Rep","Bell","Cher","Sui","Cher","Rep"],
     right: ["Cher","Bell","Sui","Rep","Cher","Seven","Bell","Sui","Rep","Cher","Bell","Rep","Bar","Cher","Bell","Sui","Rep","X","Bell","Sui","Rep"]
 };
 
@@ -260,7 +262,7 @@ const parseAndRegister = (reel, state, rawText) => {
 };
 
 // ==========================================
-// DATA INJECTION
+// DATA INJECTION (REBUILT & FIXED)
 // ==========================================
 
 parseAndRegister("左リール", "ボーナス未成立", `
@@ -359,12 +361,11 @@ parseAndRegister("左リール", "Regボーナス成立", `
 1	1	3	3	3	0	1	1	1	3	3	1	1	0	0	0
 `);
 
-// ★中リール再構築: Row N が Reel Index N-1 (逆回転) になるようデータを配置
-// Row 1 (3コマ) -> Index 21
-// Row 2 (0コマ) -> Index 1
-// Row 3 (1コマ) -> Index 2 ...
+// ★中リール再構築: Row 1 -> Reel 21, Row 2 -> Reel 1...
+// 「データ1行目の3コマ滑り」が「リール21番（ベル）」へ。
+// 「データ3行目の1コマ滑り」が「リール2番（チェリー）」へ。 -> 2+1=3(スイカ)停止。OK。
 parseAndRegister("中リール", "ボーナス未成立", `
-21	3	1	1	1	0	0	2	2	2	2	nul	nul	nul	nul	nul
+21	3	0	0	0	4	4	1	1	1	1	nul	nul	nul	nul	nul
 20	2	1	1	1	0	0	2	2	2	2	nul	nul	nul	nul	nul
 19	0	2	2	2	1	1	3	3	0	0	nul	nul	nul	nul	nul
 18	1	0	0	0	2	2	4	4	1	1	nul	nul	nul	nul	nul
@@ -388,27 +389,27 @@ parseAndRegister("中リール", "ボーナス未成立", `
 `);
 
 parseAndRegister("中リール", "Ｘビッグ成立", `
-21	0	1	1	1	0	0	2	2	2	2	2	2	2	1	2
-20	0	1	1	1	0	0	2	2	2	2	2	2	2	1	2
-19	3	2	2	2	1	1	3	3	0	0	4	0	4	0	0
-18	2	0	0	0	2	2	4	4	1	1	4	0	4	1	0
-17	1	1	1	1	0	0	1	1	2	2	2	2	2	1	2
-16	1	2	2	2	1	1	0	0	0	0	0	0	0	0	0
-15	2	3	3	3	2	2	0	0	1	1	1	0	1	0	1
-14	1	4	4	4	3	3	1	1	0	0	0	0	0	0	0
-13	4	0	0	0	4	4	2	2	1	1	3	1	3	1	3
-12	0	1	1	1	0	0	2	2	2	2	4	2	4	1	4
-11	4	2	2	2	1	1	4	4	3	3	4	2	2	3	0
-10	2	3	3	3	2	2	4	4	0	0	4	3	3	3	1
-9	1	0	0	0	3	3	1	1	1	1	2	4	4	4	2
-8	0	1	1	1	0	0	0	0	2	2	2	2	2	2	2
-7	0	2	2	2	1	1	0	0	3	3	0	0	0	0	0
-6	0	3	3	3	2	2	0	0	4	4	0	0	0	0	0
-5	1	0	0	0	3	3	1	1	1	1	0	0	0	2	0
-4	2	1	1	1	0	0	2	2	2	2	3	3	3	1	3
-3	3	2	2	2	1	1	0	0	3	3	4	4	4	2	4
-2	4	3	3	3	2	2	0	0	4	4	4	4	4	3	4
-1	4	4	4	4	3	3	1	1	0	0	4	4	4	4	4
+21	0	1	1	1	0	0	0	0	2	2	2	2	2	2	2
+20	4	2	2	2	1	1	4	4	3	3	4	2	2	3	0
+19	2	3	3	3	2	2	4	4	0	0	4	3	3	3	1
+18	1	0	0	0	3	3	1	1	1	1	2	4	4	4	2
+17	0	1	1	1	0	0	0	0	2	2	2	2	2	2	2
+16	0	2	2	2	1	1	0	0	3	3	0	0	0	0	0
+15	0	3	3	3	2	2	0	0	4	4	0	0	0	0	0
+14	1	0	0	0	3	3	1	1	1	1	0	0	0	2	0
+13	2	1	1	1	0	0	2	2	2	2	3	3	3	1	3
+12	3	2	2	2	1	1	0	0	3	3	4	4	4	2	4
+11	4	3	3	3	2	2	0	0	4	4	4	4	4	3	4
+10	4	4	4	4	3	3	1	1	0	0	4	4	4	4	4
+9	1	0	0	0	4	4	1	1	1	1	1	1	1	3	1
+8	0	1	1	1	0	0	2	2	2	2	2	2	2	1	2
+7	3	2	2	2	1	1	3	3	0	0	4	0	4	0	0
+6	2	0	0	0	2	2	4	4	1	1	4	0	4	1	0
+5	1	1	1	1	0	0	1	1	2	2	2	2	2	1	2
+4	1	2	2	2	1	1	0	0	0	0	0	0	0	0	0
+3	2	3	3	3	2	2	0	0	1	1	1	0	1	0	1
+2	1	4	4	4	3	3	1	1	0	0	0	0	0	0	0
+1	4	0	0	0	4	4	2	2	1	1	3	1	3	1	3
 `);
 
 parseAndRegister("中リール", "７ビッグ成立", `
@@ -417,8 +418,8 @@ parseAndRegister("中リール", "７ビッグ成立", `
 19	0	2	2	2	1	1	3	3	0	0	4	2	4	0	0
 18	1	0	0	0	2	2	4	4	1	1	4	1	4	0	0
 17	2	1	1	1	0	0	2	2	2	2	2	1	2	2	2
-16	3	2	2	2	1	1	0	0	0	0	0	2	0	0	0
-15	0	3	3	3	2	2	0	0	0	0	0	0	0	0	0
+16	3	2	2	2	1	1	0	0	3	3	0	0	0	4	0
+15	0	3	3	3	2	2	0	0	4	4	0	1	0	4	0
 14	0	4	4	4	3	3	0	0	0	0	0	0	0	0	0
 13	2	0	0	0	4	4	2	2	1	1	1	0	1	1	1
 12	2	1	1	1	0	0	2	2	2	2	2	2	2	2	2
