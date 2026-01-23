@@ -3,16 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Versus Revise - Position Corrected</title>
+    <title>Versus Revise - Absolute Fix</title>
     <style>
         :root { --c-bg: #111; --c-text: #eee; --c-accent: #ffd700; }
         
-        * { 
-            box-sizing: border-box; 
-            user-select: none; 
-            -webkit-user-select: none; 
-            -webkit-tap-highlight-color: transparent; 
-        }
+        * { box-sizing: border-box; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
         
         html, body { 
             width: 100%; height: 100%; 
@@ -22,15 +17,12 @@
             font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif; 
             overflow: hidden; 
             display: flex; flex-direction: column;
-            
             touch-action: manipulation; 
-            overscroll-behavior: none;  
-            -webkit-text-size-adjust: 100%;
         }
         
         .controls { padding: 4px; flex-shrink: 0; background: #222; border-bottom: 1px solid #444; z-index: 20; }
         .tab-group { display: flex; gap: 4px; margin-bottom: 4px; overflow-x: auto; }
-        .tab { flex: 1; padding: 10px 2px; text-align: center; font-size: 12px; font-weight: bold; cursor: pointer; border-radius: 4px; border: 1px solid #444; opacity: 0.5; transition: all 0.2s; white-space: nowrap; min-width: 55px; color: #aaa; background: #1a1a1a; }
+        .tab { flex: 1; padding: 10px 0; text-align: center; font-size: 11px; font-weight: bold; cursor: pointer; border-radius: 4px; border: 1px solid #444; opacity: 0.5; transition: all 0.2s; white-space: nowrap; min-width: 55px; color: #aaa; background: #1a1a1a; }
         .tab.active { opacity: 1; border-color: #888; box-shadow: 0 0 5px rgba(255,255,255,0.2); color: #fff; }
         
         .stop-tab.active#t-left { background: #ffb7ce; color: #800020; border-color: #ff80ab; }
@@ -54,10 +46,9 @@
             background: #000;
         }
         
-        /* リールコンテナ：9コマ表示 (60px * 9 = 540px) */
         .reel-container { 
             width: 100px; 
-            height: 540px; 
+            height: 540px; /* 9コマ */
             position: relative; 
             background: #000; 
             border: 2px solid #333; 
@@ -101,13 +92,13 @@
             background-size: 90%; 
         }
 
-        /* 赤枠：top 180px (3コマ分下) */
+        /* 赤枠: ど真ん中 (Top 240px = 5コマ目) 1コマ分 */
         .target-box { 
             position: absolute; 
-            top: 180px; 
+            top: 240px; 
             left: 0; 
             width: 100%; 
-            height: 180px; /* 3コマ分 */
+            height: 60px; 
             border: 4px solid #ff0000; 
             pointer-events: none; 
             z-index: 10; 
@@ -128,18 +119,19 @@
         .res-row { 
             display: flex; 
             border-bottom: 1px solid #2a2a2a; 
-            min-height: 36px; 
+            height: 32px; 
             align-items: center; 
             padding: 0 4px; 
             font-family: monospace; 
+            overflow: hidden;
         }
         
         .res-name { 
-            width: 80px; 
-            font-size: 12px; 
+            width: 75px; 
+            font-size: 11px; 
             font-weight: bold; 
             flex-shrink: 0; 
-            line-height: 1.2; 
+            line-height: 1; 
             white-space: nowrap; 
             overflow: hidden; 
             text-overflow: ellipsis; 
@@ -150,39 +142,35 @@
             flex: 1; 
             text-align: right; 
             font-size: 0; 
-            white-space: nowrap; 
+            white-space: nowrap; /* 1行強制 */
             overflow: hidden;
+            display: flex;
+            justify-content: flex-end;
         }
         
         .res-slip { 
             display: inline-block; 
-            width: 20px;
-            height: 20px;
-            line-height: 18px;
+            width: 18px; 
+            height: 18px; 
+            line-height: 16px;
             text-align: center;
-            font-size: 12px;
-            font-weight: bold;
+            font-size: 11px; 
+            font-weight: bold; 
             color: #fff;
             background: #333; 
             border: 1px solid #555;
             border-radius: 3px; 
-            margin-left: 2px;
-            vertical-align: middle;
+            margin-left: 1px;
         }
 
         .res-row:nth-child(odd) { background: rgba(255,255,255,0.03); }
         
-        .f-bell { border-left: 5px solid #ffeb3b; color: #ffeb3b; }
-        .f-bell .res-name { color: #ffeb3b; }
-        .f-suika { border-left: 5px solid #00e676; color: #00e676; }
-        .f-suika .res-name { color: #00e676; }
-        .f-cher { border-left: 5px solid #ff4081; color: #ff4081; }
-        .f-cher .res-name { color: #ff4081; }
-        .f-rep { border-left: 5px solid #80d8ff; color: #80d8ff; }
-        .f-rep .res-name { color: #80d8ff; }
-        .f-hazure { border-left: 5px solid #888; color: #aaa; }
-        .f-tok { border-left: 5px solid #e040fb; color: #e040fb; }
-        .f-tok .res-name { color: #e040fb; }
+        .f-bell { border-left: 4px solid #ffeb3b; } .f-bell .res-name { color: #ffeb3b; }
+        .f-suika { border-left: 4px solid #00e676; } .f-suika .res-name { color: #00e676; }
+        .f-cher { border-left: 4px solid #ff4081; } .f-cher .res-name { color: #ff4081; }
+        .f-rep { border-left: 4px solid #80d8ff; } .f-rep .res-name { color: #80d8ff; }
+        .f-hazure { border-left: 4px solid #888; } .f-hazure .res-name { color: #aaa; }
+        .f-tok { border-left: 4px solid #e040fb; } .f-tok .res-name { color: #e040fb; }
 
         #error-log { display: none; position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); color:red; z-index:9999; padding:20px; white-space: pre-wrap; font-family:monospace; }
     </style>
@@ -196,10 +184,10 @@
             <div id="t-right" class="stop-tab tab" onclick="app.setStop('right')">右リール</div>
         </div>
         <div class="tab-group">
-            <div id="s-bonus_unestablished" class="state-tab tab active" onclick="app.setState('bonus_unestablished')">ボナ未成立</div>
-            <div id="s-x_big_established" class="state-tab tab" onclick="app.setState('x_big_established')">Ｘビッグ</div>
-            <div id="s-seven_big_established" class="state-tab tab" onclick="app.setState('seven_big_established')">７ビッグ</div>
-            <div id="s-reg_bonus_established" class="state-tab tab" onclick="app.setState('reg_bonus_established')">Reg</div>
+            <div id="s-bonus_unestablished" class="state-tab tab active" onclick="app.setState('bonus_unestablished')">ボーナス未成立</div>
+            <div id="s-x_big_established" class="state-tab tab" onclick="app.setState('x_big_established')">Ｘビッグ成立</div>
+            <div id="s-seven_big_established" class="state-tab tab" onclick="app.setState('seven_big_established')">７ビッグ成立</div>
+            <div id="s-reg_bonus_established" class="state-tab tab" onclick="app.setState('reg_bonus_established')">Regボーナス成立</div>
         </div>
     </div>
 
@@ -218,9 +206,6 @@ window.onerror = function(msg, url, line) {
     log.innerText = `System Error:\n${msg}\nLine: ${line}`;
 };
 
-document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
-document.addEventListener('dblclick', function(e) { e.preventDefault(); }, { passive: false });
-
 const NAME_MAP = {
     "左リール": "left", "left": "left",
     "中リール": "middle", "middle": "middle",
@@ -229,16 +214,15 @@ const NAME_MAP = {
     "Ｘビッグ成立": "x_big_established", "x_big_established": "x_big_established",
     "７ビッグ成立": "seven_big_established", "seven_big_established": "seven_big_established",
     "Regボーナス成立": "reg_bonus_established", "reg_bonus_established": "reg_bonus_established",
-    "ボナ未成立": "bonus_unestablished", "Ｘビッグ": "x_big_established", "７ビッグ": "seven_big_established", "Reg": "reg_bonus_established"
 };
 
 const REEL_ASSETS = { left: "reel1.png", middle: "reel2.png", right: "reel3.png" };
 
 const FLAG_INFO = {
-    hazure: { n: "ハズレ", c: "hazure" }, replay_normal: { n: "通常リプ", c: "rep" }, replay_jac: { n: "JACリプ", c: "rep" }, replay_rt: { n: "RTリプ", c: "rep" },
+    hazure: { n: "ハズレ", c: "hazure" }, replay_normal: { n: "通常リプレイ", c: "rep" }, replay_jac: { n: "ＪＡＣリプレイ", c: "rep" }, replay_rt: { n: "ＲＴリプレイ", c: "rep" },
     bell_a: { n: "ベルＡ", c: "bell" }, bell_b: { n: "ベルＢ", c: "bell" }, watermelon_a: { n: "スイカＡ", c: "suika" }, watermelon_b: { n: "スイカＢ", c: "suika" },
-    cherry_a: { n: "チェリＡ", c: "cher" }, cherry_b: { n: "チェリＢ", c: "cher" },
-    special_a: { n: "特役Ａ", c: "tok" }, special_b: { n: "特役Ｂ", c: "tok" }, special_c: { n: "特役Ｃ", c: "tok" }, special_d: { n: "特役Ｄ", c: "tok" }, special_e: { n: "特役Ｅ", c: "tok" }
+    cherry_a: { n: "チェリーＡ", c: "cher" }, cherry_b: { n: "チェリーＢ", c: "cher" },
+    special_a: { n: "特殊役Ａ", c: "tok" }, special_b: { n: "特殊役Ｂ", c: "tok" }, special_c: { n: "特殊役Ｃ", c: "tok" }, special_d: { n: "特殊役Ｄ", c: "tok" }, special_e: { n: "特殊役Ｅ", c: "tok" }
 };
 
 const REEL_SYMBOLS = {
@@ -246,8 +230,6 @@ const REEL_SYMBOLS = {
     middle: ["Bell","Cher","Rep","Bell","Cher","Sui","Seven","Sui","Bell","Bar","Cher","Rep","Bell","Cher","X","Rep","Bell","Cher","Sui","Cher","Rep"],
     right: ["Cher","Bell","Sui","Rep","Cher","Seven","Bell","Sui","Rep","Cher","Bell","Rep","Bar","Cher","Bell","Sui","Rep","X","Bell","Sui","Rep"]
 };
-
-const SYMBOL_DISPLAY_MAP = { "Rep": "リプレイ", "Cher": "チェリー", "X": "Ｘ", "Bell": "ベル", "Sui": "スイカ", "Seven": "７", "Bar": "Reg" };
 
 class ReverseAuditor {
     constructor() { this.db = { left: {}, middle: {}, right: {} }; }
@@ -312,7 +294,7 @@ const parseAndRegister = (reel, state, rawText) => {
 };
 
 // ==========================================
-// DATA INJECTION (ALL REBUILT & CORRECT)
+// DATA INJECTION
 // ==========================================
 parseAndRegister("左リール", "ボーナス未成立", `
 21	2	0	1	0	1	1	2	2	4	4	null	null	null	null	null
@@ -593,7 +575,13 @@ parseAndRegister("右リール", "Regボーナス成立", `
 `);
 
 const app = {
-    state: { reel: 'left', flagMode: 'bonus_unestablished', stopNum: 21 },
+    // 初期位置: Left 8, Middle 3, Right 15
+    state: { 
+        reel: 'left', 
+        flagMode: 'bonus_unestablished', 
+        stopNum: 8, 
+        positions: { left: 8, middle: 3, right: 15 } 
+    },
     
     init() {
         this.renderReelStrip();
@@ -602,7 +590,10 @@ const app = {
     },
 
     setStop(side) {
-        this.state.reel = NAME_MAP[side] || side;
+        const key = NAME_MAP[side] || side;
+        this.state.reel = key;
+        this.state.stopNum = this.state.positions[key]; 
+        
         document.querySelectorAll('.stop-tab').forEach(el => 
             el.classList.toggle('active', el.id === `t-${this.state.reel}`));
         this.renderReelStrip();
@@ -670,10 +661,8 @@ const app = {
     updateReelPosition() {
         const baseH = 21 * 60;
         const targetIdx = 21 - this.state.stopNum;
-        // リール9コマ化に伴う表示位置の補正 (+120px)
-        // Previous (7frames): +180. New (9frames): +300.
-        // これで選択した絵柄が赤枠の中に正しく表示されます。
-        const y = -baseH - (targetIdx * 60) + 300; 
+        // ★修正完了: 240pxオフセット（5コマ目をターゲット）
+        const y = -baseH - (targetIdx * 60) + 240; 
         document.getElementById('reel-strip').style.transform = `translate3d(0, ${y}px, 0)`;
     },
 
@@ -692,6 +681,7 @@ const app = {
             while(nextNum < 1) nextNum += 21;
             if(this.state.stopNum !== nextNum) {
                 this.state.stopNum = nextNum;
+                this.state.positions[this.state.reel] = nextNum;
                 this.updateView();
             }
         };
