@@ -3,168 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Versus Revise - Absolute Fix</title>
+    <title>Versus Revise - Sync Fixed</title>
     <style>
-        :root { --c-bg: #111; --c-text: #eee; --c-accent: #ffd700; }
+        :root { 
+            --c-bg: #000; 
+            --c-text: #eee; 
+            --c-accent: #ffd700;
+            --c-border: #333;
+        }
         
-        * { box-sizing: border-box; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+        * { 
+            box-sizing: border-box; 
+            user-select: none; 
+            -webkit-user-select: none; 
+            -webkit-tap-highlight-color: transparent; 
+        }
         
         html, body { 
             width: 100%; height: 100%; 
             min-height: 100dvh; 
             margin: 0; padding: 0; 
             background: var(--c-bg); color: var(--c-text); 
-            font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif; 
+            font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
             overflow: hidden; 
             display: flex; flex-direction: column;
+            
             touch-action: manipulation; 
+            overscroll-behavior: none;  
+            -webkit-text-size-adjust: 100%;
         }
         
-        .controls { padding: 4px; flex-shrink: 0; background: #222; border-bottom: 1px solid #444; z-index: 20; }
+        /* 上部タブエリア */
+        .controls { 
+            padding: 4px; 
+            flex-shrink: 0; 
+            background: #111; 
+            border-bottom: 1px solid var(--c-border); 
+            z-index: 20; 
+        }
         .tab-group { display: flex; gap: 4px; margin-bottom: 4px; overflow-x: auto; }
-        .tab { flex: 1; padding: 10px 0; text-align: center; font-size: 11px; font-weight: bold; cursor: pointer; border-radius: 4px; border: 1px solid #444; opacity: 0.5; transition: all 0.2s; white-space: nowrap; min-width: 55px; color: #aaa; background: #1a1a1a; }
-        .tab.active { opacity: 1; border-color: #888; box-shadow: 0 0 5px rgba(255,255,255,0.2); color: #fff; }
+        .tab { 
+            flex: 1; 
+            padding: 10px 0; 
+            text-align: center; 
+            font-size: 11px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            border-radius: 4px; 
+            border: 1px solid #333; 
+            background: #1a1a1a; 
+            color: #888;
+            white-space: nowrap; 
+            transition: all 0.1s;
+        }
+        .tab.active { opacity: 1; color: #fff; border-color: #777; box-shadow: 0 0 8px rgba(255,255,255,0.1); }
         
-        .stop-tab.active#t-left { background: #ffb7ce; color: #800020; border-color: #ff80ab; }
-        .stop-tab.active#t-middle { background: #b3e5fc; color: #003c8f; border-color: #80d8ff; }
-        .stop-tab.active#t-right { background: #c8e6c9; color: #1b5e20; border-color: #69f0ae; }
+        .stop-tab.active#t-left { background: #600010; color: #ffb7ce; border-color: #ff80ab; }
+        .stop-tab.active#t-middle { background: #001040; color: #b3e5fc; border-color: #80d8ff; }
+        .stop-tab.active#t-right { background: #002005; color: #c8e6c9; border-color: #69f0ae; }
         
-        .state-tab#s-bonus_unestablished.active { background: #fff; color: #000; }
+        .state-tab#s-bonus_unestablished.active { background: #ddd; color: #000; }
         .state-tab#s-x_big_established.active { background: #304ffe; color: #fff; }
         .state-tab#s-seven_big_established.active { background: #d50000; color: #fff; }
-        .state-tab#s-reg_bonus_established.active { background: #222; color: #fff; border: 1px solid #fff; }
+        .state-tab#s-reg_bonus_established.active { background: #333; color: #fff; border: 1px solid #fff; }
 
+        /* メインエリア */
         .workspace { 
             display: flex; 
-            flex-direction: row-reverse; 
+            flex-direction: row-reverse; /* 右：リール、左：リスト */
             flex: 1; 
             overflow: hidden; 
             padding: 8px; 
             gap: 8px; 
-            align-items: flex-start; 
-            justify-content: center;
             background: #000;
+            align-items: flex-start;
+            justify-content: center;
         }
         
+        /* リール (9コマ表示) */
         .reel-container { 
-            width: 100px; 
-            height: 540px; /* 9コマ */
+            width: 90px; 
+            height: 540px; /* 60px * 9コマ */
             position: relative; 
             background: #000; 
-            border: 2px solid #333; 
-            border-radius: 6px; 
+            border: 2px solid #444; 
+            border-radius: 4px; 
             flex-shrink: 0; 
             overflow: hidden; 
             touch-action: none; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.8);
         }
         
         .reel-strip { position: absolute; width: 100%; top: 0; left: 0; will-change: transform; }
         
-        .symbol { height: 60px; display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.15); position: relative; font-size: 10px; box-sizing: border-box; }
+        .symbol { 
+            height: 60px; 
+            display: flex; align-items: center; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); 
+            box-sizing: border-box; 
+        }
         
         .sym-idx { 
-            width: 28px; 
-            flex-shrink: 0;
+            width: 24px; 
             text-align: center; 
             color: var(--c-accent); 
             font-weight: bold; 
+            font-size: 11px; 
             height: 100%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
+            display: flex; align-items: center; justify-content: center; 
             background: #111; 
             border-right: 1px solid #333;
-            z-index: 2; 
-            font-size: 12px; 
         }
         
         .sym-bg { 
-            position: absolute; 
-            top: 0; 
-            left: 28px; 
-            right: 0; 
-            bottom: 0; 
-            z-index: 1; 
+            flex: 1;
+            height: 100%;
             background-color: #000; 
             background-repeat: no-repeat;
             background-position: center;
-            background-size: 90%; 
+            background-size: 85%; 
         }
 
-        /* 赤枠: ど真ん中 (Top 240px = 5コマ目) 1コマ分 */
+        /* 赤枠 (3コマ分) */
         .target-box { 
             position: absolute; 
-            top: 240px; 
+            top: 180px; /* 上から4コマ目開始位置 */
             left: 0; 
             width: 100%; 
-            height: 60px; 
-            border: 4px solid #ff0000; 
+            height: 180px; /* 3コマ分 */
+            border: 4px solid #f00; 
             pointer-events: none; 
             z-index: 10; 
-            box-shadow: inset 0 0 15px rgba(255,0,0,0.3); 
+            box-shadow: inset 0 0 10px rgba(255,0,0,0.3);
         }
 
+        /* 結果リスト */
         .results { 
             flex: 1; 
             height: 540px; 
-            background: #151515; 
+            background: #111; 
             border: 1px solid #333; 
             overflow-y: auto; 
-            border-radius: 6px; 
+            border-radius: 4px; 
             display: flex; 
             flex-direction: column; 
         }
         
+        /* リスト行設定 */
         .res-row { 
             display: flex; 
-            border-bottom: 1px solid #2a2a2a; 
-            height: 32px; 
             align-items: center; 
-            padding: 0 4px; 
+            border-bottom: 1px solid #222; 
+            height: 34px; 
+            padding: 0 6px; 
             font-family: monospace; 
-            overflow: hidden;
         }
-        
+        .res-row:nth-child(odd) { background: rgba(255,255,255,0.03); }
+
         .res-name { 
-            width: 75px; 
-            font-size: 11px; 
+            width: 80px; 
+            font-size: 12px; 
             font-weight: bold; 
             flex-shrink: 0; 
-            line-height: 1; 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
-            color: #ccc;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1;
         }
         
         .res-data { 
             flex: 1; 
-            text-align: right; 
-            font-size: 0; 
-            white-space: nowrap; /* 1行強制 */
+            display: flex; 
+            justify-content: flex-end; 
+            align-items: center;
+            flex-wrap: nowrap; /* 1行強制 */
             overflow: hidden;
-            display: flex;
-            justify-content: flex-end;
         }
         
+        /* スベリ数字 */
         .res-slip { 
-            display: inline-block; 
-            width: 18px; 
-            height: 18px; 
-            line-height: 16px;
-            text-align: center;
-            font-size: 11px; 
-            font-weight: bold; 
-            color: #fff;
-            background: #333; 
-            border: 1px solid #555;
-            border-radius: 3px; 
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px; 
+            height: 20px; 
             margin-left: 1px;
+            background: #222; 
+            border: 1px solid #444; 
+            border-radius: 2px; 
+            font-size: 13px; 
+            font-weight: bold; 
+            color: #eee; 
+            flex-shrink: 0;
         }
 
-        .res-row:nth-child(odd) { background: rgba(255,255,255,0.03); }
-        
+        /* 色設定 */
         .f-bell { border-left: 4px solid #ffeb3b; } .f-bell .res-name { color: #ffeb3b; }
         .f-suika { border-left: 4px solid #00e676; } .f-suika .res-name { color: #00e676; }
         .f-cher { border-left: 4px solid #ff4081; } .f-cher .res-name { color: #ff4081; }
@@ -205,6 +237,9 @@ window.onerror = function(msg, url, line) {
     log.style.display = 'block';
     log.innerText = `System Error:\n${msg}\nLine: ${line}`;
 };
+
+document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
+document.addEventListener('dblclick', function(e) { e.preventDefault(); }, { passive: false });
 
 const NAME_MAP = {
     "左リール": "left", "left": "left",
@@ -259,7 +294,9 @@ class ReverseAuditor {
             for (let P = 1; P <= 21; P++) {
                 const L = slips[P];
                 if (L === null) continue;
+                // 元の計算ロジックに戻す
                 const calculatedStop = (P + L - 1) % 21 + 1;
+                
                 if (calculatedStop === currentStopNum) found.push({ pushNum: P, slip: L });
             }
             if (found.length > 0) {
@@ -615,7 +652,12 @@ const app = {
     audit() {
         const list = document.getElementById('result-list');
         list.innerHTML = '';
-        const results = Engine.audit(this.state.reel, this.state.flagMode, this.state.stopNum);
+        
+        // ★修正: 判定ロジックに渡す値を -1 シフト（1-21の範囲内）
+        let logicStop = this.state.stopNum - 1;
+        if (logicStop < 1) logicStop = 21;
+        
+        const results = Engine.audit(this.state.reel, this.state.flagMode, logicStop);
         
         if(results.length === 0) {
             list.innerHTML = '<div style="padding:20px; text-align:center; color:#555; font-size:12px;">条件に一致するフラグがありません</div>';
@@ -661,7 +703,7 @@ const app = {
     updateReelPosition() {
         const baseH = 21 * 60;
         const targetIdx = 21 - this.state.stopNum;
-        // ★修正完了: 240pxオフセット（5コマ目をターゲット）
+        // ★修正: 240pxオフセット（上から5コマ目にstopNumを配置）
         const y = -baseH - (targetIdx * 60) + 240; 
         document.getElementById('reel-strip').style.transform = `translate3d(0, ${y}px, 0)`;
     },
