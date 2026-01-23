@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Versus Revise - Absolute Reverse Auditor (Final Fix)</title>
+    <title>Versus Revise - Absolute Reverse Auditor (UI Fixed)</title>
     <style>
         :root { --c-bg: #111; --c-text: #eee; --c-accent: #ffd700; }
         * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
@@ -50,18 +50,36 @@
         .reel-strip { position: absolute; width: 100%; top: 0; left: 0; will-change: transform; }
         
         .symbol { height: 60px; display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); position: relative; font-size: 10px; box-sizing: border-box; }
-        .sym-idx { width: 20px; text-align: center; color: var(--c-accent); font-weight: bold; height: 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.8); z-index: 2; font-size: 9px; opacity: 0.7; }
         
-        .sym-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1; background-color: #000; }
-        .sym-name { flex: 1; text-align: center; font-weight: bold; font-size: 12px; z-index: 2; text-shadow: 0 0 2px #000, 0 0 4px #000; pointer-events: none;}
+        /* 配列番号の表示調整：左端に固定し、画像と重ならないようにする */
+        .sym-idx { 
+            width: 25px; 
+            flex-shrink: 0;
+            text-align: center; 
+            color: var(--c-accent); 
+            font-weight: bold; 
+            height: 100%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background: #111; /* 背景を黒にして分離 */
+            border-right: 1px solid #333;
+            z-index: 2; 
+            font-size: 10px; 
+        }
         
-        .sym-Seven { color: #ff3333; }
-        .sym-X { color: #3388ff; }
-        .sym-Bar { color: #fff; }
-        .sym-Bell { color: #ffeb3b; }
-        .sym-Sui { color: #00e676; }
-        .sym-Cher { color: #ff4081; }
-        .sym-Rep { color: #80d8ff; }
+        /* 画像表示エリア：番号の右側に配置 */
+        .sym-bg { 
+            position: absolute; 
+            top: 0; 
+            left: 25px; /* 番号幅分ずらす */
+            right: 0; 
+            bottom: 0; 
+            z-index: 1; 
+            background-color: #000; 
+            background-repeat: no-repeat;
+            background-position: center;
+        }
 
         .target-box { 
             position: absolute; 
@@ -87,7 +105,7 @@
         }
         .res-row { display: flex; border-bottom: 1px solid #333; min-height: 40px; align-items: center; padding: 0 8px; font-family: monospace; }
         .res-name { width: 90px; font-size: 11px; font-weight: bold; flex-shrink: 0; line-height: 1.2; }
-        .res-data { flex: 1; text-align: right; font-size: 13px; color: #ddd; word-break: break-all; }
+        .res-data { flex: 1; text-align: right; font-size: 12px; color: #ddd; word-break: break-all; }
         .res-row:nth-child(odd) { background: rgba(255,255,255,0.02); }
         
         .f-bell { border-left: 4px solid #ffeb3b; color: #ffeb3b; }
@@ -515,7 +533,6 @@ parseAndRegister("右リール", "Regボーナス成立", `
 1	1	2	2	2	1	1	1	1	3	3	1	1	1	1	1
 `);
 
-// ★ここに抜けていたメインプログラムを追加
 const app = {
     state: { reel: 'left', flagMode: 'bonus_unestablished', stopNum: 21 },
     
@@ -558,8 +575,9 @@ const app = {
         results.forEach(res => {
             const row = document.createElement('div');
             row.className = `res-row f-${res.info.c}`;
+            // フォーマット変更: [押下位置→スベリ]
             const matchesStr = res.matches
-                .map(m => `<span style="opacity:0.6">#</span>${m.pushNum}(${m.slip})`)
+                .map(m => `[${m.pushNum}→${m.slip}]`)
                 .join('  ');
             row.innerHTML = `<div class="res-name">${res.info.n}</div><div class="res-data">${matchesStr}</div>`;
             list.appendChild(row);
@@ -575,15 +593,16 @@ const app = {
         for(let loop=0; loop<3; loop++) {
             symbols.forEach((sym, idx) => {
                 const reelNum = 21 - idx;
-                const displayName = SYMBOL_DISPLAY_MAP[sym] || sym;
                 const el = document.createElement('div');
                 el.className = 'symbol';
                 const bgSize = `100% ${21 * 60}px`;
-                const bgPos = `0px -${idx * 60}px`;
+                const bgPos = `center -${idx * 60}px`;
+                
+                // sym-name (文字) は削除
+                // sym-idx (黒背景) と sym-bg (画像) を並列に配置
                 el.innerHTML = `
                     <div class="sym-idx">${reelNum}</div>
                     <div class="sym-bg" style="background-image: url('${bgImage}'); background-size: ${bgSize}; background-position: ${bgPos}"></div>
-                    <div class="sym-name sym-${sym}">${displayName}</div>
                 `;
                 container.appendChild(el);
             });
