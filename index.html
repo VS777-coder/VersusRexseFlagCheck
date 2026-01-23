@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Versus Revise - Absolute Reverse Auditor (Rebuilt & #14 Suika)</title>
+    <title>Versus Revise - Absolute Reverse Auditor (Compact)</title>
     <style>
         :root { --c-bg: #111; --c-text: #eee; --c-accent: #ffd700; }
         * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
@@ -105,19 +105,19 @@
         .res-name { width: 90px; font-size: 11px; font-weight: bold; flex-shrink: 0; line-height: 1.2; }
         .res-data { flex: 1; text-align: right; font-size: 13px; color: #ddd; word-break: break-all; }
         
+        /* スベリ表示用：間隔を詰めてシンプルに */
         .res-slip { 
             display: inline-block; 
-            padding: 2px 6px; 
-            margin-left: 4px; 
+            padding: 2px 2px; /* 横幅を詰める */
+            margin-left: 0;   /* 余白削除 */
             background: #333; 
-            border-radius: 3px; 
+            border-radius: 2px; 
             font-weight: bold; 
             color: #fff;
-            cursor: help; 
-            min-width: 25px;
+            min-width: 20px;
             text-align: center;
+            border: 1px solid #444; /* 境界がわかるように薄く線を入れる */
         }
-        .res-slip:hover { background: #555; }
 
         .res-row:nth-child(odd) { background: rgba(255,255,255,0.02); }
         
@@ -181,11 +181,8 @@ const FLAG_INFO = {
     special_a: { n: "特殊役Ａ", c: "tok" }, special_b: { n: "特殊役Ｂ", c: "tok" }, special_c: { n: "特殊役Ｃ", c: "tok" }, special_d: { n: "特殊役Ｄ", c: "tok" }, special_e: { n: "特殊役Ｅ", c: "tok" }
 };
 
-// ★リール配列: 画像(s_versus_rexse-reel.gif)に完全準拠
-// 中リール#14は「スイカ」に修正。
 const REEL_SYMBOLS = {
     left: ["Rep","Cher","X","Bell","Sui","Rep","Bell","Sui","Seven","Bell","Rep","Cher","Bar","Bell","Sui","Rep","X","X","X","Sui","Bell"],
-    // #14=Sui, #21=Bell, #1=Rep (画像完全準拠)
     middle: ["Bell","Cher","Rep","Bell","Cher","Sui","Seven","Sui","Bell","Bar","Cher","Rep","Bell","Cher","X","Rep","Bell","Cher","Sui","Cher","Rep"],
     right: ["Cher","Bell","Sui","Rep","Cher","Seven","Bell","Sui","Rep","Cher","Bell","Rep","Bar","Cher","Bell","Sui","Rep","X","Bell","Sui","Rep"]
 };
@@ -262,7 +259,7 @@ const parseAndRegister = (reel, state, rawText) => {
 };
 
 // ==========================================
-// DATA INJECTION (REBUILT & FIXED)
+// DATA INJECTION (ALL REBUILT & CORRECT)
 // ==========================================
 
 parseAndRegister("左リール", "ボーナス未成立", `
@@ -361,11 +358,8 @@ parseAndRegister("左リール", "Regボーナス成立", `
 1	1	3	3	3	0	1	1	1	3	3	1	1	0	0	0
 `);
 
-// ★中リール再構築: Row 1 -> Reel 21, Row 2 -> Reel 1...
-// 「データ1行目の3コマ滑り」が「リール21番（ベル）」へ。
-// 「データ3行目の1コマ滑り」が「リール2番（チェリー）」へ。 -> 2+1=3(スイカ)停止。OK。
 parseAndRegister("中リール", "ボーナス未成立", `
-21	3	0	0	0	4	4	1	1	1	1	nul	nul	nul	nul	nul
+21	3	1	1	1	0	0	2	2	2	2	nul	nul	nul	nul	nul
 20	2	1	1	1	0	0	2	2	2	2	nul	nul	nul	nul	nul
 19	0	2	2	2	1	1	3	3	0	0	nul	nul	nul	nul	nul
 18	1	0	0	0	2	2	4	4	1	1	nul	nul	nul	nul	nul
@@ -599,8 +593,9 @@ const app = {
         results.forEach(res => {
             const row = document.createElement('div');
             row.className = `res-row f-${res.info.c}`;
+            // 修正: ツールチップを削除し、間隔を詰める
             const matchesStr = res.matches
-                .map(m => `<span class="res-slip" title="押下位置: #${m.pushNum}">[${m.slip}]</span>`)
+                .map(m => `<span class="res-slip">[${m.slip}]</span>`)
                 .join('');
             row.innerHTML = `<div class="res-name">${res.info.n}</div><div class="res-data">${matchesStr}</div>`;
             list.appendChild(row);
