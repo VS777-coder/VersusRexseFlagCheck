@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Versus Revise - Sync Fixed</title>
+    <title>Versus Revise - Layout Fix</title>
     <style>
         :root { 
             --c-bg: #000; 
@@ -160,7 +160,8 @@
         .res-row:nth-child(odd) { background: rgba(255,255,255,0.03); }
 
         .res-name { 
-            width: 80px; 
+            /* ★修正: 幅を80pxから110pxに広げて「ＪＡＣリプレイ」等が収まるように変更 */
+            width: 110px; 
             font-size: 12px; 
             font-weight: bold; 
             flex-shrink: 0; 
@@ -294,9 +295,7 @@ class ReverseAuditor {
             for (let P = 1; P <= 21; P++) {
                 const L = slips[P];
                 if (L === null) continue;
-                // 元の計算ロジックに戻す
                 const calculatedStop = (P + L - 1) % 21 + 1;
-                
                 if (calculatedStop === currentStopNum) found.push({ pushNum: P, slip: L });
             }
             if (found.length > 0) {
@@ -612,13 +611,7 @@ parseAndRegister("右リール", "Regボーナス成立", `
 `);
 
 const app = {
-    // 初期位置: Left 8, Middle 3, Right 15
-    state: { 
-        reel: 'left', 
-        flagMode: 'bonus_unestablished', 
-        stopNum: 8, 
-        positions: { left: 8, middle: 3, right: 15 } 
-    },
+    state: { reel: 'left', flagMode: 'bonus_unestablished', stopNum: 8, positions: { left: 8, middle: 3, right: 15 } },
     
     init() {
         this.renderReelStrip();
@@ -629,7 +622,7 @@ const app = {
     setStop(side) {
         const key = NAME_MAP[side] || side;
         this.state.reel = key;
-        this.state.stopNum = this.state.positions[key]; 
+        this.state.stopNum = this.state.positions[key];
         
         document.querySelectorAll('.stop-tab').forEach(el => 
             el.classList.toggle('active', el.id === `t-${this.state.reel}`));
