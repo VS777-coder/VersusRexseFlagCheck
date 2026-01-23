@@ -3,16 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Versus Revise - 9 Symbols View</title>
+    <title>Versus Revise - Final View</title>
     <style>
         :root { --c-bg: #111; --c-text: #eee; --c-accent: #ffd700; }
-        
-        * { 
-            box-sizing: border-box; 
-            user-select: none; 
-            -webkit-user-select: none; 
-            -webkit-tap-highlight-color: transparent; 
-        }
+        * { box-sizing: border-box; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
         
         html, body { 
             width: 100%; height: 100%; 
@@ -28,10 +22,9 @@
             -webkit-text-size-adjust: 100%;
         }
         
-        /* 上部操作パネル */
         .controls { padding: 4px; flex-shrink: 0; background: #222; border-bottom: 1px solid #444; z-index: 20; }
         .tab-group { display: flex; gap: 4px; margin-bottom: 4px; overflow-x: auto; }
-        .tab { flex: 1; padding: 10px 4px; text-align: center; font-size: 12px; font-weight: bold; cursor: pointer; border-radius: 4px; border: 1px solid #444; opacity: 0.5; transition: all 0.2s; white-space: nowrap; min-width: 60px; color: #aaa; background: #1a1a1a; }
+        .tab { flex: 1; padding: 10px 2px; text-align: center; font-size: 12px; font-weight: bold; cursor: pointer; border-radius: 4px; border: 1px solid #444; opacity: 0.5; transition: all 0.2s; white-space: nowrap; min-width: 55px; color: #aaa; background: #1a1a1a; }
         .tab.active { opacity: 1; border-color: #888; box-shadow: 0 0 5px rgba(255,255,255,0.2); color: #fff; }
         
         .stop-tab.active#t-left { background: #ffb7ce; color: #800020; border-color: #ff80ab; }
@@ -43,7 +36,6 @@
         .state-tab#s-seven_big_established.active { background: #d50000; color: #fff; }
         .state-tab#s-reg_bonus_established.active { background: #222; color: #fff; border: 1px solid #fff; }
 
-        /* メインエリア：左リスト、右リール */
         .workspace { 
             display: flex; 
             flex-direction: row-reverse; 
@@ -59,7 +51,7 @@
         /* リールコンテナ：9コマ表示 (60px * 9 = 540px) */
         .reel-container { 
             width: 100px; 
-            height: 540px; /* 9コマ分 */
+            height: 540px; 
             position: relative; 
             background: #000; 
             border: 2px solid #333; 
@@ -100,10 +92,10 @@
             background-color: #000; 
             background-repeat: no-repeat;
             background-position: center;
-            background-size: 90%; /* 絵柄を少し大きく */
+            background-size: 90%; 
         }
 
-        /* 赤枠：中央配置 (Top: 180px = 3コマ分降りたところからスタート) */
+        /* 赤枠：top 180px (3コマ分下) */
         .target-box { 
             position: absolute; 
             top: 180px; 
@@ -116,10 +108,9 @@
             box-shadow: inset 0 0 15px rgba(255,0,0,0.3); 
         }
 
-        /* リストエリア */
         .results { 
             flex: 1; 
-            height: 540px; /* リールと同じ高さ */
+            height: 540px; 
             background: #151515; 
             border: 1px solid #333; 
             overflow-y: auto; 
@@ -128,19 +119,18 @@
             flex-direction: column; 
         }
         
-        /* 行スタイル：高さを十分に確保 */
         .res-row { 
             display: flex; 
             border-bottom: 1px solid #2a2a2a; 
-            min-height: 38px; /* 押しやすい高さ */
+            min-height: 36px; /* 13行入る高さ */
             align-items: center; 
-            padding: 0 8px; 
+            padding: 0 4px; 
             font-family: monospace; 
         }
         
         .res-name { 
-            width: 90px; 
-            font-size: 13px; /* 文字サイズUP */
+            width: 80px; 
+            font-size: 12px; 
             font-weight: bold; 
             flex-shrink: 0; 
             line-height: 1.2; 
@@ -153,30 +143,31 @@
         .res-data { 
             flex: 1; 
             text-align: right; 
-            font-size: 15px; /* 数字サイズUP */
-            color: #fff; 
-            word-break: break-all; 
-            letter-spacing: -1px; /* 数字の間隔調整 */
+            font-size: 0; /* inline-block隙間対策 */
+            white-space: nowrap; 
+            overflow: hidden;
         }
         
-        /* スベリ表示：間隔を詰めて視認性確保 */
+        /* スベリ表示：括弧なし、枠線のみで省スペース化 */
         .res-slip { 
             display: inline-block; 
-            padding: 2px 4px; 
-            margin: 0; 
-            background: #333; 
-            border-radius: 3px; 
-            font-weight: bold; 
-            color: #fff;
-            min-width: 20px;
+            width: 20px;
+            height: 20px;
+            line-height: 18px;
             text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: #fff;
+            background: #333; 
             border: 1px solid #555;
-            font-size: 14px;
+            border-radius: 3px; 
+            margin-left: 2px;
+            vertical-align: middle;
         }
 
         .res-row:nth-child(odd) { background: rgba(255,255,255,0.03); }
         
-        /* 色分け定義（重要） */
+        /* 色分け設定 */
         .f-bell { border-left: 5px solid #ffeb3b; color: #ffeb3b; }
         .f-bell .res-name { color: #ffeb3b; }
         
@@ -206,10 +197,10 @@
             <div id="t-right" class="stop-tab tab" onclick="app.setStop('right')">右リール</div>
         </div>
         <div class="tab-group">
-            <div id="s-bonus_unestablished" class="state-tab tab active" onclick="app.setState('bonus_unestablished')">ボーナス未成立</div>
-            <div id="s-x_big_established" class="state-tab tab" onclick="app.setState('x_big_established')">Ｘビッグ成立</div>
-            <div id="s-seven_big_established" class="state-tab tab" onclick="app.setState('seven_big_established')">７ビッグ成立</div>
-            <div id="s-reg_bonus_established" class="state-tab tab" onclick="app.setState('reg_bonus_established')">Regボーナス成立</div>
+            <div id="s-bonus_unestablished" class="state-tab tab active" onclick="app.setState('bonus_unestablished')">ボナ未成立</div>
+            <div id="s-x_big_established" class="state-tab tab" onclick="app.setState('x_big_established')">Ｘビッグ</div>
+            <div id="s-seven_big_established" class="state-tab tab" onclick="app.setState('seven_big_established')">７ビッグ</div>
+            <div id="s-reg_bonus_established" class="state-tab tab" onclick="app.setState('reg_bonus_established')">Reg</div>
         </div>
     </div>
 
@@ -228,7 +219,6 @@ window.onerror = function(msg, url, line) {
     log.innerText = `System Error:\n${msg}\nLine: ${line}`;
 };
 
-// ピンチイン・アウト防止
 document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
 document.addEventListener('dblclick', function(e) { e.preventDefault(); }, { passive: false });
 
@@ -240,15 +230,16 @@ const NAME_MAP = {
     "Ｘビッグ成立": "x_big_established", "x_big_established": "x_big_established",
     "７ビッグ成立": "seven_big_established", "seven_big_established": "seven_big_established",
     "Regボーナス成立": "reg_bonus_established", "reg_bonus_established": "reg_bonus_established",
+    "ボナ未成立": "bonus_unestablished", "Ｘビッグ": "x_big_established", "７ビッグ": "seven_big_established", "Reg": "reg_bonus_established"
 };
 
 const REEL_ASSETS = { left: "reel1.png", middle: "reel2.png", right: "reel3.png" };
 
 const FLAG_INFO = {
-    hazure: { n: "ハズレ", c: "hazure" }, replay_normal: { n: "通常リプレイ", c: "rep" }, replay_jac: { n: "ＪＡＣリプレイ", c: "rep" }, replay_rt: { n: "ＲＴリプレイ", c: "rep" },
+    hazure: { n: "ハズレ", c: "hazure" }, replay_normal: { n: "通常リプ", c: "rep" }, replay_jac: { n: "JACリプ", c: "rep" }, replay_rt: { n: "RTリプ", c: "rep" },
     bell_a: { n: "ベルＡ", c: "bell" }, bell_b: { n: "ベルＢ", c: "bell" }, watermelon_a: { n: "スイカＡ", c: "suika" }, watermelon_b: { n: "スイカＢ", c: "suika" },
-    cherry_a: { n: "チェリーＡ", c: "cher" }, cherry_b: { n: "チェリーＢ", c: "cher" },
-    special_a: { n: "特殊役Ａ", c: "tok" }, special_b: { n: "特殊役Ｂ", c: "tok" }, special_c: { n: "特殊役Ｃ", c: "tok" }, special_d: { n: "特殊役Ｄ", c: "tok" }, special_e: { n: "特殊役Ｅ", c: "tok" }
+    cherry_a: { n: "チェリＡ", c: "cher" }, cherry_b: { n: "チェリＢ", c: "cher" },
+    special_a: { n: "特役Ａ", c: "tok" }, special_b: { n: "特役Ｂ", c: "tok" }, special_c: { n: "特役Ｃ", c: "tok" }, special_d: { n: "特役Ｄ", c: "tok" }, special_e: { n: "特役Ｅ", c: "tok" }
 };
 
 const REEL_SYMBOLS = {
@@ -322,7 +313,7 @@ const parseAndRegister = (reel, state, rawText) => {
 };
 
 // ==========================================
-// DATA INJECTION (ALL REBUILT & CORRECT)
+// DATA INJECTION
 // ==========================================
 parseAndRegister("左リール", "ボーナス未成立", `
 21	2	0	1	0	1	1	2	2	4	4	null	null	null	null	null
@@ -646,7 +637,7 @@ const app = {
             row.className = `res-row f-${res.info.c}`;
             
             const matchesStr = res.matches
-                .map(m => `<span class="res-slip">[${m.slip}]</span>`)
+                .map(m => `<span class="res-slip">${m.slip}</span>`)
                 .join('');
             
             row.innerHTML = `<div class="res-name">${res.info.n}</div><div class="res-data">${matchesStr}</div>`;
@@ -681,8 +672,8 @@ const app = {
     updateReelPosition() {
         const baseH = 21 * 60;
         const targetIdx = 21 - this.state.stopNum;
-        // 9コマ表示の中央（上から4コマ目）付近にターゲットを持ってくるための補正値
-        const y = -baseH - (targetIdx * 60) + 180; 
+        // 中央配置調整: 赤枠が上から180px(4コマ目)にあるので、それに合わせる
+        const y = -baseH - (targetIdx * 60) + 180;
         document.getElementById('reel-strip').style.transform = `translate3d(0, ${y}px, 0)`;
     },
 
