@@ -3,10 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Versus Revise - Final View</title>
+    <title>Versus Revise - Position Corrected</title>
     <style>
         :root { --c-bg: #111; --c-text: #eee; --c-accent: #ffd700; }
-        * { box-sizing: border-box; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+        
+        * { 
+            box-sizing: border-box; 
+            user-select: none; 
+            -webkit-user-select: none; 
+            -webkit-tap-highlight-color: transparent; 
+        }
         
         html, body { 
             width: 100%; height: 100%; 
@@ -122,7 +128,7 @@
         .res-row { 
             display: flex; 
             border-bottom: 1px solid #2a2a2a; 
-            min-height: 36px; /* 13行入る高さ */
+            min-height: 36px; 
             align-items: center; 
             padding: 0 4px; 
             font-family: monospace; 
@@ -143,12 +149,11 @@
         .res-data { 
             flex: 1; 
             text-align: right; 
-            font-size: 0; /* inline-block隙間対策 */
+            font-size: 0; 
             white-space: nowrap; 
             overflow: hidden;
         }
         
-        /* スベリ表示：括弧なし、枠線のみで省スペース化 */
         .res-slip { 
             display: inline-block; 
             width: 20px;
@@ -167,21 +172,15 @@
 
         .res-row:nth-child(odd) { background: rgba(255,255,255,0.03); }
         
-        /* 色分け設定 */
         .f-bell { border-left: 5px solid #ffeb3b; color: #ffeb3b; }
         .f-bell .res-name { color: #ffeb3b; }
-        
         .f-suika { border-left: 5px solid #00e676; color: #00e676; }
         .f-suika .res-name { color: #00e676; }
-        
         .f-cher { border-left: 5px solid #ff4081; color: #ff4081; }
         .f-cher .res-name { color: #ff4081; }
-        
         .f-rep { border-left: 5px solid #80d8ff; color: #80d8ff; }
         .f-rep .res-name { color: #80d8ff; }
-        
         .f-hazure { border-left: 5px solid #888; color: #aaa; }
-        
         .f-tok { border-left: 5px solid #e040fb; color: #e040fb; }
         .f-tok .res-name { color: #e040fb; }
 
@@ -313,7 +312,7 @@ const parseAndRegister = (reel, state, rawText) => {
 };
 
 // ==========================================
-// DATA INJECTION
+// DATA INJECTION (ALL REBUILT & CORRECT)
 // ==========================================
 parseAndRegister("左リール", "ボーナス未成立", `
 21	2	0	1	0	1	1	2	2	4	4	null	null	null	null	null
@@ -651,7 +650,6 @@ const app = {
         const symbols = REEL_SYMBOLS[this.state.reel];
         const bgImage = REEL_ASSETS[this.state.reel]; 
         
-        // 3周分描画
         for(let loop=0; loop<3; loop++) {
             symbols.forEach((sym, idx) => {
                 const reelNum = 21 - idx;
@@ -672,8 +670,10 @@ const app = {
     updateReelPosition() {
         const baseH = 21 * 60;
         const targetIdx = 21 - this.state.stopNum;
-        // 中央配置調整: 赤枠が上から180px(4コマ目)にあるので、それに合わせる
-        const y = -baseH - (targetIdx * 60) + 180;
+        // リール9コマ化に伴う表示位置の補正 (+120px)
+        // Previous (7frames): +180. New (9frames): +300.
+        // これで選択した絵柄が赤枠の中に正しく表示されます。
+        const y = -baseH - (targetIdx * 60) + 300; 
         document.getElementById('reel-strip').style.transform = `translate3d(0, ${y}px, 0)`;
     },
 
