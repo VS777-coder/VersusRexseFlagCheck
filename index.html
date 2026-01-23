@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Versus Revise - Absolute Reverse Auditor (Simple View)</title>
+    <title>Versus Revise - Absolute Reverse Auditor (Final Corrected)</title>
     <style>
         :root { --c-bg: #111; --c-text: #eee; --c-accent: #ffd700; }
         * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
@@ -52,7 +52,7 @@
         .symbol { height: 60px; display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); position: relative; font-size: 10px; box-sizing: border-box; }
         
         .sym-idx { 
-            width: 25px; 
+            width: 26px; 
             flex-shrink: 0;
             text-align: center; 
             color: var(--c-accent); 
@@ -61,16 +61,16 @@
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            background: #111;
+            background: #111; 
             border-right: 1px solid #333;
             z-index: 2; 
-            font-size: 10px; 
+            font-size: 11px; 
         }
         
         .sym-bg { 
             position: absolute; 
             top: 0; 
-            left: 25px; 
+            left: 26px; 
             right: 0; 
             bottom: 0; 
             z-index: 1; 
@@ -105,18 +105,20 @@
         .res-name { width: 90px; font-size: 11px; font-weight: bold; flex-shrink: 0; line-height: 1.2; }
         .res-data { flex: 1; text-align: right; font-size: 13px; color: #ddd; word-break: break-all; }
         
-        /* スベリ表示用：見やすく強調 */
         .res-slip { 
             display: inline-block; 
-            padding: 2px 5px; 
+            padding: 2px 6px; 
             margin-left: 4px; 
             background: #333; 
             border-radius: 3px; 
             font-weight: bold; 
             color: #fff;
-            cursor: help; /* ホバーでツールチップが出ることを示唆 */
+            cursor: help; 
+            min-width: 25px;
+            text-align: center;
         }
-        
+        .res-slip:hover { background: #555; }
+
         .res-row:nth-child(odd) { background: rgba(255,255,255,0.02); }
         
         .f-bell { border-left: 4px solid #ffeb3b; color: #ffeb3b; }
@@ -179,9 +181,16 @@ const FLAG_INFO = {
     special_a: { n: "特殊役Ａ", c: "tok" }, special_b: { n: "特殊役Ｂ", c: "tok" }, special_c: { n: "特殊役Ｃ", c: "tok" }, special_d: { n: "特殊役Ｄ", c: "tok" }, special_e: { n: "特殊役Ｅ", c: "tok" }
 };
 
+// ★リール配列: 画像(s_versus_rexse-reel.gif)の目視トレース結果
+// 左・右は変更なし。
+// 中リールのみ、#14を画像通りの「リプレイ」に修正。
 const REEL_SYMBOLS = {
     left: ["Rep","Cher","X","Bell","Sui","Rep","Bell","Sui","Seven","Bell","Rep","Cher","Bar","Bell","Sui","Rep","X","X","X","Sui","Bell"],
-    middle: ["Rep","Cher","Sui","Cher","Bell","Rep","X","Cher","Bell","Rep","Cher","Bar","Bell","Rep","Seven","Sui","Cher","Bell","Rep","Cher","Bell"],
+    
+    // 中リール(#21 -> #1)：画像トレース (21:Bell ... 14:Rep ... 1:Rep)
+    middle: ["Bell","Cher","Rep","Bell","Cher","Sui","Seven","Rep","Bell","Bar","Cher","Rep","Bell","Cher","X","Rep","Bell","Cher","Sui","Cher","Rep"],
+    
+    // 右リール(#21 -> #1)：画像トレース (21:Cher ... 9:Bar ... 1:Rep)
     right: ["Cher","Bell","Sui","Rep","Cher","Seven","Bell","Sui","Rep","Cher","Bell","Rep","Bar","Cher","Bell","Sui","Rep","X","Bell","Sui","Rep"]
 };
 
@@ -586,8 +595,6 @@ const app = {
         results.forEach(res => {
             const row = document.createElement('div');
             row.className = `res-row f-${res.info.c}`;
-            // フォーマット変更: スベリコマ数のみ表示し、見やすく装飾
-            // ツールチップ(title属性)で押下位置を確認可能に
             const matchesStr = res.matches
                 .map(m => `<span class="res-slip" title="押下位置: #${m.pushNum}">[${m.slip}]</span>`)
                 .join('');
