@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Versus Revise - Absolute Reverse Auditor (Compact)</title>
+    <title>Versus Revise - Compact Fixed</title>
     <style>
         :root { --c-bg: #111; --c-text: #eee; --c-accent: #ffd700; }
         * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
         html, body { width: 100%; height: 100%; margin: 0; padding: 0; background: var(--c-bg); color: var(--c-text); font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif; overflow: hidden; display: flex; flex-direction: column; }
         
-        .controls { padding: 5px; flex-shrink: 0; background: #222; border-bottom: 1px solid #444; }
-        .tab-group { display: flex; gap: 4px; margin-bottom: 5px; overflow-x: auto; }
+        .controls { padding: 4px; flex-shrink: 0; background: #222; border-bottom: 1px solid #444; }
+        .tab-group { display: flex; gap: 4px; margin-bottom: 4px; overflow-x: auto; }
         .tab { flex: 1; padding: 8px 4px; text-align: center; font-size: 11px; font-weight: bold; cursor: pointer; border-radius: 4px; border: 1px solid #444; opacity: 0.5; transition: all 0.2s; white-space: nowrap; min-width: 60px; }
         .tab.active { opacity: 1; border-color: #888; box-shadow: 0 0 5px rgba(255,255,255,0.2); }
         
@@ -25,11 +25,11 @@
 
         .workspace { 
             display: flex; 
-            flex-direction: row-reverse; 
+            flex-direction: row-reverse; /* 右にリール、左にリスト */
             flex: 1; 
             overflow: hidden; 
-            padding: 10px; 
-            gap: 10px; 
+            padding: 5px; 
+            gap: 5px; 
             align-items: flex-start; 
             justify-content: center;
         }
@@ -101,32 +101,41 @@
             display: flex; 
             flex-direction: column; 
         }
-        .res-row { display: flex; border-bottom: 1px solid #333; min-height: 40px; align-items: center; padding: 0 8px; font-family: monospace; }
-        .res-name { width: 90px; font-size: 11px; font-weight: bold; flex-shrink: 0; line-height: 1.2; }
-        .res-data { flex: 1; text-align: right; font-size: 13px; color: #ddd; word-break: break-all; }
+        /* 行の高さを圧縮 */
+        .res-row { 
+            display: flex; 
+            border-bottom: 1px solid #333; 
+            min-height: 24px; /* ここを詰めた */
+            align-items: center; 
+            padding: 0 4px; 
+            font-family: monospace; 
+        }
+        .res-name { width: 75px; font-size: 10px; font-weight: bold; flex-shrink: 0; line-height: 1.1; white-space: nowrap; overflow: hidden; }
+        .res-data { flex: 1; text-align: right; font-size: 12px; color: #ddd; word-break: break-all; line-height: 1; }
         
-        /* スベリ表示用：間隔を詰めてシンプルに */
+        /* スベリ表示：間隔ゼロ */
         .res-slip { 
             display: inline-block; 
-            padding: 2px 2px; /* 横幅を詰める */
-            margin-left: 0;   /* 余白削除 */
+            padding: 1px 2px; 
+            margin: 0; 
             background: #333; 
             border-radius: 2px; 
             font-weight: bold; 
             color: #fff;
-            min-width: 20px;
+            min-width: 16px;
             text-align: center;
-            border: 1px solid #444; /* 境界がわかるように薄く線を入れる */
+            border: 1px solid #444;
+            font-size: 11px;
         }
 
         .res-row:nth-child(odd) { background: rgba(255,255,255,0.02); }
         
-        .f-bell { border-left: 4px solid #ffeb3b; color: #ffeb3b; }
-        .f-suika { border-left: 4px solid #00e676; color: #00e676; }
-        .f-cher { border-left: 4px solid #ff4081; color: #ff4081; }
-        .f-rep { border-left: 4px solid #80d8ff; color: #80d8ff; }
-        .f-hazure { border-left: 4px solid #888; color: #aaa; }
-        .f-tok { border-left: 4px solid #e040fb; color: #e040fb; }
+        .f-bell { border-left: 3px solid #ffeb3b; color: #ffeb3b; }
+        .f-suika { border-left: 3px solid #00e676; color: #00e676; }
+        .f-cher { border-left: 3px solid #ff4081; color: #ff4081; }
+        .f-rep { border-left: 3px solid #80d8ff; color: #80d8ff; }
+        .f-hazure { border-left: 3px solid #888; color: #aaa; }
+        .f-tok { border-left: 3px solid #e040fb; color: #e040fb; }
 
         #error-log { display: none; position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); color:red; z-index:9999; padding:20px; white-space: pre-wrap; font-family:monospace; }
     </style>
@@ -175,9 +184,9 @@ const NAME_MAP = {
 const REEL_ASSETS = { left: "reel1.png", middle: "reel2.png", right: "reel3.png" };
 
 const FLAG_INFO = {
-    hazure: { n: "ハズレ", c: "hazure" }, replay_normal: { n: "通常リプレイ", c: "rep" }, replay_jac: { n: "ＪＡＣリプレイ", c: "rep" }, replay_rt: { n: "ＲＴリプレイ", c: "rep" },
+    hazure: { n: "ハズレ", c: "hazure" }, replay_normal: { n: "通常リプ", c: "rep" }, replay_jac: { n: "JACリプ", c: "rep" }, replay_rt: { n: "RTリプ", c: "rep" },
     bell_a: { n: "ベルＡ", c: "bell" }, bell_b: { n: "ベルＢ", c: "bell" }, watermelon_a: { n: "スイカＡ", c: "suika" }, watermelon_b: { n: "スイカＢ", c: "suika" },
-    cherry_a: { n: "チェリーＡ", c: "cher" }, cherry_b: { n: "チェリーＢ", c: "cher" },
+    cherry_a: { n: "チェリＡ", c: "cher" }, cherry_b: { n: "チェリＢ", c: "cher" },
     special_a: { n: "特殊役Ａ", c: "tok" }, special_b: { n: "特殊役Ｂ", c: "tok" }, special_c: { n: "特殊役Ｃ", c: "tok" }, special_d: { n: "特殊役Ｄ", c: "tok" }, special_e: { n: "特殊役Ｅ", c: "tok" }
 };
 
@@ -191,26 +200,22 @@ const SYMBOL_DISPLAY_MAP = { "Rep": "リプレイ", "Cher": "チェリー", "X":
 
 class ReverseAuditor {
     constructor() { this.db = { left: {}, middle: {}, right: {} }; }
-    
     register(reelName, stateName, flagKey, data) {
         const reel = NAME_MAP[reelName];
         const state = NAME_MAP[stateName];
         if (!reel || !this.db[reel]) return;
         if (!this.db[reel][state]) this.db[reel][state] = {};
-        
         const store = new Array(22).fill(null); 
         if (typeof data === 'object') {
             Object.keys(data).forEach(key => {
                 const num = parseInt(key, 10);
                 if (num >= 1 && num <= 21) {
-                    const val = data[key];
-                    store[num] = (val === 'n' || val === null) ? null : val;
+                    store[num] = (data[key] === 'n' || data[key] === null) ? null : data[key];
                 }
             });
         }
         this.db[reel][state][flagKey] = store;
     }
-
     audit(reel, state, currentStopNum) {
         const table = this.db[reel][state];
         if (!table) return [];
@@ -242,17 +247,14 @@ const parseAndRegister = (reel, state, rawText) => {
     const flagOrder = ["hazure", "replay_normal", "replay_jac", "replay_rt", "bell_a", "bell_b", "watermelon_a", "watermelon_b", "cherry_a", "cherry_b", "special_a", "special_b", "special_c", "special_d", "special_e"];
     const dataStore = {};
     flagOrder.forEach(f => dataStore[f] = {});
-    
     lines.forEach(line => {
         const cols = line.trim().split(/\s+/);
         if (cols.length < 2) return;
         const pushNum = parseInt(cols[0], 10);
         if (isNaN(pushNum) || pushNum < 1 || pushNum > 21) return;
-
         flagOrder.forEach((flag, idx) => {
             const val = cols[idx + 1];
-            const isNull = (!val || val.toLowerCase() === "null");
-            dataStore[flag][pushNum] = isNull ? null : parseInt(val, 10);
+            dataStore[flag][pushNum] = (!val || val.toLowerCase() === "null") ? null : parseInt(val, 10);
         });
     });
     flagOrder.forEach(flag => Engine.register(reel, state, flag, dataStore[flag]));
@@ -261,7 +263,6 @@ const parseAndRegister = (reel, state, rawText) => {
 // ==========================================
 // DATA INJECTION (ALL REBUILT & CORRECT)
 // ==========================================
-
 parseAndRegister("左リール", "ボーナス未成立", `
 21	2	0	1	0	1	1	2	2	4	4	null	null	null	null	null
 20	2	1	2	1	1	1	1	1	0	0	null	null	null	null	null
@@ -285,7 +286,6 @@ parseAndRegister("左リール", "ボーナス未成立", `
 2	0	2	3	2	2	2	3	3	2	2	null	null	null	null	null
 1	0	3	3	3	0	0	1	1	3	3	null	null	null	null	null
 `);
-
 parseAndRegister("左リール", "Ｘビッグ成立", `
 21	2	0	0	0	1	1	2	2	4	4	2	2	2	1	2
 20	2	1	2	1	1	1	3	3	0	0	2	2	2	4	2
@@ -309,7 +309,6 @@ parseAndRegister("左リール", "Ｘビッグ成立", `
 2	0	2	0	2	2	2	3	3	2	2	0	0	0	3	0
 1	0	3	1	3	0	1	1	1	3	3	0	0	0	3	0
 `);
-
 parseAndRegister("左リール", "７ビッグ成立", `
 21	1	0	1	0	1	2	2	2	4	4	2	1	0	2	2
 20	1	1	1	1	1	2	1	1	0	0	1	3	1	3	3
@@ -333,7 +332,6 @@ parseAndRegister("左リール", "７ビッグ成立", `
 2	1	2	3	2	2	0	3	3	2	2	3	1	3	3	3
 1	1	3	0	3	0	0	1	1	3	3	1	1	0	0	0
 `);
-
 parseAndRegister("左リール", "Regボーナス成立", `
 21	1	0	0	0	1	1	2	2	4	4	0	2	0	2	2
 20	1	1	1	1	1	1	1	1	0	0	1	3	1	2	3
@@ -357,7 +355,6 @@ parseAndRegister("左リール", "Regボーナス成立", `
 2	1	2	2	2	2	2	3	3	2	2	3	3	3	3	3
 1	1	3	3	3	0	1	1	1	3	3	1	1	0	0	0
 `);
-
 parseAndRegister("中リール", "ボーナス未成立", `
 21	3	1	1	1	0	0	2	2	2	2	nul	nul	nul	nul	nul
 20	2	1	1	1	0	0	2	2	2	2	nul	nul	nul	nul	nul
@@ -381,7 +378,6 @@ parseAndRegister("中リール", "ボーナス未成立", `
 2	1	3	3	3	2	2	1	1	4	4	nul	nul	nul	nul	nul
 1	0	4	4	4	3	3	2	2	0	0	nul	nul	nul	nul	nul
 `);
-
 parseAndRegister("中リール", "Ｘビッグ成立", `
 21	0	1	1	1	0	0	0	0	2	2	2	2	2	2	2
 20	4	2	2	2	1	1	4	4	3	3	4	2	2	3	0
@@ -405,7 +401,6 @@ parseAndRegister("中リール", "Ｘビッグ成立", `
 2	1	4	4	4	3	3	1	1	0	0	0	0	0	0	0
 1	4	0	0	0	4	4	2	2	1	1	3	1	3	1	3
 `);
-
 parseAndRegister("中リール", "７ビッグ成立", `
 21	2	0	0	0	4	4	1	1	1	1	1	0	1	1	1
 20	3	1	1	1	0	0	2	2	2	2	2	4	2	2	2
@@ -429,7 +424,6 @@ parseAndRegister("中リール", "７ビッグ成立", `
 2	0	3	3	3	2	2	1	1	4	4	0	3	0	0	4
 1	1	4	4	4	3	3	2	2	0	0	4	4	4	4	4
 `);
-
 parseAndRegister("中リール", "Regボーナス成立", `
 21	1	0	0	0	4	4	1	1	1	1	1	1	1	1	1
 20	1	1	1	1	0	0	3	3	2	2	2	2	2	2	2
@@ -453,7 +447,6 @@ parseAndRegister("中リール", "Regボーナス成立", `
 2	3	3	3	3	2	2	1	1	4	4	3	3	3	3	3
 1	0	4	4	4	3	3	0	0	0	0	0	4	0	0	4
 `);
-
 parseAndRegister("右リール", "ボーナス未成立", `
 21	0	3	0	3	2	2	0	0	2	2	Null	Null	Null	Null	Null
 20	0	0	1	0	3	3	3	3	3	3	Null	Null	Null	Null	Null
@@ -477,7 +470,6 @@ parseAndRegister("右リール", "ボーナス未成立", `
 2	2	1	2	1	0	0	2	2	2	2	Null	Null	Null	Null	Null
 1	3	2	3	2	1	1	1	1	3	3	Null	Null	Null	Null	Null
 `);
-
 parseAndRegister("右リール", "Ｘビッグ成立", `
 21	2	3	0	3	2	2	2	2	2	2	2	2	2	2	2
 20	3	0	1	0	3	3	3	3	3	3	3	3	3	3	3
@@ -501,7 +493,6 @@ parseAndRegister("右リール", "Ｘビッグ成立", `
 2	0	1	2	1	0	0	0	0	2	2	2	2	2	2	2
 1	3	2	3	2	1	1	3	3	3	3	1	1	1	1	1
 `);
-
 parseAndRegister("右リール", "７ビッグ成立", `
 21	0	3	0	3	2	2	0	0	2	2	2	1	2	2	2
 20	1	0	1	0	3	3	3	3	3	3	3	2	3	3	3
@@ -525,7 +516,6 @@ parseAndRegister("右リール", "７ビッグ成立", `
 2	2	1	2	1	0	0	2	2	2	2	0	3	2	2	2
 1	1	2	3	2	1	1	1	1	3	3	1	0	1	1	1
 `);
-
 parseAndRegister("右リール", "Regボーナス成立", `
 下段に押した絵柄	ハズレ	通常リプ	JACリプ	RTリプ	ベルA	ベルB	スイカA	スイカB	チェリA	チェリB	特役A	特役B	特役C	特役D	特役E
 21	2	3	3	3	2	2	2	2	2	2	0	0	0	0	0
@@ -593,10 +583,11 @@ const app = {
         results.forEach(res => {
             const row = document.createElement('div');
             row.className = `res-row f-${res.info.c}`;
-            // 修正: ツールチップを削除し、間隔を詰める
+            
             const matchesStr = res.matches
                 .map(m => `<span class="res-slip">[${m.slip}]</span>`)
                 .join('');
+            
             row.innerHTML = `<div class="res-name">${res.info.n}</div><div class="res-data">${matchesStr}</div>`;
             list.appendChild(row);
         });
@@ -637,6 +628,7 @@ const app = {
         let startY = 0;
         let startNum = 0;
         let isDragging = false;
+        
         const onMove = (y) => {
             if(!isDragging) return;
             const diff = startY - y;
@@ -649,9 +641,11 @@ const app = {
                 this.updateView();
             }
         };
+        
         touchArea.addEventListener('mousedown', e => { isDragging=true; startY=e.pageY; startNum=this.state.stopNum; });
         window.addEventListener('mousemove', e => onMove(e.pageY));
         window.addEventListener('mouseup', () => isDragging=false);
+        
         touchArea.addEventListener('touchstart', e => { isDragging=true; startY=e.touches[0].pageY; startNum=this.state.stopNum; }, {passive:false});
         window.addEventListener('touchmove', e => { e.preventDefault(); onMove(e.touches[0].pageY); }, {passive:false});
         window.addEventListener('touchend', () => isDragging=false);
