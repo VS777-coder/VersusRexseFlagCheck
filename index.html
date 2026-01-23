@@ -3,207 +3,627 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Versus Revise - Absolute Reverse Auditor</title>
+    <title>Versus Revise - Absolute Reverse Auditor (Final Fix)</title>
     <style>
-        * { box-sizing: border-box; }
-        html, body { width: 100%; height: 100%; margin: 0; padding: 0; background: #000; color: #fff; font-family: sans-serif; overflow: hidden; display: flex; flex-direction: column; }
+        :root { --c-bg: #111; --c-text: #eee; --c-accent: #ffd700; }
+        * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
+        html, body { width: 100%; height: 100%; margin: 0; padding: 0; background: var(--c-bg); color: var(--c-text); font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif; overflow: hidden; display: flex; flex-direction: column; }
         
-        .stop-tabs { display: flex; width: calc(100% - 10px); background: #000; border: 1px solid #444; border-radius: 8px; margin: 5px; flex-shrink: 0; overflow: hidden; }
-        .stop-tab { flex: 1; text-align: center; padding: 12px 0; font-size: 13px; font-weight: 900; cursor: pointer; border-right: 1px solid #222; opacity: 0.35; filter: grayscale(0.5); }
-        .stop-tab.active { opacity: 1; filter: grayscale(0); box-shadow: inset 0 0 12px rgba(255,255,255,0.5); }
-        #stop-left { background: #ffb7ce; color: #a01040; }   
-        #stop-middle { background: #b3e5fc; color: #01579b; } 
-        #stop-right { background: #c8e6c9; color: #1b5e20; }  
+        .controls { padding: 5px; flex-shrink: 0; background: #222; border-bottom: 1px solid #444; }
+        .tab-group { display: flex; gap: 4px; margin-bottom: 5px; overflow-x: auto; }
+        .tab { flex: 1; padding: 8px 4px; text-align: center; font-size: 11px; font-weight: bold; cursor: pointer; border-radius: 4px; border: 1px solid #444; opacity: 0.5; transition: all 0.2s; white-space: nowrap; min-width: 60px; }
+        .tab.active { opacity: 1; border-color: #888; box-shadow: 0 0 5px rgba(255,255,255,0.2); }
+        
+        .stop-tab.active#t-left { background: #ffb7ce; color: #800020; }
+        .stop-tab.active#t-middle { background: #b3e5fc; color: #003c8f; }
+        .stop-tab.active#t-right { background: #c8e6c9; color: #1b5e20; }
+        
+        .state-tab#s-bonus_unestablished.active { background: #fff; color: #000; }
+        .state-tab#s-x_big_established.active { background: #304ffe; color: #fff; }
+        .state-tab#s-seven_big_established.active { background: #d50000; color: #fff; }
+        .state-tab#s-reg_bonus_established.active { background: #222; color: #fff; border: 1px solid #fff; }
 
-        .state-tabs { display: flex; width: calc(100% - 10px); height: 55px; flex-shrink: 0; background: #222; border: 1px solid #444; border-radius: 4px; overflow: hidden; margin: 0 5px 5px 5px; }
-        .state-tab { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; cursor: pointer; opacity: 0.6; text-align: center; }
-        .state-tab.active { opacity: 1; border-bottom: 4px solid #fff; }
-        #tab-hazure { background: #ffffff; color: #000; }
-        #tab-x_flag { background: #304ffe; color: #fff; }
-        #tab-seven_flag { background: #d50000; color: #fff; }
-        #tab-bar_flag { background: #111; color: #fff; }
+        .workspace { 
+            display: flex; 
+            flex-direction: row-reverse; 
+            flex: 1; 
+            overflow: hidden; 
+            padding: 10px; 
+            gap: 10px; 
+            align-items: flex-start; 
+            justify-content: center;
+        }
+        
+        .reel-container { 
+            width: 100px; 
+            height: 420px; 
+            position: relative; 
+            background: #000; 
+            border: 2px solid #333; 
+            border-radius: 4px; 
+            flex-shrink: 0; 
+            overflow: hidden; 
+            touch-action: none; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        
+        .reel-strip { position: absolute; width: 100%; top: 0; left: 0; will-change: transform; }
+        
+        .symbol { height: 60px; display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); position: relative; font-size: 10px; box-sizing: border-box; }
+        .sym-idx { width: 20px; text-align: center; color: var(--c-accent); font-weight: bold; height: 100%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.8); z-index: 2; font-size: 9px; opacity: 0.7; }
+        
+        .sym-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1; background-color: #000; }
+        .sym-name { flex: 1; text-align: center; font-weight: bold; font-size: 12px; z-index: 2; text-shadow: 0 0 2px #000, 0 0 4px #000; pointer-events: none;}
+        
+        .sym-Seven { color: #ff3333; }
+        .sym-X { color: #3388ff; }
+        .sym-Bar { color: #fff; }
+        .sym-Bell { color: #ffeb3b; }
+        .sym-Sui { color: #00e676; }
+        .sym-Cher { color: #ff4081; }
+        .sym-Rep { color: #80d8ff; }
 
-        .main-content { display: flex; flex-direction: row-reverse; flex: 1; overflow: hidden; gap: 4px; padding: 0 5px 5px 5px; }
-        .reel-frame { width: 100px; height: 490px; background: #000; border: 2px solid #444; border-radius: 8px; overflow: hidden; flex-shrink: 0; position: relative; touch-action: none; }
-        #reel-window { position: absolute; width: 100%; top: 0; left: 0; pointer-events: none; }
-        .symbol { height: 70px; display: flex; border-bottom: 1px solid #1a1a1a; width: 100%; box-sizing: border-box; }
-        .index-num { width: 20px; color: #ffd700; text-align: center; font-size: 9px; font-weight: bold; display: flex; align-items: center; justify-content: center; }
-        .symbol-image { flex: 1; height: 100%; background-size: 100% 2100%; background-repeat: repeat-y; }
-        .guide-box { position: absolute; top: 140px; left: 0; width: 100%; height: 210px; border: 3px solid #ff0000; background: rgba(255, 0, 0, 0.05); pointer-events: none; z-index: 10; box-shadow: inset 0 0 10px rgba(255, 0, 0, 0.3); }
+        .target-box { 
+            position: absolute; 
+            top: 120px; 
+            left: 0; 
+            width: 100%; 
+            height: 180px; 
+            border: 3px solid #ff0000; 
+            pointer-events: none; 
+            z-index: 10; 
+            box-shadow: inset 0 0 10px rgba(255,0,0,0.2); 
+        }
 
-        .result-area { flex: 1; background: #1a1a1a; border: 1px solid #333; border-radius: 4px; overflow-y: auto; display: flex; flex-direction: column; }
-        .flag-item { display: flex; align-items: center; min-height: 40px; padding: 0 6px; border-bottom: 1px solid #222; border-left: 5px solid rgba(0,0,0,0.5); }
-        .flag-name { font-size: 11px; font-weight: bold; width: 65px; flex-shrink: 0; }
-        .flag-data { font-size: 12px; color: #fff; font-family: monospace; text-align: right; flex: 1; word-spacing: -2px; }
+        .results { 
+            flex: 1; 
+            height: 420px; 
+            background: #1a1a1a; 
+            border: 1px solid #333; 
+            overflow-y: auto; 
+            border-radius: 4px; 
+            display: flex; 
+            flex-direction: column; 
+        }
+        .res-row { display: flex; border-bottom: 1px solid #333; min-height: 40px; align-items: center; padding: 0 8px; font-family: monospace; }
+        .res-name { width: 90px; font-size: 11px; font-weight: bold; flex-shrink: 0; line-height: 1.2; }
+        .res-data { flex: 1; text-align: right; font-size: 13px; color: #ddd; word-break: break-all; }
+        .res-row:nth-child(odd) { background: rgba(255,255,255,0.02); }
+        
+        .f-bell { border-left: 4px solid #ffeb3b; color: #ffeb3b; }
+        .f-suika { border-left: 4px solid #00e676; color: #00e676; }
+        .f-cher { border-left: 4px solid #ff4081; color: #ff4081; }
+        .f-rep { border-left: 4px solid #80d8ff; color: #80d8ff; }
+        .f-hazure { border-left: 4px solid #888; color: #aaa; }
+        .f-tok { border-left: 4px solid #e040fb; color: #e040fb; }
 
-        .c-rep { border-left-color: #00ccff; color: #00ccff; background: rgba(0, 204, 255, 0.08); } 
-        .c-bell { border-left-color: #eeee00; color: #eeee00; background: rgba(238, 238, 0, 0.08); } 
-        .c-suika { border-left-color: #00ff66; color: #00ff66; background: rgba(0, 255, 102, 0.08); } 
-        .c-cher { border-left-color: #ff0066; color: #ff0066; background: rgba(255, 0, 102, 0.08); }
-        .c-hazure { border-left-color: #888888; color: #cccccc; background: rgba(136, 136, 136, 0.08); }
-        .c-tok { border-left-color: #cc33ff; color: #cc33ff; background: rgba(204, 51, 255, 0.08); }
+        #error-log { display: none; position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); color:red; z-index:9999; padding:20px; white-space: pre-wrap; font-family:monospace; }
     </style>
 </head>
 <body>
-    <div class="stop-tabs">
-        <div id="stop-left" class="stop-tab active" onclick="switchStop('left')">左リール</div>
-        <div id="stop-middle" class="stop-tab" onclick="switchStop('middle')">中リール</div>
-        <div id="stop-right" class="stop-tab" onclick="switchStop('right')">右リール</div>
-    </div>
-    <div class="state-tabs">
-        <div id="tab-hazure" class="state-tab active" onclick="switchState('hazure')">ボーナス未成立</div>
-        <div id="tab-x_flag" class="state-tab" onclick="switchState('x_flag')">Ｘビッグ成立</div>
-        <div id="tab-seven_flag" class="state-tab" onclick="switchState('seven_flag')">７ビッグ成立</div>
-        <div id="tab-bar_flag" class="state-tab" onclick="switchState('bar_flag')">Reg成立</div>
-    </div>
-    <div class="main-content">
-        <div id="reel-touch-area" class="reel-frame">
-            <div class="guide-box"></div><div id="reel-window"></div>
+    <div id="error-log"></div>
+    <div class="controls">
+        <div class="tab-group">
+            <div id="t-left" class="stop-tab tab active" onclick="app.setStop('left')">左リール</div>
+            <div id="t-middle" class="stop-tab tab" onclick="app.setStop('middle')">中リール</div>
+            <div id="t-right" class="stop-tab tab" onclick="app.setStop('right')">右リール</div>
         </div>
-        <div class="result-area"><div id="flag-list"></div></div>
+        <div class="tab-group">
+            <div id="s-bonus_unestablished" class="state-tab tab active" onclick="app.setState('bonus_unestablished')">ボーナス未成立</div>
+            <div id="s-x_big_established" class="state-tab tab" onclick="app.setState('x_big_established')">Ｘビッグ成立</div>
+            <div id="s-seven_big_established" class="state-tab tab" onclick="app.setState('seven_big_established')">７ビッグ成立</div>
+            <div id="s-reg_bonus_established" class="state-tab tab" onclick="app.setState('reg_bonus_established')">Regボーナス成立</div>
+        </div>
+    </div>
+
+    <div class="workspace">
+        <div id="touch-area" class="reel-container">
+            <div class="target-box"></div>
+            <div id="reel-strip" class="reel-strip"></div>
+        </div>
+        <div class="results" id="result-list"></div>
     </div>
 
 <script>
+window.onerror = function(msg, url, line) {
+    const log = document.getElementById('error-log');
+    log.style.display = 'block';
+    log.innerText = `System Error:\n${msg}\nLine: ${line}`;
+};
+
+const NAME_MAP = {
+    "左リール": "left", "left": "left",
+    "中リール": "middle", "middle": "middle",
+    "右リール": "right", "right": "right",
+    "ボーナス未成立": "bonus_unestablished", "bonus_unestablished": "bonus_unestablished",
+    "Ｘビッグ成立": "x_big_established", "x_big_established": "x_big_established",
+    "７ビッグ成立": "seven_big_established", "seven_big_established": "seven_big_established",
+    "Regボーナス成立": "reg_bonus_established", "reg_bonus_established": "reg_bonus_established",
+};
+
+const REEL_ASSETS = { left: "reel1.png", middle: "reel2.png", right: "reel3.png" };
+
+const FLAG_INFO = {
+    hazure: { n: "ハズレ", c: "hazure" }, replay_normal: { n: "通常リプレイ", c: "rep" }, replay_jac: { n: "ＪＡＣリプレイ", c: "rep" }, replay_rt: { n: "ＲＴリプレイ", c: "rep" },
+    bell_a: { n: "ベルＡ", c: "bell" }, bell_b: { n: "ベルＢ", c: "bell" }, watermelon_a: { n: "スイカＡ", c: "suika" }, watermelon_b: { n: "スイカＢ", c: "suika" },
+    cherry_a: { n: "チェリーＡ", c: "cher" }, cherry_b: { n: "チェリーＢ", c: "cher" },
+    special_a: { n: "特殊役Ａ", c: "tok" }, special_b: { n: "特殊役Ｂ", c: "tok" }, special_c: { n: "特殊役Ｃ", c: "tok" }, special_d: { n: "特殊役Ｄ", c: "tok" }, special_e: { n: "特殊役Ｅ", c: "tok" }
+};
+
+const REEL_SYMBOLS = {
+    left: ["Rep","Cher","X","Bell","Sui","Rep","Bell","Sui","Seven","Bell","Rep","Cher","Bar","Bell","Sui","Rep","X","X","X","Sui","Bell"],
+    middle: ["Rep","Cher","Sui","Cher","Bell","Rep","X","Cher","Bell","Rep","Cher","Bar","Bell","Rep","Seven","Sui","Cher","Bell","Rep","Cher","Bell"],
+    right: ["Cher","Bell","Sui","Rep","Cher","Seven","Bell","Sui","Rep","Cher","Bell","Rep","Bar","Cher","Bell","Sui","Rep","X","Bell","Sui","Rep"]
+};
+
+const SYMBOL_DISPLAY_MAP = { "Rep": "リプレイ", "Cher": "チェリー", "X": "Ｘ", "Bell": "ベル", "Sui": "スイカ", "Seven": "７", "Bar": "Reg" };
+
+class ReverseAuditor {
+    constructor() { this.db = { left: {}, middle: {}, right: {} }; }
+    register(reelName, stateName, flagKey, data) {
+        const reel = NAME_MAP[reelName];
+        const state = NAME_MAP[stateName];
+        if (!reel || !this.db[reel]) return;
+        if (!this.db[reel][state]) this.db[reel][state] = {};
+        const store = new Array(22).fill(null); 
+        if (typeof data === 'object') {
+            Object.keys(data).forEach(key => {
+                const num = parseInt(key, 10);
+                if (num >= 1 && num <= 21) {
+                    const val = data[key];
+                    store[num] = (val === 'n' || val === null) ? null : val;
+                }
+            });
+        }
+        this.db[reel][state][flagKey] = store;
+    }
+    audit(reel, state, currentStopNum) {
+        const table = this.db[reel][state];
+        if (!table) return [];
+        const results = [];
+        Object.keys(table).forEach(flagKey => {
+            const slips = table[flagKey];
+            const found = [];
+            for (let P = 1; P <= 21; P++) {
+                const L = slips[P];
+                if (L === null) continue;
+                const calculatedStop = (P + L - 1) % 21 + 1;
+                if (calculatedStop === currentStopNum) found.push({ pushNum: P, slip: L });
+            }
+            if (found.length > 0) {
+                // スベリコマ数が多い順（4->0）でソート
+                found.sort((a, b) => {
+                    if (b.slip !== a.slip) return b.slip - a.slip; 
+                    return b.pushNum - a.pushNum; 
+                });
+                results.push({ key: flagKey, info: FLAG_INFO[flagKey] || {n: flagKey, c: 'hazure'}, matches: found });
+            }
+        });
+        return results;
+    }
+}
+const Engine = new ReverseAuditor();
+
+const parseAndRegister = (reel, state, rawText) => {
+    const lines = rawText.trim().split('\n');
+    const flagOrder = ["hazure", "replay_normal", "replay_jac", "replay_rt", "bell_a", "bell_b", "watermelon_a", "watermelon_b", "cherry_a", "cherry_b", "special_a", "special_b", "special_c", "special_d", "special_e"];
+    const dataStore = {};
+    flagOrder.forEach(f => dataStore[f] = {});
+    lines.forEach(line => {
+        const cols = line.trim().split(/\s+/);
+        if (cols.length < 2) return;
+        const pushNum = parseInt(cols[0], 10);
+        if (isNaN(pushNum) || pushNum < 1 || pushNum > 21) return;
+        flagOrder.forEach((flag, idx) => {
+            const val = cols[idx + 1];
+            const isNull = (!val || val.toLowerCase() === "null");
+            dataStore[flag][pushNum] = isNull ? null : parseInt(val, 10);
+        });
+    });
+    flagOrder.forEach(flag => Engine.register(reel, state, flag, dataStore[flag]));
+};
+
 // ==========================================
-// 【神のデータ：修正厳禁】
+// DATA INJECTION
 // ==========================================
-const n = null;
-const MASTER_STORE = {
-    left: {
-        img: "reel1.png",
-        hazure: {hz:[2,2,4,4,0,1,1,1,0,1,0,1,2,3,0,1,0,1,2,0,0],nr:[0,1,2,3,4,0,1,0,1,2,0,1,2,3,4,0,1,0,1,2,3],jr:[1,2,0,1,2,3,0,0,2,2,4,2,3,4,2,3,0,1,1,3,3],rr:[0,1,2,3,4,0,0,1,1,2,0,1,2,3,4,0,0,1,1,2,3],ba:[1,1,3,3,4,0,2,1,1,1,1,1,3,3,4,1,2,3,1,2,0],bb:[1,1,3,3,4,0,2,1,1,1,1,1,3,3,4,1,2,3,1,2,0],sa:[2,1,4,3,0,0,1,1,4,0,2,2,4,4,0,1,1,2,2,3,1],sb:[2,1,4,3,0,0,1,1,4,0,2,2,4,4,0,1,1,2,2,3,1],ca:[4,0,1,0,1,2,3,4,0,1,2,0,1,0,1,2,3,4,1,2,3],cb:[4,0,1,0,1,2,3,4,0,1,2,0,1,0,1,2,3,4,1,2,3],ta:Array(21).fill(n),tb:Array(21).fill(n),tc:Array(21).fill(n),td:Array(21).fill(n),te:Array(21).fill(n)},
-        x_flag: {hz:[2,2,4,4,0,1,2,3,4,1,0,2,2,3,0,1,0,0,0,0,0],nr:[0,1,2,3,4,0,1,2,3,4,0,4,2,3,4,0,1,0,3,2,3],jr:[0,2,2,4,0,0,1,1,0,0,2,1,4,3,0,1,1,2,4,0,1],rr:[0,1,2,3,4,0,1,0,1,2,0,1,2,3,4,0,1,0,1,2,3],ba:[1,1,3,3,4,0,2,1,1,1,1,1,3,3,4,1,2,3,1,2,0],bb:[1,1,2,4,0,1,1,2,4,0,2,4,2,4,0,1,2,3,4,2,1],sa:[2,3,4,4,0,1,2,3,4,0,2,2,4,4,0,1,0,1,2,3,1],sb:[2,3,4,4,0,1,2,3,4,0,2,2,4,4,0,1,0,1,2,3,1],ca:[4,0,1,0,1,2,3,4,4,1,2,0,1,0,1,2,3,4,1,2,3],cb:[4,0,1,0,1,2,3,4,4,1,2,0,1,0,1,2,3,4,1,2,3],ta:[2,2,4,4,0,1,2,3,4,1,2,2,4,4,0,1,0,0,0,0,0],tb:[2,2,4,4,0,1,2,3,4,1,0,2,2,3,0,1,0,0,0,0,0],tc:[2,2,4,4,0,1,2,3,4,1,2,2,4,4,0,1,0,0,0,0,0],td:[1,4,3,4,0,1,2,3,4,2,2,2,2,4,0,0,0,1,1,3,3],te:[2,2,4,4,0,1,2,3,4,1,0,2,2,3,0,1,0,0,0,0,0]},
-        seven_flag: {hz:[1,0,1,0,1,2,2,2,4,4,2,1,0,2,2,n,n,n,n,n,n],nr:[1,1,1,1,1,2,1,1,0,0,1,3,1,3,3,n,n,n,n,n,n],jr:[1,0,1,0,1,2,2,2,4,4,2,1,0,2,2,n,n,n,n,n,n],rr:[3,3,1,3,3,4,3,3,0,0,3,4,3,4,4,n,n,n,n,n,n],ba:[0,4,4,4,4,0,0,0,1,1,0,0,0,0,0,n,n,n,n,n,n],bb:[1,0,1,0,0,1,0,0,2,2,0,1,1,1,1,n,n,n,n,n,n],sa:[0,1,4,1,2,1,1,1,3,3,1,0,2,2,2,n,n,n,n,n,n],sb:[0,0,2,0,1,1,1,1,4,4,1,0,1,1,1,n,n,n,n,n,n],ca:[0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,n,n,n,n,n,n],cb:[1,2,0,2,1,1,0,0,1,1,0,1,0,0,0,n,n,n,n,n,n],ta:[1,0,1,0,1,0,2,2,2,2,2,1,1,1,1,n,n,n,n,n,n],tb:[1,1,2,1,1,1,2,2,0,0,2,1,2,2,2,n,n,n,n,n,n],tc:[3,2,0,2,3,2,4,4,1,1,4,3,3,3,3,n,n,n,n,n,n],td:[3,3,4,3,3,3,4,4,0,0,4,3,4,4,4,n,n,n,n,n,n],te:[4,4,4,4,4,0,0,0,1,1,0,4,0,4,4,n,n,n,n,n,n]},
-        bar_flag: {hz:[1,0,0,0,1,1,2,2,4,4,0,2,0,2,2,n,n,n,n,n,n],nr:[1,1,1,1,1,1,1,1,0,0,1,3,1,2,3,n,n,n,n,n,n],jr:[3,2,2,2,3,2,4,4,1,1,3,3,3,4,3,n,n,n,n,n,n],rr:[3,3,3,3,3,4,3,3,0,0,3,4,3,4,4,n,n,n,n,n,n],ba:[0,4,4,4,4,0,0,0,1,1,0,0,0,0,0,n,n,n,n,n,n],bb:[1,0,0,0,0,1,0,0,2,2,1,1,1,1,1,n,n,n,n,n,n],sa:[0,1,1,1,2,1,1,1,3,3,2,2,2,2,2,n,n,n,n,n,n],sb:[0,0,0,0,1,2,1,1,4,4,1,1,1,3,1,n,n,n,n,n,n],ca:[0,1,1,1,1,4,0,0,0,0,0,0,0,0,0,n,n,n,n,n,n],cb:[1,2,2,2,1,0,0,0,1,1,0,0,0,1,0,n,n,n,n,n,n],ta:[1,0,0,0,1,0,2,2,2,2,1,1,1,0,1,n,n,n,n,n,n],tb:[1,1,1,1,1,4,2,2,0,0,2,2,2,2,2,n,n,n,n,n,n],tc:[3,2,2,2,3,2,4,4,1,1,3,3,3,3,3,n,n,n,n,n,n],td:[3,3,3,3,3,3,4,4,0,0,4,4,4,3,4,n,n,n,n,n,n],te:[0,4,4,4,4,0,0,0,1,1,0,0,0,0,0,n,n,n,n,n,n]}
+parseAndRegister("左リール", "ボーナス未成立", `
+21	2	0	1	0	1	1	2	2	4	4	null	null	null	null	null
+20	2	1	2	1	1	1	1	1	0	0	null	null	null	null	null
+19	4	2	0	2	3	3	4	4	1	1	null	null	null	null	null
+18	4	3	1	3	3	3	3	3	0	0	null	null	null	null	null
+17	0	4	2	4	4	4	0	0	1	1	null	null	null	null	null
+16	1	0	3	0	0	0	0	0	2	2	null	null	null	null	null
+15	1	1	0	0	2	2	1	1	3	3	null	null	null	null	null
+14	1	0	0	1	1	1	1	1	4	4	null	null	null	null	null
+13	0	1	2	1	1	1	4	4	0	0	null	null	null	null	null
+12	1	2	2	2	1	1	0	0	1	1	null	null	null	null	null
+11	0	0	4	0	1	1	2	2	2	2	null	null	null	null	null
+10	1	1	2	1	1	1	2	2	0	0	null	null	null	null	null
+9	2	2	3	2	3	3	4	4	1	1	null	null	null	null	null
+8	3	3	4	3	3	3	4	4	0	0	null	null	null	null	null
+7	0	4	2	4	4	4	0	0	1	1	null	null	null	null	null
+6	1	0	3	0	1	1	1	1	2	2	null	null	null	null	null
+5	0	1	0	0	2	2	1	1	3	3	null	null	null	null	null
+4	1	0	1	1	3	3	2	2	4	4	null	null	null	null	null
+3	2	1	1	1	1	1	2	2	1	1	null	null	null	null	null
+2	0	2	3	2	2	2	3	3	2	2	null	null	null	null	null
+1	0	3	3	3	0	0	1	1	3	3	null	null	null	null	null
+`);
+
+parseAndRegister("左リール", "Ｘビッグ成立", `
+21	2	0	0	0	1	1	2	2	4	4	2	2	2	1	2
+20	2	1	2	1	1	1	3	3	0	0	2	2	2	4	2
+19	4	2	2	2	3	2	4	4	1	1	4	4	4	3	4
+18	4	3	4	3	3	4	4	4	0	0	4	4	4	4	4
+17	0	4	0	4	4	0	0	0	1	1	0	0	0	0	0
+16	1	0	0	0	0	1	1	1	2	2	1	1	1	1	1
+15	2	1	1	1	2	1	2	2	3	3	2	2	2	2	2
+14	3	2	1	0	1	2	3	3	4	4	3	3	3	3	3
+13	4	3	0	1	1	4	4	4	4	4	4	4	4	4	4
+12	1	4	0	2	1	0	0	0	1	1	1	1	1	2	1
+11	0	0	2	0	1	2	2	2	2	2	2	0	2	2	0
+10	2	4	1	1	1	4	2	2	0	0	2	2	2	2	2
+9	2	2	4	2	3	2	4	4	1	1	4	2	4	2	2
+8	3	3	3	3	3	4	4	4	0	0	4	3	4	4	3
+7	0	4	0	4	4	0	0	0	1	1	0	0	0	0	0
+6	1	0	1	0	1	1	1	1	2	2	1	1	1	0	1
+5	0	1	1	1	2	2	0	0	3	3	0	0	0	0	0
+4	0	0	2	0	3	3	1	1	4	4	0	0	0	1	0
+3	0	3	4	1	1	4	2	2	1	1	0	0	0	1	0
+2	0	2	0	2	2	2	3	3	2	2	0	0	0	3	0
+1	0	3	1	3	0	1	1	1	3	3	0	0	0	3	0
+`);
+
+parseAndRegister("左リール", "７ビッグ成立", `
+21	1	0	1	0	1	2	2	2	4	4	2	1	0	2	2
+20	1	1	1	1	1	2	1	1	0	0	1	3	1	3	3
+19	3	2	4	2	3	4	4	4	1	1	4	3	3	3	3
+18	3	3	1	3	3	4	3	3	0	0	3	4	3	4	4
+17	0	4	4	4	4	0	0	0	1	1	0	0	0	0	0
+16	1	0	1	0	0	1	0	0	2	2	0	1	1	1	1
+15	0	1	4	1	2	1	1	1	3	3	1	0	2	2	2
+14	0	0	2	0	1	1	1	1	4	4	1	0	1	1	1
+13	0	1	1	1	1	0	0	0	0	0	0	0	0	0	0
+12	1	2	0	2	1	1	0	0	1	1	0	1	0	0	0
+11	1	0	1	0	1	0	2	2	2	2	2	1	1	1	1
+10	1	1	2	1	1	1	2	2	0	0	2	1	2	2	2
+9	3	2	0	2	3	2	4	4	1	1	4	3	3	3	3
+8	3	3	4	3	3	3	4	4	0	0	4	3	4	4	4
+7	4	4	4	4	4	0	0	0	1	1	0	4	0	4	4
+6	1	0	0	0	1	1	1	1	2	2	1	1	1	1	1
+5	2	1	4	1	2	0	1	1	3	3	1	0	2	0	0
+4	3	0	1	0	3	1	2	2	4	4	2	1	1	1	1
+3	4	1	1	1	1	2	2	2	1	1	2	2	2	2	2
+2	1	2	3	2	2	0	3	3	2	2	3	1	3	3	3
+1	1	3	0	3	0	0	1	1	3	3	1	1	0	0	0
+`);
+
+parseAndRegister("左リール", "Regボーナス成立", `
+21	1	0	0	0	1	1	2	2	4	4	0	2	0	2	2
+20	1	1	1	1	1	1	1	1	0	0	1	3	1	2	3
+19	3	2	2	2	3	2	4	4	1	1	3	3	3	4	3
+18	3	3	3	3	3	4	3	3	0	0	3	4	3	4	4
+17	0	4	4	4	4	0	0	0	1	1	0	0	0	0	0
+16	1	0	0	0	0	1	0	0	2	2	1	1	1	1	1
+15	0	1	1	1	2	1	1	1	3	3	2	2	2	2	2
+14	0	0	0	0	1	2	1	1	4	4	1	1	1	3	1
+13	0	1	1	1	1	4	0	0	0	0	0	0	0	0	0
+12	1	2	2	2	1	0	0	0	1	1	0	0	0	1	0
+11	1	0	0	0	1	0	2	2	2	2	1	1	1	0	1
+10	1	1	1	1	1	4	2	2	0	0	2	2	2	2	2
+9	3	2	2	2	3	2	4	4	1	1	3	3	3	3	3
+8	3	3	3	3	3	3	4	4	0	0	4	4	4	3	4
+7	0	4	4	4	4	0	0	0	1	1	0	0	0	0	0
+6	1	0	0	0	1	1	1	1	2	2	1	1	1	1	1
+5	2	1	1	1	2	2	2	2	3	3	2	0	2	0	0
+4	3	0	0	0	3	3	3	3	4	4	3	1	3	0	1
+3	4	1	1	1	1	4	4	4	4	4	4	2	4	0	2
+2	1	2	2	2	2	2	3	3	2	2	3	3	3	3	3
+1	1	3	3	3	0	1	1	1	3	3	1	1	0	0	0
+`);
+
+parseAndRegister("中リール", "ボーナス未成立", `
+21	2	1	1	1	0	0	2	2	2	2	nul	nul	nul	nul	nul
+20	0	2	2	2	1	1	3	3	0	0	nul	nul	nul	nul	nul
+19	1	0	0	0	2	2	4	4	1	1	nul	nul	nul	nul	nul
+18	2	1	1	1	0	0	2	2	2	2	nul	nul	nul	nul	nul
+17	0	2	2	2	1	1	0	0	0	0	nul	nul	nul	nul	nul
+16	1	3	3	3	2	2	0	0	1	1	nul	nul	nul	nul	nul
+15	0	4	4	4	3	3	0	0	0	0	nul	nul	nul	nul	nul
+14	3	0	0	0	4	4	2	2	1	1	nul	nul	nul	nul	nul
+13	2	1	1	1	0	0	2	2	2	2	nul	nul	nul	nul	nul
+12	3	2	2	2	1	1	4	4	3	3	nul	nul	nul	nul	nul
+11	1	3	3	3	2	2	4	4	0	0	nul	nul	nul	nul	nul
+10	1	0	0	0	3	3	1	1	1	1	nul	nul	nul	nul	nul
+9	3	1	1	1	0	0	2	2	2	2	nul	nul	nul	nul	nul
+8	3	2	2	2	1	1	0	0	3	3	nul	nul	nul	nul	nul
+7	1	3	3	3	2	2	0	0	4	4	nul	nul	nul	nul	nul
+6	1	0	0	0	3	3	2	2	1	1	nul	nul	nul	nul	nul
+5	3	1	1	1	0	0	3	3	2	2	nul	nul	nul	nul	nul
+4	3	2	2	2	1	1	0	0	3	3	nul	nul	nul	nul	nul
+3	1	3	3	3	2	2	1	1	4	4	nul	nul	nul	nul	nul
+2	0	4	4	4	3	3	2	2	0	0	nul	nul	nul	nul	nul
+1	3	0	0	0	4	4	1	1	1	1	nul	nul	nul	nul	nul
+`);
+
+parseAndRegister("中リール", "Ｘビッグ成立", `
+21	0	1	1	1	0	0	2	2	2	2	2	2	2	1	2
+20	3	2	2	2	1	1	3	3	0	0	4	0	4	0	0
+19	2	0	0	0	2	2	4	4	1	1	4	0	4	1	0
+18	1	1	1	1	0	0	1	1	2	2	2	2	2	1	2
+17	1	2	2	2	1	1	0	0	0	0	0	0	0	0	0
+16	2	3	3	3	2	2	0	0	1	1	1	0	1	0	1
+15	1	4	4	4	3	3	1	1	0	0	0	0	0	0	0
+14	4	0	0	0	4	4	2	2	1	1	3	1	3	1	3
+13	0	1	1	1	0	0	2	2	2	2	4	2	4	1	4
+12	4	2	2	2	1	1	4	4	3	3	4	2	2	3	0
+11	2	3	3	3	2	2	4	4	0	0	4	3	3	3	1
+10	1	0	0	0	3	3	1	1	1	1	2	4	4	4	2
+9	0	1	1	1	0	0	0	0	2	2	2	2	2	2	2
+8	0	2	2	2	1	1	0	0	3	3	0	0	0	0	0
+7	0	3	3	3	2	2	0	0	4	4	0	0	0	0	0
+6	1	0	0	0	3	3	1	1	1	1	0	0	0	2	0
+5	2	1	1	1	0	0	2	2	2	2	3	3	3	1	3
+4	3	2	2	2	1	1	0	0	3	3	4	4	4	2	4
+3	4	3	3	3	2	2	0	0	4	4	4	4	4	3	4
+2	4	4	4	4	3	3	1	1	0	0	4	4	4	4	4
+1	1	0	0	0	4	4	1	1	1	1	1	1	1	3	1
+`);
+
+parseAndRegister("中リール", "７ビッグ成立", `
+21	3	1	1	1	0	0	2	2	2	2	2	4	2	2	2
+20	0	2	2	2	1	1	3	3	0	0	4	2	4	0	0
+19	1	0	0	0	2	2	4	4	1	1	4	1	4	0	0
+18	2	1	1	1	0	0	2	2	2	2	2	1	2	2	2
+17	3	2	2	2	1	1	0	0	0	0	0	2	0	0	0
+16	0	3	3	3	2	2	0	0	0	0	0	0	0	0	0
+15	0	4	4	4	3	3	0	0	0	0	0	0	0	0	0
+14	2	0	0	0	4	4	2	2	1	1	1	0	1	1	1
+13	2	1	1	1	0	0	2	2	2	2	2	2	2	2	2
+12	3	2	2	2	1	1	4	4	3	3	4	2	2	2	2
+11	4	3	3	3	2	2	4	4	0	0	4	3	3	3	3
+10	4	0	0	0	3	3	4	4	1	1	4	4	4	4	4
+9	2	1	1	1	0	0	2	2	2	2	2	1	2	2	2
+8	3	2	2	2	1	1	0	0	3	3	0	0	0	4	0
+7	4	3	3	3	2	2	0	0	4	4	0	1	0	4	0
+6	2	0	0	0	3	3	2	2	1	1	0	0	0	0	0
+5	3	1	1	1	0	0	3	3	2	2	3	3	3	3	3
+4	4	2	2	2	1	1	0	0	3	3	4	2	4	4	4
+3	0	3	3	3	2	2	1	1	4	4	0	3	0	0	4
+2	1	4	4	4	3	3	2	2	0	0	4	4	4	4	4
+1	2	0	0	0	4	4	1	1	1	1	1	0	1	1	1
+`);
+
+parseAndRegister("中リール", "Regボーナス成立", `
+21	1	1	1	1	0	0	3	3	2	2	2	2	2	2	2
+20	0	2	2	2	1	1	4	4	0	0	3	3	3	3	3
+19	1	0	0	0	2	2	4	4	1	1	4	0	4	0	0
+18	2	1	1	1	0	0	2	2	2	2	1	1	1	1	1
+17	3	2	2	2	1	1	0	0	0	0	0	2	0	2	2
+16	0	3	3	3	2	2	0	0	0	0	0	0	0	0	0
+15	0	4	4	4	3	3	0	0	0	0	1	1	1	1	1
+14	1	0	0	0	4	4	1	1	1	1	1	1	1	1	1
+13	2	1	1	1	0	0	2	2	2	2	2	2	2	2	2
+12	3	2	2	2	1	1	3	3	3	3	4	2	2	2	2
+11	0	3	3	3	2	2	4	4	0	0	4	3	3	3	3
+10	1	0	0	0	3	3	1	1	1	1	4	4	4	4	4
+9	2	1	1	1	0	0	2	2	2	2	2	2	2	2	2
+8	3	2	2	2	1	1	3	3	3	3	0	0	0	3	0
+7	4	3	3	3	2	2	4	4	4	4	1	1	1	4	1
+6	2	0	0	0	3	3	2	2	1	1	0	0	0	0	0
+5	1	1	1	1	0	0	1	1	2	2	3	3	3	3	3
+4	4	2	2	2	1	1	0	0	3	3	2	2	2	2	2
+3	3	3	3	3	2	2	1	1	4	4	3	3	3	3	3
+2	0	4	4	4	3	3	0	0	0	0	0	4	0	0	4
+1	1	0	0	0	4	4	1	1	1	1	1	1	1	1	1
+`);
+
+parseAndRegister("右リール", "ボーナス未成立", `
+21	0	3	0	3	2	2	0	0	2	2	Null	Null	Null	Null	Null
+20	0	0	1	0	3	3	3	3	3	3	Null	Null	Null	Null	Null
+19	2	1	2	1	0	0	0	0	0	0	Null	Null	Null	Null	Null
+18	2	2	3	2	1	1	3	3	1	1	Null	Null	Null	Null	Null
+17	0	3	0	3	2	2	2	2	2	2	Null	Null	Null	Null	Null
+16	1	0	1	0	3	3	1	1	3	3	Null	Null	Null	Null	Null
+15	2	1	2	1	4	4	4	4	2	2	Null	Null	Null	Null	Null
+14	3	2	3	2	0	0	0	0	3	3	Null	Null	Null	Null	Null
+13	4	3	4	3	1	1	4	4	4	4	Null	Null	Null	Null	Null
+12	0	4	0	4	2	2	0	0	0	0	Null	Null	Null	Null	Null
+11	1	0	1	0	3	3	3	3	1	1	Null	Null	Null	Null	Null
+10	1	1	2	1	0	0	4	4	2	2	Null	Null	Null	Null	Null
+9	3	2	0	2	1	1	0	0	3	3	Null	Null	Null	Null	Null
+8	3	0	1	0	2	2	4	4	0	0	Null	Null	Null	Null	Null
+7	0	1	2	1	3	3	0	0	1	1	Null	Null	Null	Null	Null
+6	1	2	3	2	0	0	0	0	0	0	Null	Null	Null	Null	Null
+5	2	3	4	3	1	1	2	2	1	1	Null	Null	Null	Null	Null
+4	0	4	0	4	2	2	2	2	2	2	Null	Null	Null	Null	Null
+3	1	0	1	0	3	3	4	4	3	3	Null	Null	Null	Null	Null
+2	2	1	2	1	0	0	2	2	2	2	Null	Null	Null	Null	Null
+1	3	2	3	2	1	1	1	1	3	3	Null	Null	Null	Null	Null
+`);
+
+parseAndRegister("右リール", "Ｘビッグ成立", `
+21	2	3	0	3	2	2	2	2	2	2	2	2	2	2	2
+20	3	0	1	0	3	3	3	3	3	3	3	3	3	3	3
+19	4	1	2	1	0	0	4	4	0	0	4	4	4	4	4
+18	3	2	3	2	1	1	3	3	1	1	3	3	3	0	3
+17	2	3	0	3	2	2	2	2	2	2	2	2	2	1	2
+16	1	0	1	0	3	3	1	1	3	3	0	0	0	2	0
+15	4	1	2	1	4	4	4	4	2	2	1	1	1	3	1
+14	3	2	3	2	0	0	3	3	3	3	0	0	0	4	0
+13	1	3	4	3	1	1	1	1	4	4	3	3	3	0	3
+12	0	4	0	4	2	2	0	0	0	0	2	2	2	0	2
+11	3	0	1	0	3	3	3	3	1	1	3	3	3	1	3
+10	0	1	2	1	0	0	2	2	2	2	4	0	0	0	4
+9	0	2	0	2	1	1	0	0	3	3	2	2	2	1	2
+8	2	0	1	0	2	2	4	4	0	0	2	2	2	2	2
+7	2	1	2	1	3	3	2	2	1	1	0	4	4	3	0
+6	0	2	3	2	0	0	0	0	0	0	0	4	4	4	0
+5	1	3	4	3	1	1	1	1	1	1	2	2	2	0	2
+4	0	4	0	4	2	2	0	0	2	2	0	0	0	0	0
+3	1	0	1	0	3	3	1	1	3	3	1	1	1	1	1
+2	0	1	2	1	0	0	0	0	2	2	2	2	2	2	2
+1	3	2	3	2	1	1	3	3	3	3	1	1	1	1	1
+`);
+
+parseAndRegister("右リール", "７ビッグ成立", `
+21	0	3	0	3	2	2	0	0	2	2	2	1	2	2	2
+20	1	0	1	0	3	3	3	3	3	3	3	2	3	3	3
+19	0	1	2	1	0	0	0	0	0	0	0	2	0	0	0
+18	3	2	3	2	1	1	3	3	1	1	3	3	3	3	3
+17	2	3	0	3	2	2	2	2	2	2	2	0	2	2	2
+16	0	0	1	0	3	3	1	1	3	3	0	0	0	0	0
+15	0	1	2	1	4	4	4	4	1	1	1	1	1	1	1
+14	0	2	3	2	0	0	0	0	0	0	0	0	0	0	0
+13	3	3	4	3	1	1	1	1	1	1	3	1	1	3	3
+12	2	4	0	4	2	2	2	2	2	2	2	2	2	2	2
+11	3	0	1	0	3	3	3	3	3	3	3	3	3	1	3
+10	4	1	2	1	0	0	4	4	4	4	4	4	4	0	4
+9	0	2	0	2	1	1	0	0	3	3	2	3	2	2	2
+8	1	0	1	0	2	2	4	4	0	0	2	2	2	2	2
+7	0	1	2	1	3	3	0	0	1	1	0	3	4	4	0
+6	3	2	3	2	0	0	0	0	0	0	0	4	4	4	0
+5	2	3	4	3	1	1	2	2	1	1	2	3	2	1	2
+4	3	4	0	4	2	2	2	2	2	2	3	1	3	3	3
+3	4	0	1	0	3	3	4	4	3	3	2	1	2	3	3
+2	2	1	2	1	0	0	2	2	2	2	0	3	2	2	2
+1	1	2	3	2	1	1	1	1	3	3	1	0	1	1	1
+`);
+
+parseAndRegister("右リール", "Regボーナス成立", `
+下段に押した絵柄	ハズレ	通常リプ	JACリプ	RTリプ	ベルA	ベルB	スイカA	スイカB	チェリA	チェリB	特役A	特役B	特役C	特役D	特役E
+21	2	3	3	3	2	2	2	2	2	2	0	0	0	0	0
+20	3	0	0	0	3	3	3	3	3	3	1	1	1	1	1
+19	0	1	1	1	0	0	0	0	0	0	2	2	2	2	2
+18	1	2	2	2	1	1	1	1	1	1	3	3	3	3	3
+17	0	3	3	3	2	2	0	0	2	2	0	0	0	0	0
+16	1	0	0	0	3	3	1	1	3	3	1	1	1	1	1
+15	2	1	1	1	4	4	2	2	2	2	1	1	1	1	1
+14	0	2	2	2	0	0	0	0	3	3	0	0	0	0	0
+13	1	3	3	3	1	1	1	1	4	4	1	1	1	1	1
+12	2	4	4	4	2	2	2	2	0	0	2	2	2	0	2
+11	3	0	0	0	3	3	3	3	1	1	3	3	3	1	3
+10	4	1	1	1	0	0	4	4	2	2	4	4	4	2	4
+9	0	2	2	2	1	1	0	0	3	3	0	3	3	3	0
+8	1	0	0	0	2	2	1	1	0	0	1	3	3	3	1
+7	0	1	1	1	3	3	0	0	1	1	0	4	4	4	0
+6	3	2	2	2	0	0	3	3	0	0	1	4	4	4	1
+5	2	3	3	3	1	1	2	2	1	1	2	2	2	2	2
+4	3	4	4	4	2	2	3	3	2	2	3	3	3	3	3
+3	4	0	0	0	3	3	4	4	3	3	4	4	4	4	4
+2	0	1	1	1	0	0	0	0	2	2	2	2	2	2	2
+1	1	2	2	2	1	1	1	1	3	3	1	1	1	1	1
+`);
+
+// ★ここに抜けていたメインプログラムを追加
+const app = {
+    state: { reel: 'left', flagMode: 'bonus_unestablished', stopNum: 21 },
+    
+    init() {
+        this.renderReelStrip();
+        this.attachEvents();
+        setTimeout(() => this.updateView(), 100);
     },
-    middle: {
-        img: "reel2.png",
-        hazure: {hz:[0,3,0,3,2,2,0,0,2,2,n,n,n,n,n,n,n,n,n,n,n],nr:[0,0,1,0,3,3,3,3,3,3,n,n,n,n,n,n,n,n,n,n,n],jr:[2,1,2,1,0,0,0,0,0,0,n,n,n,n,n,n,n,n,n,n,n],rr:[2,2,3,2,1,1,3,3,1,1,n,n,n,n,n,n,n,n,n,n,n],ba:[0,3,0,3,2,2,2,2,2,2,n,n,n,n,n,n,n,n,n,n,n],bb:[1,0,1,0,3,3,1,1,3,3,n,n,n,n,n,n,n,n,n,n,n],sa:[2,1,2,1,4,4,4,4,2,2,n,n,n,n,n,n,n,n,n,n,n],sb:[3,2,3,2,0,0,0,0,3,3,n,n,n,n,n,n,n,n,n,n,n],ca:[4,3,4,3,1,1,4,4,4,4,n,n,n,n,n,n,n,n,n,n,n],cb:[0,3,0,3,2,2,0,0,2,2,n,n,n,n,n,n,n,n,n,n,n],ta:Array(21).fill(n),tb:Array(21).fill(n),tc:Array(21).fill(n),td:Array(21).fill(n),te:Array(21).fill(n)},
-        x_flag: {hz:[2,3,0,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],nr:[3,0,1,0,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3],jr:[4,1,2,1,0,0,4,4,0,0,4,4,4,4,4,4,4,4,4,4,4],rr:[3,2,3,2,1,1,3,3,1,1,3,3,3,0,3,3,3,3,3,3,3],ba:[2,3,0,3,2,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2],bb:[1,0,1,0,3,3,1,1,3,3,0,0,0,2,0,0,0,0,0,0,0],sa:[4,1,2,1,4,4,4,4,2,2,1,1,1,3,1,1,1,1,1,1,1],sb:[3,2,3,2,0,0,3,3,3,3,0,0,0,4,0,0,0,0,0,0,0],ca:[1,3,4,3,1,1,1,1,4,4,3,3,3,0,3,3,3,3,3,3,3],cb:[0,4,0,4,2,2,0,0,0,0,2,2,2,0,2,2,2,2,2,2,2],ta:[3,0,1,0,3,3,3,3,1,1,3,3,3,1,3,3,3,3,3,3,3],tb:[0,1,2,1,0,0,2,2,2,2,4,0,0,0,4,4,0,0,0,0,0],tc:[0,2,0,2,1,1,0,0,3,3,2,2,2,1,2,2,2,2,2,2,2],td:[2,0,1,0,2,2,4,4,0,0,2,2,2,2,2,2,2,2,2,2,2],te:[2,1,2,1,3,3,2,2,1,1,0,4,4,3,0,0,4,4,4,4,4]},
-        seven_flag: {hz:[0,3,0,3,2,2,0,0,2,2,2,1,2,2,2,n,n,n,n,n,n],nr:[1,0,1,0,3,3,3,3,3,3,3,2,3,3,3,n,n,n,n,n,n],jr:[0,1,2,1,0,0,0,0,0,0,0,2,0,0,0,n,n,n,n,n,n],rr:[3,2,3,2,1,1,3,3,1,1,3,3,3,3,3,n,n,n,n,n,n],ba:[2,3,0,3,2,2,2,2,2,2,2,0,2,2,2,n,n,n,n,n,n],bb:[0,0,1,0,3,3,1,1,3,3,0,0,0,0,0,n,n,n,n,n,n],sa:[0,1,2,1,4,4,4,4,1,1,1,1,1,1,1,n,n,n,n,n,n],sb:[0,2,3,2,0,0,0,0,0,0,0,0,0,0,0,n,n,n,n,n,n],ca:[3,3,4,3,1,1,1,1,1,1,3,1,1,3,3,n,n,n,n,n,n],cb:[2,4,0,4,2,2,2,2,2,2,2,2,2,2,2,n,n,n,n,n,n],ta:[3,0,1,0,3,3,3,3,3,3,3,3,3,1,3,n,n,n,n,n,n],tb:[4,1,2,1,0,0,4,4,4,4,4,4,4,0,4,n,n,n,n,n,n],tc:[0,2,0,2,1,1,0,0,3,3,2,3,2,2,2,n,n,n,n,n,n],td:[1,0,1,0,2,2,4,4,0,0,2,2,2,2,2,n,n,n,n,n,n],te:[0,1,2,1,3,3,0,0,1,1,0,3,4,4,0,n,n,n,n,n,n]},
-        bar_flag: {hz:[2,3,3,3,2,2,2,2,2,2,0,0,0,0,0,n,n,n,n,n,n],nr:[3,0,0,0,3,3,3,3,3,3,1,1,1,1,1,n,n,n,n,n,n],jr:[0,1,1,1,0,0,0,0,0,0,2,2,2,2,2,n,n,n,n,n,n],rr:[1,2,2,2,1,1,1,1,1,1,3,3,3,3,3,n,n,n,n,n,n],ba:[0,3,3,3,2,2,0,0,2,2,0,0,0,0,0,n,n,n,n,n,n],bb:[1,0,0,0,3,3,1,1,3,3,1,1,1,1,1,n,n,n,n,n,n],sa:[2,1,1,1,4,4,2,2,2,2,1,1,1,1,1,n,n,n,n,n,n],sb:[0,2,2,2,0,0,0,0,3,3,0,0,0,0,0,n,n,n,n,n,n],ca:[1,3,3,3,1,1,1,1,4,4,1,1,1,1,1,n,n,n,n,n,n],cb:[2,4,4,4,2,2,2,2,0,0,2,2,2,0,2,n,n,n,n,n,n],ta:[3,0,0,0,3,3,3,3,1,1,3,3,3,1,3,n,n,n,n,n,n],tb:[4,1,1,1,0,0,4,4,2,2,4,4,4,2,4,n,n,n,n,n,n],tc:[0,2,2,2,1,1,0,0,3,3,0,3,3,3,0,n,n,n,n,n,n],td:[1,0,0,0,2,2,1,1,0,0,1,3,3,3,1,n,n,n,n,n,n],te:[0,1,1,1,3,3,0,0,1,1,0,4,4,4,0,n,n,n,n,n,n]}
+
+    setStop(side) {
+        this.state.reel = NAME_MAP[side] || side;
+        document.querySelectorAll('.stop-tab').forEach(el => 
+            el.classList.toggle('active', el.id === `t-${this.state.reel}`));
+        this.renderReelStrip();
+        this.updateView();
     },
-    right: {
-        img: "reel3.png",
-        hazure: {hz:[2,1,1,1,0,0,2,2,2,2,n,n,n,n,n,n,n,n,n,n,n],nr:[0,2,2,2,1,1,3,3,0,0,n,n,n,n,n,n,n,n,n,n,n],jr:[1,0,0,0,2,2,4,4,1,1,n,n,n,n,n,n,n,n,n,n,n],rr:[2,1,1,1,0,0,2,2,2,2,n,n,n,n,n,n,n,n,n,n,n],ba:[0,2,2,2,1,1,0,0,0,0,n,n,n,n,n,n,n,n,n,n,n],bb:[1,3,3,3,2,2,0,0,1,1,n,n,n,n,n,n,n,n,n,n,n],sa:[0,4,4,4,3,3,0,0,0,0,n,n,n,n,n,n,n,n,n,n,n],sb:[3,0,0,0,4,4,2,2,1,1,n,n,n,n,n,n,n,n,n,n,n],ca:[2,1,1,1,0,0,2,2,2,2,n,n,n,n,n,n,n,n,n,n,n],cb:[3,2,2,2,1,1,4,4,3,3,n,n,n,n,n,n,n,n,n,n,n],ta:Array(21).fill(n),tb:Array(21).fill(n),tc:Array(21).fill(n),td:Array(21).fill(n),te:Array(21).fill(n)},
-        x_flag: {hz:[0,1,1,1,0,0,2,2,2,2,2,2,2,1,2,n,n,n,n,n,n],nr:[3,2,2,2,1,1,3,3,0,0,4,0,4,0,0,n,n,n,n,n,n],jr:[2,0,0,0,2,2,4,4,1,1,4,0,4,1,0,n,n,n,n,n,n],rr:[1,1,1,1,0,0,1,1,2,2,2,2,2,1,2,n,n,n,n,n,n],ba:[1,2,2,2,1,1,0,0,0,0,0,0,0,0,0,n,n,n,n,n,n],bb:[2,3,3,3,2,2,0,0,1,1,1,0,1,0,1,n,n,n,n,n,n],sa:[1,4,4,4,3,3,1,1,0,0,0,0,0,0,0,n,n,n,n,n,n],sb:[4,0,0,0,4,4,2,2,1,1,3,1,3,1,3,n,n,n,n,n,n],ca:[0,1,1,1,0,0,2,2,2,2,4,2,4,1,4,n,n,n,n,n,n],cb:[4,2,2,2,1,1,4,4,3,3,4,2,2,3,0,n,n,n,n,n,n],ta:[2,3,3,3,2,2,4,4,0,0,4,3,3,3,1,n,n,n,n,n,n],tb:[1,0,0,0,3,3,1,1,1,1,2,4,4,4,2,n,n,n,n,n,n],tc:[0,1,1,1,0,0,0,0,2,2,2,2,2,2,2,n,n,n,n,n,n],td:[0,2,2,2,1,1,0,0,3,3,0,0,0,0,0,n,n,n,n,n,n],te:[0,3,3,3,2,2,0,0,4,4,0,0,0,0,0,n,n,n,n,n,n]},
-        seven_flag: {hz:[3,1,1,1,0,0,2,2,2,2,2,4,2,2,2,n,n,n,n,n,n],nr:[0,2,2,2,1,1,3,3,0,0,4,2,4,0,0,n,n,n,n,n,n],jr:[1,0,0,0,2,2,4,4,1,1,4,1,4,0,0,n,n,n,n,n,n],rr:[2,1,1,1,0,0,2,2,2,2,2,1,2,2,2,n,n,n,n,n,n],ba:[3,2,2,2,1,1,0,0,0,0,0,2,0,0,0,n,n,n,n,n,n],bb:[0,3,3,3,2,2,0,0,0,0,0,0,0,0,0,n,n,n,n,n,n],sa:[0,4,4,4,3,3,0,0,0,0,0,0,0,0,0,n,n,n,n,n,n],sb:[2,0,0,0,4,4,2,2,1,1,1,0,1,1,1,n,n,n,n,n,n],ca:[2,1,1,1,0,0,2,2,2,2,2,2,2,2,2,n,n,n,n,n,n],cb:[3,2,2,2,1,1,4,4,3,3,4,2,2,2,2,n,n,n,n,n,n],ta:[4,3,3,3,2,2,4,4,0,0,4,3,3,3,3,n,n,n,n,n,n],tb:[4,0,0,0,3,3,4,4,1,1,4,4,4,4,4,n,n,n,n,n,n],tc:[2,1,1,1,0,0,2,2,2,2,2,1,2,2,2,n,n,n,n,n,n],td:[3,2,2,2,1,1,0,0,3,3,0,0,0,4,0,n,n,n,n,n,n],te:[4,3,3,3,2,2,0,0,4,4,0,1,0,4,0,n,n,n,n,n,n]},
-        bar_flag: {hz:[1,1,1,1,0,0,3,3,2,2,2,2,2,2,2,n,n,n,n,n,n],nr:[0,2,2,2,1,1,4,4,0,0,3,3,3,3,3,n,n,n,n,n,n],jr:[1,0,0,0,2,2,4,4,1,1,4,0,4,0,0,n,n,n,n,n,n],rr:[2,1,1,1,0,0,2,2,2,2,1,1,1,1,1,n,n,n,n,n,n],ba:[3,2,2,2,1,1,0,0,0,0,0,2,0,2,2,n,n,n,n,n,n],bb:[0,3,3,3,2,2,0,0,0,0,0,0,0,0,0,n,n,n,n,n,n],sa:[0,4,4,4,3,3,0,0,0,0,1,1,1,1,1,n,n,n,n,n,n],sb:[1,0,0,0,4,4,1,1,1,1,1,1,1,1,1,n,n,n,n,n,n],ca:[2,1,1,1,0,0,2,2,2,2,2,2,2,2,2,n,n,n,n,n,n],cb:[3,2,2,2,1,1,3,3,3,3,4,2,2,2,2,n,n,n,n,n,n],ta:[2,1,1,1,0,0,2,2,2,2,2,2,2,2,2,n,n,n,n,n,n],tb:[3,2,2,2,1,1,3,3,3,3,0,0,0,3,0,n,n,n,n,n,n],tc:[4,3,3,3,2,2,4,4,4,4,1,1,1,4,1,n,n,n,n,n,n],td:[2,0,0,0,3,3,2,2,1,1,0,0,0,0,0,n,n,n,n,n,n],te:[1,1,1,1,0,0,1,1,2,2,1,1,1,1,1,n,n,n,n,n,n]}
+
+    setState(mode) {
+        this.state.flagMode = NAME_MAP[mode] || mode;
+        document.querySelectorAll('.state-tab').forEach(el => 
+            el.classList.toggle('active', el.id === `s-${this.state.flagMode}`));
+        this.updateView();
+    },
+
+    updateView() {
+        this.audit();
+        this.updateReelPosition();
+    },
+
+    audit() {
+        const list = document.getElementById('result-list');
+        list.innerHTML = '';
+        const results = Engine.audit(this.state.reel, this.state.flagMode, this.state.stopNum);
+        
+        if(results.length === 0) {
+            list.innerHTML = '<div style="padding:20px; text-align:center; color:#555; font-size:12px;">条件に一致するフラグがありません</div>';
+            return;
+        }
+
+        results.forEach(res => {
+            const row = document.createElement('div');
+            row.className = `res-row f-${res.info.c}`;
+            const matchesStr = res.matches
+                .map(m => `<span style="opacity:0.6">#</span>${m.pushNum}(${m.slip})`)
+                .join('  ');
+            row.innerHTML = `<div class="res-name">${res.info.n}</div><div class="res-data">${matchesStr}</div>`;
+            list.appendChild(row);
+        });
+    },
+
+    renderReelStrip() {
+        const container = document.getElementById('reel-strip');
+        container.innerHTML = '';
+        const symbols = REEL_SYMBOLS[this.state.reel];
+        const bgImage = REEL_ASSETS[this.state.reel]; 
+        
+        for(let loop=0; loop<3; loop++) {
+            symbols.forEach((sym, idx) => {
+                const reelNum = 21 - idx;
+                const displayName = SYMBOL_DISPLAY_MAP[sym] || sym;
+                const el = document.createElement('div');
+                el.className = 'symbol';
+                const bgSize = `100% ${21 * 60}px`;
+                const bgPos = `0px -${idx * 60}px`;
+                el.innerHTML = `
+                    <div class="sym-idx">${reelNum}</div>
+                    <div class="sym-bg" style="background-image: url('${bgImage}'); background-size: ${bgSize}; background-position: ${bgPos}"></div>
+                    <div class="sym-name sym-${sym}">${displayName}</div>
+                `;
+                container.appendChild(el);
+            });
+        }
+    },
+
+    updateReelPosition() {
+        const baseH = 21 * 60;
+        const targetIdx = 21 - this.state.stopNum;
+        const y = -baseH - (targetIdx * 60) + 240; 
+        document.getElementById('reel-strip').style.transform = `translate3d(0, ${y}px, 0)`;
+    },
+
+    attachEvents() {
+        const touchArea = document.getElementById('touch-area');
+        let startY = 0;
+        let startNum = 0;
+        let isDragging = false;
+        const onMove = (y) => {
+            if(!isDragging) return;
+            const diff = startY - y;
+            const moveFrame = Math.round(diff / 60);
+            let nextNum = startNum - moveFrame;
+            while(nextNum > 21) nextNum -= 21;
+            while(nextNum < 1) nextNum += 21;
+            if(this.state.stopNum !== nextNum) {
+                this.state.stopNum = nextNum;
+                this.updateView();
+            }
+        };
+        touchArea.addEventListener('mousedown', e => { isDragging=true; startY=e.pageY; startNum=this.state.stopNum; });
+        window.addEventListener('mousemove', e => onMove(e.pageY));
+        window.addEventListener('mouseup', () => isDragging=false);
+        touchArea.addEventListener('touchstart', e => { isDragging=true; startY=e.touches[0].pageY; startNum=this.state.stopNum; }, {passive:false});
+        window.addEventListener('touchmove', e => { e.preventDefault(); onMove(e.touches[0].pageY); }, {passive:false});
+        window.addEventListener('touchend', () => isDragging=false);
     }
 };
 
-const FLAGS = [
-    {k:"hz",n:"ハズレ",c:"hazure"},{k:"nr",n:"通常リプ",c:"rep"},{k:"jr",n:"JACリプ",c:"rep"},{k:"rr",n:"RTリプ",c:"rep"},
-    {k:"ba",n:"ベルA",c:"bell"},{k:"bb",n:"ベルB",c:"bell"},{k:"sa",n:"スイカA",c:"suika"},{k:"sb",n:"スイカB",c:"suika"},
-    {k:"ca",n:"チェリーA",c:"cher"},{k:"cb",n:"チェリーB",c:"cher"},{k:"ta",n:"特殊役A",c:"tok"},{k:"tb",n:"特殊役B",c:"tok"},
-    {k:"tc",n:"特殊役C",c:"tok"},{k:"td",n:"特殊役D",c:"tok"},{k:"te",n:"特殊役E",c:"tok"}
-];
-const mod = (n, m) => ((n % m) + m) % m;
-const REEL_LEN = 21;
-
-// 下段停止位置 (#21=0, #1=20)
-let currentBottomIdx = 10; // 初期：#11
-let currentState = 'hazure', currentStop = 'left';
-
-/**
- * 【真・逆引き監査エンジン】
- * 全押し位置(P)に対してスベリ(L)を実施し、最終停止位置(S)に合致するものを全抽出。
- * 加算方向に滑るため、インデックスは引き算になる。
- */
-function update() {
-    const list = document.getElementById('flag-list');
-    list.innerHTML = '';
-    const side = MASTER_STORE[currentStop];
-    const dataSet = side[currentState];
-    
-    // 現在の下段位置 S (インデックス)
-    const S = currentBottomIdx;
-
-    FLAGS.forEach(f => {
-        const rawSlips = dataSet[f.k];
-        if (!rawSlips) return;
-        
-        let foundResults = [];
-        // 1. 全配列番号 P (0..20) を「ストップボタン押下位置」としてループ実施
-        for (let P = 0; P < REEL_LEN; P++) {
-            const L = rawSlips[P];
-            if (L === null) continue;
-            
-            // 2. 物理法則：押し位置 P(記号) + スベリ L = 停止位置 S(記号)
-            // 配列インデックスにおいては「減算」が「記号番号の加算」に相当する。
-            if (mod(P - L, REEL_LEN) === S) {
-                // 一致した場合、その時の押し位置（記号番号 #21..1）とスベリを記録
-                foundResults.push({ pushNum: 21 - P, slip: L });
-            }
-        }
-
-        if (foundResults.length > 0) {
-            const row = document.createElement('div');
-            row.className = `flag-item c-${f.c}`;
-            
-            // 監査結果を表示（狙い位置の降順）
-            const dataStr = foundResults
-                .sort((a, b) => b.pushNum - a.pushNum)
-                .map(r => `#${r.pushNum}(${r.slip})`)
-                .join(' ');
-            
-            row.innerHTML = `<div class="flag-name">${f.n}</div><div class="flag-data">${dataStr}</div>`;
-            list.appendChild(row);
-        }
-    });
-
-    // リール物理座標同期描画
-    const win = document.getElementById('reel-window');
-    const visualY = 280 - (currentBottomIdx + REEL_LEN) * 70;
-    win.style.transform = `translate3d(0, ${visualY}px, 0)`;
-}
-
-function switchStop(side) {
-    currentStop = side;
-    document.querySelectorAll('.stop-tab').forEach(t => t.classList.toggle('active', t.id === 'stop-' + side));
-    const img = MASTER_STORE[side].img;
-    document.querySelectorAll('.symbol-image').forEach(s => s.style.backgroundImage = `url('${img}')`);
-    update();
-}
-
-function switchState(s) {
-    currentState = s;
-    document.querySelectorAll('.state-tab').forEach(t => t.classList.toggle('active', t.id === 'tab-' + s));
-    update();
-}
-
-function init() {
-    const win = document.getElementById('reel-window');
-    win.innerHTML = ''; 
-    for (let l = 0; l < 3; l++) { 
-        for (let i = 0; i < REEL_LEN; i++) {
-            const nNum = 21 - i;
-            const d = document.createElement('div');
-            d.className = 'symbol';
-            d.innerHTML = `<div class="index-num">${nNum}</div><div class="symbol-image" style="background-position:0% ${(21-nNum)*5}%"></div>`;
-            win.appendChild(d);
-        }
-    }
-    const area = document.getElementById('reel-touch-area'); 
-    let isDragging = false, startY = 0, initialIdx = 0;
-    const onStart = (y) => { isDragging = true; startY = y; initialIdx = currentBottomIdx; };
-    const onMove = (y) => { 
-        if (!isDragging) return; 
-        const delta = Math.round((y - startY) / 70);
-        // ドラッグ下方向(delta正)でインデックスが増える(記号番号が減る)ように同期
-        currentBottomIdx = mod(initialIdx - delta, REEL_LEN); 
-        update(); 
-    };
-    area.onmousedown = e => onStart(e.pageY);
-    window.onmousemove = e => onMove(e.pageY);
-    window.onmouseup = () => isDragging = false;
-    area.addEventListener('touchstart', e => { onStart(e.touches[0].pageY); e.preventDefault(); }, {passive: false});
-    area.addEventListener('touchmove', e => { onMove(e.touches[0].pageY); e.preventDefault(); }, {passive: false});
-    area.addEventListener('touchend', () => isDragging = false);
-
-    switchStop('left'); 
-}
-init();
+app.init();
 </script>
 </body>
 </html>
