@@ -12,33 +12,36 @@
             padding: 5px; 
             margin: 0;
             line-height: 1.2;
-            width: fit-content;
+            overflow-x: hidden; 
         }
 
+        /* 詳細表：スマホ縦画面で収まるよう列幅を自動調整 */
         .summary-table {
             border-collapse: collapse;
             width: 100%;
-            margin-bottom: 50px;
+            margin-bottom: 30px;
             background: #111;
             border: 1px solid #ffffff;
+            table-layout: auto;
         }
         .summary-table th, .summary-table td {
             border: 1px solid #ffffff;
-            padding: 8px 2px;
-            font-size: 16px; 
+            padding: 8px 1px;
+            font-size: 16px; /* 文字サイズ最大 */
             font-weight: bold;
             text-align: center;
             vertical-align: middle;
         }
         .summary-table thead th {
             background: #1a1a1a;
+            font-size: 11px;
         }
 
-        /* 設定列の幅を最小に */
+        /* 設定列の幅を最小に固定 */
         .summary-table th:first-child, .summary-table td:first-child {
             width: 1px;
             white-space: nowrap;
-            padding: 8px 5px;
+            padding: 8px 4px;
         }
 
         .flag-section { margin-bottom: 60px; }
@@ -52,42 +55,30 @@
         .title-reg { background: #333; }
 
         /* 背景色設定 */
-        .bg-light-blue { background-color: #002244 !important; } /* 薄い水色 */
-        .bg-light-red { background-color: #440011 !important; }  /* 薄い赤 */
+        .bg-light-blue { background-color: #002244 !important; }
+        .bg-light-red { background-color: #440011 !important; }
 
-        /* XBB詳細 列の色 */
-        .xbig-table th:nth-child(2), .xbig-table td:nth-child(2) { color: #448aff !important; }
-        .xbig-table th:nth-child(3), .xbig-table td:nth-child(3) { color: #81d4fa !important; }
-        .xbig-table th:nth-child(4), .xbig-table td:nth-child(4) { color: #81d4fa !important; }
-        .xbig-table th:nth-child(5), .xbig-table td:nth-child(5) { color: #fff176 !important; }
-        .xbig-table th:nth-child(6), .xbig-table td:nth-child(6) { color: #ff4081 !important; }
-        .xbig-table th:nth-child(7), .xbig-table td:nth-child(7) { color: #e1bee7 !important; }
-        .xbig-table th:nth-child(8), .xbig-table td:nth-child(8) { color: #e1bee7 !important; }
-        .xbig-table th:nth-child(9), .xbig-table td:nth-child(9) { color: #448aff !important; }
+        /* 文字色設定 */
+        .c-blue { color: #448aff !important; }
+        .c-sky { color: #81d4fa !important; }
+        .c-yellow { color: #fff176 !important; }
+        .c-red { color: #ff4081 !important; }
+        .c-purple { color: #e1bee7 !important; }
+        .c-white { color: #ffffff !important; }
 
-        /* 7BB詳細 列の色 */
-        .sevenbig-table th:nth-child(2), .sevenbig-table td:nth-child(2) { color: #ff4081 !important; }
-        .sevenbig-table th:nth-child(3), .sevenbig-table td:nth-child(3) { color: #81d4fa !important; }
-        .sevenbig-table th:nth-child(4), .sevenbig-table td:nth-child(4) { color: #81d4fa !important; }
-        .sevenbig-table th:nth-child(5), .sevenbig-table td:nth-child(5) { color: #ff4081 !important; }
-        .sevenbig-table th:nth-child(6), .sevenbig-table td:nth-child(6) { color: #ff4081 !important; }
-        .sevenbig-table th:nth-child(7), .sevenbig-table td:nth-child(7) { color: #e1bee7 !important; }
-        .sevenbig-table th:nth-child(8), .sevenbig-table td:nth-child(8) { color: #e1bee7 !important; }
-        .sevenbig-table th:nth-child(9), .sevenbig-table td:nth-child(9) { color: #e1bee7 !important; }
-        .sevenbig-table th:nth-child(10), .sevenbig-table td:nth-child(10) { color: #ff4081 !important; }
+        /* 比較表用のスクロールコンテナ */
+        .scroll-container {
+            width: 100vw;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
 
-        /* REG詳細 列の色 */
-        .reg-table th:nth-child(2), .reg-table td:nth-child(2) { color: #ffffff !important; }
-        .reg-table th:nth-child(3), .reg-table td:nth-child(3) { color: #81d4fa !important; }
-        .reg-table th:nth-child(4), .reg-table td:nth-child(4) { color: #ff4081 !important; }
-        .reg-table th:nth-child(5), .reg-table td:nth-child(5) { color: #e1bee7 !important; }
-        .reg-table th:nth-child(6), .reg-table td:nth-child(6) { color: #e1bee7 !important; }
-        .reg-table th:nth-child(7), .reg-table td:nth-child(7) { color: #ffffff !important; }
-
-        .comparison-table { border-collapse: collapse; background: #111; border: 1px solid #ffffff; }
+        .comparison-table { border-collapse: collapse; background: #111; border: 1px solid #ffffff; width: auto; }
         .comparison-table th { padding: 10px; border: 1px solid #ffffff; background: #1a1a1a; font-size: 12px; }
         .comparison-table td { padding: 8px; border: 1px solid #ffffff; text-align: center; vertical-align: middle; }
-        .mode-label-black { background: #000 !important; font-weight: bold; min-width: 120px; font-size: 11px; }
+        
+        .mode-label-black { background: #000 !important; font-weight: bold; min-width: 120px; font-size: 11px; position: sticky; left: 0; z-index: 2; }
+        
         .stop-box { background: #000; padding: 5px; border-radius: 2px; display: inline-block; }
         .bg-blue { background: #0000ff !important; }
         .reel-unit { border-collapse: collapse; margin-top: 5px; background: #000; }
@@ -103,70 +94,70 @@
 <body>
 
 <div class="flag-title title-xbig">Ｘビッグ詳細</div>
-<table class="summary-table xbig-table">
+<table class="summary-table">
     <thead>
         <tr>
             <th>設定</th>
-            <th>単独</th>
-            <th>JACリプレイ</th>
-            <th class="bg-light-blue">RTリプレイ</th>
-            <th>ベルＡ</th>
-            <th class="bg-light-red">チェリーＢ</th>
-            <th>特殊役D</th>
-            <th>特殊役E</th>
-            <th>Xビッグボーナス</th>
+            <th class="c-blue">単独</th>
+            <th class="c-sky">JACリプレイ</th>
+            <th class="c-sky bg-light-blue">RTリプレイ</th>
+            <th class="c-yellow">ベルＡ</th>
+            <th class="c-red bg-light-red">チェリーＢ</th>
+            <th class="c-purple">特殊役D</th>
+            <th class="c-purple">特殊役E</th>
+            <th class="c-blue">Xビッグボーナス</th>
         </tr>
     </thead>
     <tbody>
-        <tr><td>1</td><td>1/1524.1</td><td>1/4096.0</td><td class="bg-light-blue">1/5957.8</td><td>1/16384.0</td><td class="bg-light-red">1/5957.8</td><td>1/4096.0</td><td>1/5957.8</td><td>1/585.1</td></tr>
-        <tr><td>2</td><td>1/1489.5</td><td>1/3855.1</td><td class="bg-light-blue">1/5957.8</td><td>1/16384.0</td><td class="bg-light-red">1/5957.8</td><td>1/3855.1</td><td>1/5957.8</td><td>1/569.9</td></tr>
-        <tr><td>5</td><td>1/1456.4</td><td>1/3855.1</td><td class="bg-light-blue">1/5461.3</td><td>1/16384.0</td><td class="bg-light-red">1/5461.3</td><td>1/3855.1</td><td>1/5461.3</td><td>1/550.7</td></tr>
-        <tr><td>6</td><td>1/1394.4</td><td>1/3640.9</td><td class="bg-light-blue">1/5461.3</td><td>1/13107.2</td><td class="bg-light-red">1/5461.3</td><td>1/3640.9</td><td>1/5461.3</td><td>1/528.5</td></tr>
+        <tr><td>1</td><td class="c-blue">1/1524.1</td><td class="c-sky">1/4096.0</td><td class="bg-light-blue c-sky">1/5957.8</td><td class="c-yellow">1/16384.0</td><td class="bg-light-red c-red">1/5957.8</td><td class="c-purple">1/4096.0</td><td class="c-purple">1/5957.8</td><td class="c-blue">1/585.1</td></tr>
+        <tr><td>2</td><td class="c-blue">1/1489.5</td><td class="c-sky">1/3855.1</td><td class="bg-light-blue c-sky">1/5957.8</td><td class="c-yellow">1/16384.0</td><td class="bg-light-red c-red">1/5957.8</td><td class="c-purple">1/3855.1</td><td class="c-purple">1/5957.8</td><td class="c-blue">1/569.9</td></tr>
+        <tr><td>5</td><td class="c-blue">1/1456.4</td><td class="c-sky">1/3855.1</td><td class="bg-light-blue c-sky">1/5461.3</td><td class="c-yellow">1/16384.0</td><td class="bg-light-red c-red">1/5461.3</td><td class="c-purple">1/3855.1</td><td class="c-purple">1/5461.3</td><td class="c-blue">1/550.7</td></tr>
+        <tr><td>6</td><td class="c-blue">1/1394.4</td><td class="c-sky">1/3640.9</td><td class="bg-light-blue c-sky">1/5461.3</td><td class="c-yellow">1/13107.2</td><td class="bg-light-red c-red">1/5461.3</td><td class="c-purple">1/3640.9</td><td class="c-purple">1/5461.3</td><td class="c-blue">1/528.5</td></tr>
     </tbody>
 </table>
 
 <div class="flag-title title-sevenbig">７ビッグ詳細</div>
-<table class="summary-table sevenbig-table">
+<table class="summary-table">
     <thead>
         <tr>
             <th>設定</th>
-            <th>単独</th>
-            <th>JACリプレイ</th>
-            <th class="bg-light-blue">RTリプレイ</th>
-            <th>チェリーA</th>
-            <th class="bg-light-red">チェリーB</th>
-            <th>特殊役A</th>
-            <th>特殊役B</th>
-            <th>特殊役C</th>
-            <th>7ビッグボーナス</th>
+            <th class="c-red">単独</th>
+            <th class="c-sky">JACリプレイ</th>
+            <th class="bg-light-blue c-sky">RTリプレイ</th>
+            <th class="c-red">チェリーA</th>
+            <th class="bg-light-red c-red">チェリーB</th>
+            <th class="c-purple">特殊役A</th>
+            <th class="c-purple">特殊役B</th>
+            <th class="c-purple">特殊役C</th>
+            <th class="c-red">7ビッグボーナス</th>
         </tr>
     </thead>
     <tbody>
-        <tr><td>1</td><td>1/3449.3</td><td>1/8192.0</td><td class="bg-light-blue">1/5957.8</td><td>1/16384.0</td><td class="bg-light-red">1/5957.8</td><td>1/8192.0</td><td>1/5957.8</td><td>1/1638.4</td><td>1/585.1</td></tr>
-        <tr><td>2</td><td>1/3276.8</td><td>1/8192.0</td><td class="bg-light-blue">1/5957.8</td><td>1/16384.0</td><td class="bg-light-red">1/5957.8</td><td>1/8192.0</td><td>1/5957.8</td><td>1/1560.4</td><td>1/569.9</td></tr>
-        <tr><td>5</td><td>1/3276.8</td><td>1/8192.0</td><td class="bg-light-blue">1/5461.3</td><td>1/16384.0</td><td class="bg-light-red">1/5461.3</td><td>1/8192.0</td><td>1/5461.3</td><td>1/1524.1</td><td>1/550.7</td></tr>
-        <tr><td>6</td><td>1/3120.8</td><td>1/7281.8</td><td class="bg-light-blue">1/5461.3</td><td>1/13107.2</td><td class="bg-light-red">1/5461.3</td><td>1/7281.8</td><td>1/5461.3</td><td>1/1489.5</td><td>1/528.5</td></tr>
+        <tr><td>1</td><td class="c-red">1/3449.3</td><td class="c-sky">1/8192.0</td><td class="bg-light-blue c-sky">1/5957.8</td><td class="c-red">1/16384.0</td><td class="bg-light-red c-red">1/5957.8</td><td class="c-purple">1/8192.0</td><td class="c-purple">1/5957.8</td><td class="c-purple">1/1638.4</td><td class="c-red">1/585.1</td></tr>
+        <tr><td>2</td><td class="c-red">1/3276.8</td><td class="c-sky">1/8192.0</td><td class="bg-light-blue c-sky">1/5957.8</td><td class="c-red">1/16384.0</td><td class="bg-light-red c-red">1/5957.8</td><td class="c-purple">1/8192.0</td><td class="c-purple">1/5957.8</td><td class="c-purple">1/1560.4</td><td class="c-red">1/569.9</td></tr>
+        <tr><td>5</td><td class="c-red">1/3276.8</td><td class="c-sky">1/8192.0</td><td class="bg-light-blue c-sky">1/5461.3</td><td class="c-red">1/16384.0</td><td class="bg-light-red c-red">1/5461.3</td><td class="c-purple">1/8192.0</td><td class="c-purple">1/5461.3</td><td class="c-purple">1/1524.1</td><td class="c-red">1/550.7</td></tr>
+        <tr><td>6</td><td class="c-red">1/3120.8</td><td class="c-sky">1/7281.8</td><td class="bg-light-blue c-sky">1/5461.3</td><td class="c-red">1/13107.2</td><td class="bg-light-red c-red">1/5461.3</td><td class="c-purple">1/7281.8</td><td class="c-purple">1/5461.3</td><td class="c-purple">1/1489.5</td><td class="c-red">1/528.5</td></tr>
     </tbody>
 </table>
 
 <div class="flag-title title-reg">レギュラーボーナス詳細</div>
-<table class="summary-table reg-table">
+<table class="summary-table">
     <thead>
         <tr>
             <th>設定</th>
-            <th>単独</th>
-            <th class="bg-light-blue">RTリプレイ</th>
-            <th class="bg-light-red">チェリーB</th>
-            <th>特殊役D</th>
-            <th>特殊役E</th>
-            <th>RB出現率</th>
+            <th class="c-white">単独</th>
+            <th class="bg-light-blue c-sky">RTリプレイ</th>
+            <th class="bg-light-red c-red">チェリーB</th>
+            <th class="c-purple">特殊役D</th>
+            <th class="c-purple">特殊役E</th>
+            <th class="c-white">RB出現率</th>
         </tr>
     </thead>
     <tbody>
-        <tr><td>1</td><td>1/1456.4</td><td class="bg-light-blue">1/3276.8</td><td class="bg-light-red">1/3276.8</td><td>1/2427.3</td><td>1/1040.3</td><td>1/374.5</td></tr>
-        <tr><td>2</td><td>1/1310.7</td><td class="bg-light-blue">1/3120.8</td><td class="bg-light-red">1/3120.8</td><td>1/2259.9</td><td>1/923.0</td><td>1/341.3</td></tr>
-        <tr><td>5</td><td>1/1236.5</td><td class="bg-light-blue">1/2978.9</td><td class="bg-light-red">1/2978.9</td><td>1/2114.1</td><td>1/851.1</td><td>1/319.7</td></tr>
-        <tr><td>6</td><td>1/1149.8</td><td class="bg-light-blue">1/2730.7</td><td class="bg-light-red">1/2930.7</td><td>1/1820.4</td><td>1/789.6</td><td>1/292.6</td></tr>
+        <tr><td>1</td><td class="c-white">1/1456.4</td><td class="bg-light-blue c-sky">1/3276.8</td><td class="bg-light-red c-red">1/3276.8</td><td class="c-purple">1/2427.3</td><td class="c-purple">1/1040.3</td><td class="c-white">1/374.5</td></tr>
+        <tr><td>2</td><td class="c-white">1/1310.7</td><td class="bg-light-blue c-sky">1/3120.8</td><td class="bg-light-red c-red">1/3120.8</td><td class="c-purple">1/2259.9</td><td class="c-purple">1/923.0</td><td class="c-white">1/341.3</td></tr>
+        <tr><td>5</td><td class="c-white">1/1236.5</td><td class="bg-light-blue c-sky">1/2978.9</td><td class="bg-light-red c-red">1/2978.9</td><td class="c-purple">1/2114.1</td><td class="c-purple">1/851.1</td><td class="c-white">1/319.7</td></tr>
+        <tr><td>6</td><td class="c-white">1/1149.8</td><td class="bg-light-blue c-sky">1/2730.7</td><td class="bg-light-red c-red">1/2930.7</td><td class="c-purple">1/1820.4</td><td class="c-purple">1/789.6</td><td class="c-white">1/292.6</td></tr>
     </tbody>
 </table>
 
@@ -181,6 +172,7 @@
     </tbody>
 </table>
 
+<div class="scroll-container">
 <script>
 const IMG_FILES = { "リプレイ":"r.png", "チェリー":"c.png", "赤Ｘ":"xr.png", "ベル":"be.png", "スイカ":"w.png", "７":"7.png", "ＢＡＲ":"ba.png", "黄Ｘ":"xy.png" };
 const REEL_MAP = { 21:"リプレイ", 20:"チェリー", 19:"赤Ｘ", 18:"ベル", 17:"スイカ", 16:"リプレイ", 15:"ベル", 14:"スイカ", 13:"７", 12:"ベル", 11:"リプレイ", 10:"チェリー", 9:"ＢＡＲ", 8:"ベル", 7:"スイカ", 6:"リプレイ", 5:"黄Ｘ", 4:"赤Ｘ", 3:"黄Ｘ", 2:"スイカ", 1:"ベル" };
@@ -210,7 +202,6 @@ const modeKeys = ["ボーナス未成立", "Ｘビッグ成立", "７ビッグ�
 ["チェリーＢ", "通常リプ"].forEach(flagName => {
     const isCherryFlag = flagName === "チェリーＢ";
     document.write('<div class="flag-section"><div class="flag-title ' + (isCherryFlag ? 'title-cherry' : 'title-rep') + '">' + flagName + '</div>');
-    
     const modes = RAW_DATA[flagName];
     let allS = new Set();
     modeKeys.forEach(m => {
@@ -224,13 +215,10 @@ const modeKeys = ["ボーナス未成立", "Ｘビッグ成立", "７ビッグ�
         }
     });
     const sortedS = Array.from(allS).sort((a, b) => b - a);
-
     document.write('<table class="comparison-table"><thead><tr><th class="mode-label-black">状態</th>');
     sortedS.forEach(S => document.write('<th>' + S + '</th>'));
     document.write('</tr></thead><tbody>');
-
     modeKeys.forEach(m => {
-        if(!modes[m]) return;
         document.write('<tr><td class="mode-label-black">' + m + '</td>');
         const table = modes[m];
         sortedS.forEach(S => {
@@ -239,28 +227,24 @@ const modeKeys = ["ボーナス未成立", "Ｘビッグ成立", "７ビッグ�
                 let P = S - L; if (P < 1) P += 21;
                 if (table[P] !== undefined && table[P] === L) validSlips.push(L);
             }
-
             let cellClass = "";
             const baseL = RAW_DATA[flagName]["ボーナス未成立"];
             if (isCherryFlag) {
                 if ((S === 17 && m === "Ｘビッグ成立") || (S === 7 && m === "Regボーナス成立")) cellClass = "bg-blue";
             } else {
                 let isDiff = false;
-                for(let L of [4,3,2,1,0]){
+                for(let L of validSlips){
                     let P = S - L; if (P < 1) P += 21;
-                    if (table[P] === L && baseL[P] !== L) { isDiff = true; break; }
+                    if (baseL[P] !== L) { isDiff = true; break; }
                 }
                 if (isDiff) cellClass = "bg-blue";
             }
-
             document.write('<td class="' + cellClass + '">');
             if (validSlips.length > 0) {
                 const mid = (S % 21) + 1;
                 const top = (mid % 21) + 1;
                 document.write('<div class="stop-box"><span class="slip-tag ' + (flagName.includes("リプ")?'rep-tag':'') + '">[' + validSlips.join('') + ']</span><table class="reel-unit"><tr>' + getReelHTML(top) + '</tr><tr>' + getReelHTML(mid) + '</tr><tr>' + getReelHTML(S) + '</tr></table></div>');
-            } else {
-                document.write('<div class="empty">―</div>');
-            }
+            } else { document.write('<div class="empty">―</div>'); }
             document.write('</td>');
         });
         document.write('</tr>');
@@ -268,5 +252,6 @@ const modeKeys = ["ボーナス未成立", "Ｘビッグ成立", "７ビッグ�
     document.write('</tbody></table></div>');
 });
 </script>
+</div>
 </body>
 </html>
