@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Versus Revise - Auditor UI Fixed V2</title>
+    <title>Versus Revise - Auditor Fixed Final</title>
     <style>
         :root { --c-bg: #111; --c-text: #eee; --c-accent: #ffd700; --c-active-border: #adff2f; }
         * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
@@ -79,7 +79,7 @@ const FLAG_INFO = {
     special_a:{n:"特役Ａ",c:"tok"}, special_b:{n:"特役Ｂ",c:"tok"}, special_c:{n:"特役Ｃ",c:"tok"}, special_d:{n:"特役Ｄ",c:"tok"}, special_e:{n:"特役Ｅ",c:"tok"} 
 };
 
-
+// --- ここにマスターデータを貼り付け ---
 const LEFT_REEL_SLIP_MASTER = {
     hazure: {
         21: [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,0,1,,,,0,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
@@ -365,6 +365,8 @@ const RIGHT_REEL_SLIP_MASTER = {
     }
 };
 
+
+
 class ReverseAuditor {
     audit(reel, state, stopNum) {
         if (typeof LEFT_REEL_SLIP_MASTER === 'undefined') return [];
@@ -432,12 +434,10 @@ const app = {
             });
         }
         
-        // --- ズレ修正の核心部 ---
-        // 21番を配列インデックス0として扱うための調整
+        // --- 修正箇所：+240px にすることで指定番号を中段（180-360の中間）に配置 ---
         const baseH = 21 * 60;
         const offsetIdx = 21 - stopNum; 
-        // ターゲットボックス中段に指定番号を正確に配置（+180px）
-        document.getElementById('reel-strip').style.transform = `translate3d(0, ${-baseH - (offsetIdx * 60) + 180}px, 0)`;
+        document.getElementById('reel-strip').style.transform = `translate3d(0, ${-baseH - (offsetIdx * 60) + 240}px, 0)`;
     },
     renderReelStrip() {
         const container = document.getElementById('reel-strip'); container.innerHTML = '';
