@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Versus Revise - Auditor UI Fixed</title>
+    <title>Versus Revise - Auditor UI Fixed V2</title>
     <style>
         :root { --c-bg: #111; --c-text: #eee; --c-accent: #ffd700; --c-active-border: #adff2f; }
         * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
@@ -11,7 +11,6 @@
         .controls { padding: 5px; flex-shrink: 0; background: #222; border-bottom: 1px solid #444; }
         .tab-group { display: flex; gap: 4px; margin-bottom: 5px; overflow-x: auto; }
         
-        /* ボタン：非選択時は暗く、選択時は黄緑枠 */
         .tab { flex: 1; padding: 8px 4px; text-align: center; font-size: 11px; font-weight: bold; cursor: pointer; border-radius: 4px; border: 2px solid #444; opacity: 0.6; transition: all 0.2s; white-space: nowrap; min-width: 60px; filter: brightness(0.6); }
         .tab.active { opacity: 1; filter: brightness(1); border-color: var(--c-active-border); box-shadow: 0 0 8px rgba(173, 255, 47, 0.5); }
 
@@ -24,7 +23,6 @@
         #s-seven_big_established { background: #d50000; color: #fff; }
         #s-reg_bonus_established { background: #333; color: #fff; border: 2px solid #666; }
 
-        /* ワークスペース：9マス表示に最適化 */
         .workspace { display: flex; flex-direction: row-reverse; flex: 1; overflow: hidden; padding: 10px; gap: 10px; align-items: stretch; justify-content: center; }
         .reel-container { width: 100px; height: 540px; position: relative; background: #000; border: 2px solid #333; border-radius: 4px; flex-shrink: 0; overflow: hidden; touch-action: none; }
         .reel-strip { position: absolute; width: 100%; top: 0; left: 0; will-change: transform; }
@@ -38,7 +36,6 @@
         .res-name { width: 100px; font-size: 13px; flex-shrink: 0; }
         .res-data { flex: 1; text-align: right; font-size: 18px; letter-spacing: 2px; }
 
-        /* フラグ配色：同色系の濃い文字色に変更 */
         .f-hazure { background: #ffffff; color: #333333; }
         .f-rep { background: #b3e5fc; color: #01579b; }
         .f-bell { background: #fff176; color: #827717; }
@@ -82,8 +79,7 @@ const FLAG_INFO = {
     special_a:{n:"特役Ａ",c:"tok"}, special_b:{n:"特役Ｂ",c:"tok"}, special_c:{n:"特役Ｃ",c:"tok"}, special_d:{n:"特役Ｄ",c:"tok"}, special_e:{n:"特役Ｅ",c:"tok"} 
 };
 
-// --- マスタデータ（コメントアウト） ---
-// --- マスタデータ ---
+
 const LEFT_REEL_SLIP_MASTER = {
     hazure: {
         21: [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,0,1,,,,0,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
@@ -369,7 +365,6 @@ const RIGHT_REEL_SLIP_MASTER = {
     }
 };
 
-
 class ReverseAuditor {
     audit(reel, state, stopNum) {
         if (typeof LEFT_REEL_SLIP_MASTER === 'undefined') return [];
@@ -397,7 +392,6 @@ class ReverseAuditor {
 const Engine = new ReverseAuditor();
 
 const app = {
-    // 位置保持のためのオブジェクト
     state: { 
         reel: 'left', 
         flagMode: 'bonus_unestablished', 
@@ -419,7 +413,7 @@ const app = {
     },
     updateView() {
         const curReel = this.state.reel;
-        const stopNum = this.state.pos[curReel]; // 現在のリールの保持位置を取得
+        const stopNum = this.state.pos[curReel]; 
         
         document.querySelectorAll('.stop-tab').forEach(el => el.classList.toggle('active', el.id === `t-${curReel}`));
         document.querySelectorAll('.state-tab').forEach(el => el.classList.toggle('active', el.id === `s-${this.state.flagMode}`));
@@ -438,10 +432,12 @@ const app = {
             });
         }
         
+        // --- ズレ修正の核心部 ---
+        // 21番を配列インデックス0として扱うための調整
         const baseH = 21 * 60;
-        const targetIdx = 21 - stopNum;
-        // 中段に合わせるためオフセット 180px
-        document.getElementById('reel-strip').style.transform = `translate3d(0, ${-baseH - (targetIdx * 60) + 180}px, 0)`;
+        const offsetIdx = 21 - stopNum; 
+        // ターゲットボックス中段に指定番号を正確に配置（+180px）
+        document.getElementById('reel-strip').style.transform = `translate3d(0, ${-baseH - (offsetIdx * 60) + 180}px, 0)`;
     },
     renderReelStrip() {
         const container = document.getElementById('reel-strip'); container.innerHTML = '';
@@ -469,7 +465,7 @@ const app = {
             
             const curReel = this.state.reel;
             if(this.state.pos[curReel] !== nextNum) {
-                this.state.pos[curReel] = nextNum; // 位置を保持用オブジェクトに保存
+                this.state.pos[curReel] = nextNum; 
                 this.updateView();
             }
         };
