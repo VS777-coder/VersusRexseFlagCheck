@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Versus Revise - Position Aligned Auditor</title>
+    <style>
+        body { 
+            background: #0a0a0a; 
+            color: #ffffff; 
+            font-family: "Helvetica Neue", Arial, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif; 
+            padding: 30px; 
+            width: fit-content; 
+            line-height: 1.2;
+        }
+
+        .summary-table {
+            border-collapse: collapse;
+            margin-bottom: 50px;
+            background: #111;
+            border: 1px solid #ffffff;
+        }
+        .summary-table th, .summary-table td {
+            border: 1px solid #ffffff;
+            padding: 10px 20px;
+            font-size: 11px;
+            vertical-align: middle;
+            color: #ffffff; 
+        }
+        .summary-table thead th {
+            background: #1a1a1a;
+            text-align: center;
+            font-weight: bold;
+        }
+        .summary-table tbody th {
+            text-align: center;
+            width: auto;
+            min-width: 60px;
+            font-weight: bold;
+        }
+        
+        .indent {
+            padding-left: 30px !important;
+            text-align: left !important;
+        }
+
+        .summary-table td {
+            text-align: center;
+            font-family: "Consolas", "Monaco", monospace;
+            font-weight: bold;
+            min-width: 80px;
+        }
+
+        .cherry-hit-row th, .cherry-hit-row td { color: #ff4081 !important; }
+        .rep-hit-row th, .rep-hit-row td { color: #00b0ff !important; }
+
+        .flag-section { margin-bottom: 60px; }
+        .flag-title { color: #ffffff; padding: 6px 15px; font-size: 11px; display: inline-block; margin-bottom: 10px; border-radius: 2px; font-weight: bold; }
+        
+        .title-cherry { background: #ff4081; }
+        .title-rep { background: #00b0ff; }
+        .title-vc { background: #000080; }
+        .title-xbig { background: #0056b3; }
+        .title-sevenbig { background: #d50000; }
+        .title-reg { background: #333; }
+
+        /* 背景色設定 */
+        .bg-light-blue { background-color: #002244 !important; } /* 薄い水色 */
+        .bg-light-red { background-color: #440011 !important; }  /* 薄い赤 */
+
+        /* XBB詳細 列の色設定 (タイトルthとデータtd両方) */
+        .xbig-table th:nth-child(2), .xbig-table td:nth-child(2) { color: #448aff !important; }
+        .xbig-table th:nth-child(3), .xbig-table td:nth-child(3) { color: #81d4fa !important; }
+        .xbig-table th:nth-child(4), .xbig-table td:nth-child(4) { color: #81d4fa !important; }
+        .xbig-table th:nth-child(5), .xbig-table td:nth-child(5) { color: #fff176 !important; }
+        .xbig-table th:nth-child(6), .xbig-table td:nth-child(6) { color: #ff4081 !important; }
+        .xbig-table th:nth-child(7), .xbig-table td:nth-child(7) { color: #e1bee7 !important; }
+        .xbig-table th:nth-child(8), .xbig-table td:nth-child(8) { color: #e1bee7 !important; }
+        .xbig-table th:nth-child(9), .xbig-table td:nth-child(9) { color: #448aff !important; }
+
+        /* 7BB詳細 列の色設定 (タイトルthとデータtd両方) */
+        .sevenbig-table th:nth-child(2), .sevenbig-table td:nth-child(2) { color: #ff4081 !important; }
+        .sevenbig-table th:nth-child(3), .sevenbig-table td:nth-child(3) { color: #81d4fa !important; }
+        .sevenbig-table th:nth-child(4), .sevenbig-table td:nth-child(4) { color: #81d4fa !important; }
+        .sevenbig-table th:nth-child(5), .sevenbig-table td:nth-child(5) { color: #ff4081 !important; }
+        .sevenbig-table th:nth-child(6), .sevenbig-table td:nth-child(6) { color: #ff4081 !important; }
+        .sevenbig-table th:nth-child(7), .sevenbig-table td:nth-child(7) { color: #e1bee7 !important; }
+        .sevenbig-table th:nth-child(8), .sevenbig-table td:nth-child(8) { color: #e1bee7 !important; }
+        .sevenbig-table th:nth-child(9), .sevenbig-table td:nth-child(9) { color: #e1bee7 !important; }
+        .sevenbig-table th:nth-child(10), .sevenbig-table td:nth-child(10) { color: #ff4081 !important; }
+
+        /* レギュラーボーナス詳細 列の色設定 (タイトルthとデータtd両方) */
+        .reg-table th:nth-child(2), .reg-table td:nth-child(2) { color: #ffffff !important; }
+        .reg-table th:nth-child(3), .reg-table td:nth-child(3) { color: #81d4fa !important; }
+        .reg-table th:nth-child(4), .reg-table td:nth-child(4) { color: #ff4081 !important; }
+        .reg-table th:nth-child(5), .reg-table td:nth-child(5) { color: #e1bee7 !important; }
+        .reg-table th:nth-child(6), .reg-table td:nth-child(6) { color: #e1bee7 !important; }
+        .reg-table th:nth-child(7), .reg-table td:nth-child(7) { color: #ffffff !important; }
+
+        .comparison-table { border-collapse: collapse; background: #111; border: 1px solid #ffffff; }
+        .comparison-table th { padding: 10px; border: 1px solid #ffffff; background: #1a1a1a; color: #ffffff; font-size: 11px; text-align: center; vertical-align: middle; }
+        .comparison-table td { padding: 8px; border: 1px solid #ffffff; vertical-align: middle; text-align: center; color: #ffffff; }
+        
+        .mode-label-black { 
+            background: #000000 !important; 
+            font-weight: bold; 
+            text-align: center !important; 
+            min-width: 160px !important; 
+            font-size: 11px; 
+        }
+
+        .stop-box { background: #000; padding: 5px; border-radius: 2px; display: inline-block; }
+        .bg-blue { background: #0000ff !important; }
+
+        .reel-unit { border-collapse: collapse; margin-top: 5px; background: #000; }
+        .reel-unit td { border: 1px solid #555; padding: 0; width: 50px; height: auto; }
+        .reel-unit img { width: 50px; display: block; }
+        .slip-tag { color: #ff4081; font-weight: bold; font-size: 10px; display: block; margin-bottom: 3px; }
+        .rep-tag { color: #00b0ff; }
+        .empty { color: #444; font-size: 20px; vertical-align: middle; }
+    </style>
+</head>
+<body>
+
+<div class="flag-title title-xbig">Ｘビッグ詳細</div>
+<table class="summary-table xbig-table">
+    <thead>
+        <tr>
+            <th>設定</th>
+            <th>単独</th>
+            <th>JACリプレイ</th>
+            <th class="bg-light-blue">RTリプレイ</th>
+            <th>ベルＡ</th>
+            <th class="bg-light-red">チェリーＢ</th>
+            <th>特殊役D</th>
+            <th>特殊役E</th>
+            <th>Xビッグボーナス</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><th>1</th><td>1/1524.1</td><td>1/4096.0</td><td class="bg-light-blue">1/5957.8</td><td>1/16384.0</td><td class="bg-light-red">1/5957.8</td><td>1/4096.0</td><td>1/5957.8</td><td>1/585.1</td></tr>
+        <tr><th>2</th><td>1/1489.5</td><td>1/3855.1</td><td class="bg-light-blue">1/5957.8</td><td>1/16384.0</td><td class="bg-light-red">1/5957.8</td><td>1/3855.1</td><td>1/5957.8</td><td>1/569.9</td></tr>
+        <tr><th>5</th><td>1/1456.4</td><td>1/3855.1</td><td class="bg-light-blue">1/5461.3</td><td>1/16384.0</td><td class="bg-light-red">1/5461.3</td><td>1/3855.1</td><td>1/5461.3</td><td>1/550.7</td></tr>
+        <tr><th>6</th><td>1/1394.4</td><td>1/3640.9</td><td class="bg-light-blue">1/5461.3</td><td>1/13107.2</td><td class="bg-light-red">1/5461.3</td><td>1/3640.9</td><td>1/5461.3</td><td>1/528.5</td></tr>
+    </tbody>
+</table>
+
+<div class="flag-title title-sevenbig">７ビッグ詳細</div>
+<table class="summary-table sevenbig-table">
+    <thead>
+        <tr>
+            <th>設定</th>
+            <th>単独</th>
+            <th>JACリプレイ</th>
+            <th class="bg-light-blue">RTリプレイ</th>
+            <th>チェリーA</th>
+            <th class="bg-light-red">チェリーB</th>
+            <th>特殊役A</th>
+            <th>特殊役B</th>
+            <th>特殊役C</th>
+            <th>7ビッグボーナス</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><th>1</th><td>1/3449.3</td><td>1/8192.0</td><td class="bg-light-blue">1/5957.8</td><td>1/16384.0</td><td class="bg-light-red">1/5957.8</td><td>1/8192.0</td><td>1/5957.8</td><td>1/1638.4</td><td>1/585.1</td></tr>
+        <tr><th>2</th><td>1/3276.8</td><td>1/8192.0</td><td class="bg-light-blue">1/5957.8</td><td>1/16384.0</td><td class="bg-light-red">1/5957.8</td><td>1/8192.0</td><td>1/5957.8</td><td>1/1560.4</td><td>1/569.9</td></tr>
+        <tr><th>5</th><td>1/3276.8</td><td>1/8192.0</td><td class="bg-light-blue">1/5461.3</td><td>1/16384.0</td><td class="bg-light-red">1/5461.3</td><td>1/8192.0</td><td>1/5461.3</td><td>1/1524.1</td><td>1/550.7</td></tr>
+        <tr><th>6</th><td>1/3120.8</td><td>1/7281.8</td><td class="bg-light-blue">1/5461.3</td><td>1/13107.2</td><td class="bg-light-red">1/5461.3</td><td>1/7281.8</td><td>1/5461.3</td><td>1/1489.5</td><td>1/528.5</td></tr>
+    </tbody>
+</table>
+
+<div class="flag-title title-reg">レギュラーボーナス詳細</div>
+<table class="summary-table reg-table">
+    <thead>
+        <tr>
+            <th>設定</th>
+            <th>単独</th>
+            <th class="bg-light-blue">RTリプレイ</th>
+            <th class="bg-light-red">チェリーB</th>
+            <th>特殊役D</th>
+            <th>特殊役E</th>
+            <th>RB出現率</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><th>1</th><td>1/1456.4</td><td class="bg-light-blue">1/3276.8</td><td class="bg-light-red">1/3276.8</td><td>1/2427.3</td><td>1/1040.3</td><td>1/374.5</td></tr>
+        <tr><th>2</th><td>1/1310.7</td><td class="bg-light-blue">1/3120.8</td><td class="bg-light-red">1/3120.8</td><td>1/2259.9</td><td>1/923.0</td><td>1/341.3</td></tr>
+        <tr><th>5</th><td>1/1236.5</td><td class="bg-light-blue">1/2978.9</td><td class="bg-light-red">1/2978.9</td><td>1/2114.1</td><td>1/851.1</td><td>1/319.7</td></tr>
+        <tr><th>6</th><td>1/1149.8</td><td class="bg-light-blue">1/2730.7</td><td class="bg-light-red">1/2930.7</td><td>1/1820.4</td><td>1/789.6</td><td>1/292.6</td></tr>
+    </tbody>
+</table>
+
+<div class="flag-title title-vc">バーサスチャレンジ</div>
+
+<table class="summary-table">
+    <thead>
+        <tr>
+            <th>項目</th>
+            <th>確率</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><th class="indent">チェリーB＋ バーサスチャレンジ</th><td>1/479.9</td></tr>
+        <tr><th class="indent" style="padding-left:60px !important;">└ボーナス成立</th><td class="cherry-hit-row">1/1599.7</td></tr>
+        <tr><th class="indent">リプレイ＋ バーサスチャレンジ</th><td>1/472.1</td></tr>
+        <tr><th class="indent" style="padding-left:60px !important;">└ボーナス成立</th><td class="rep-hit-row">1/1573.7</td></tr>
+        <tr><th class="indent">バーサスチャレンジ合算</th><td>1/238.0</td></tr>
+    </tbody>
+</table>
+
+<script>
+// (以下、JavaScriptロジック部分は変更なし)
+const IMG_FILES = { "リプレイ":"r.png", "チェリー":"c.png", "赤Ｘ":"xr.png", "ベル":"be.png", "スイカ":"w.png", "７":"7.png", "ＢＡＲ":"ba.png", "黄Ｘ":"xy.png" };
+const REEL_MAP = { 21:"リプレイ", 20:"チェリー", 19:"赤Ｘ", 18:"ベル", 17:"スイカ", 16:"リプレイ", 15:"ベル", 14:"スイカ", 13:"７", 12:"ベル", 11:"リプレイ", 10:"チェリー", 9:"ＢＡＲ", 8:"ベル", 7:"スイカ", 6:"リプレイ", 5:"黄Ｘ", 4:"赤Ｘ", 3:"黄Ｘ", 2:"スイカ", 1:"ベル" };
+
+const RAW_DATA = {
+  "チェリーＢ": {
+    "ボーナス未成立": {21:4,20:0,19:1,18:0,17:1,16:2,15:3,14:4,13:0,12:1,11:2,10:0,9:1,8:0,7:1,6:2,5:3,4:4,3:1,2:2,1:3},
+    "Ｘビッグ成立": {21:4,20:0,19:1,18:0,17:1,16:2,15:3,14:4,13:4,12:1,11:2,10:0,9:1,8:0,7:1,6:2,5:3,4:4,3:1,2:2,1:3},
+    "７ビッグ成立": {21:4,20:0,19:1,18:0,17:1,16:2,15:3,14:4,13:0,12:1,11:2,10:0,9:1,8:0,7:1,6:2,5:3,4:4,3:1,2:2,1:3},
+    "Regボーナス成立": {21:4,20:0,19:1,18:0,17:1,16:2,15:3,14:4,13:0,12:1,11:2,10:0,9:1,8:0,7:1,6:2,5:3,4:4,3:4,2:2,1:3}
+  },
+  "通常リプ": {
+    "ボーナス未成立": {21:0,20:1,19:2,18:3,17:4,16:0,15:1,14:0,13:1,12:2,11:0,10:1,9:2,8:3,7:4,6:0,5:1,4:0,3:1,2:2,1:3},
+    "Ｘビッグ成立": {21:0,20:1,19:2,18:3,17:4,16:0,15:1,14:2,13:3,12:4,11:0,10:4,9:2,8:3,7:4,6:0,5:1,4:0,3:3,2:2,1:3},
+    "７ビッグ成立": {21:0,20:1,19:2,18:3,17:4,16:0,15:1,14:0,13:1,12:2,11:0,10:1,9:2,8:3,7:4,6:0,5:1,4:0,3:1,2:2,1:3},
+    "Regボーナス成立": {21:0,20:1,19:2,18:3,17:4,16:0,15:1,14:0,13:1,12:2,11:0,10:1,9:2,8:3,7:4,6:0,5:1,4:0,3:1,2:2,1:3}
+  }
+};
+
+function getReelHTML(n) {
+    let num = ((n - 1) % 21 + 21) % 21 + 1;
+    return '<td><img src="' + IMG_FILES[REEL_MAP[num]] + '"></td>';
+}
+
+const modeKeys = ["ボーナス未成立", "Ｘビッグ成立", "７ビッグ成立", "Regボーナス成立"];
+
+["チェリーＢ", "通常リプ"].forEach(flagName => {
+    const isCherryFlag = flagName === "チェリーＢ";
+    document.write('<div class="flag-section"><div class="flag-title ' + (isCherryFlag ? 'title-cherry' : 'title-rep') + '">' + flagName + '</div>');
+    
+    const modes = RAW_DATA[flagName];
+    let allS = new Set();
+    modeKeys.forEach(m => {
+        const table = modes[m];
+        if(!table) return;
+        for (let S = 21; S >= 1; S--) {
+            for (let L of [4,3,2,1,0]) {
+                let P = S - L; if (P < 1) P += 21;
+                if (table[P] !== undefined && table[P] === L) { allS.add(S); break; }
+            }
+        }
+    });
+    const sortedS = Array.from(allS).sort((a, b) => b - a);
+
+    document.write('<table class="comparison-table"><thead><tr><th class="mode-label-black">状態</th>');
+    sortedS.forEach(S => document.write('<th>' + S + '</th>'));
+    document.write('</tr></thead><tbody>');
+
+    modeKeys.forEach(m => {
+        if(!modes[m]) return;
+        document.write('<tr><td class="mode-label-black">' + m + '</td>');
+        const table = modes[m];
+        sortedS.forEach(S => {
+            let validSlips = [];
+            for (let L of [4,3,2,1,0]) {
+                let P = S - L; if (P < 1) P += 21;
+                if (table[P] !== undefined && table[P] === L) validSlips.push(L);
+            }
+
+            let cellClass = "";
+            const baseL = RAW_DATA[flagName]["ボーナス未成立"];
+            if (isCherryFlag) {
+                if ((S === 17 && m === "Ｘビッグ成立") || (S === 7 && m === "Regボーナス成立")) cellClass = "bg-blue";
+            } else {
+                let isDiff = false;
+                for(let L of [4,3,2,1,0]){
+                    let P = S - L; if (P < 1) P += 21;
+                    if (table[P] === L && baseL[P] !== L) { isDiff = true; break; }
+                }
+                if (isDiff) cellClass = "bg-blue";
+            }
+
+            document.write('<td class="' + cellClass + '">');
+            if (validSlips.length > 0) {
+                const mid = (S % 21) + 1;
+                const top = (mid % 21) + 1;
+                document.write('<div class="stop-box"><span class="slip-tag ' + (flagName.includes("リプ")?'rep-tag':'') + '">[' + validSlips.join('') + ']</span><table class="reel-unit"><tr>' + getReelHTML(top) + '</tr><tr>' + getReelHTML(mid) + '</tr><tr>' + getReelHTML(S) + '</tr></table></div>');
+            } else {
+                document.write('<div class="empty">―</div>');
+            }
+            document.write('</td>');
+        });
+        document.write('</tr>');
+    });
+    document.write('</tbody></table></div>');
+});
+</script>
+</body>
+</html>
