@@ -5,32 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Versus Revise - Static Data Auditor</title>
     <style>
-        :root { --c-bg: #111; --c-text: #eee; --c-accent: #ffd700; }
+        :root { --c-bg: #111; --c-text: #eee; --c-accent: #ffd700; --c-active-border: #adff2f; }
         * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
         html, body { width: 100%; height: 100%; margin: 0; padding: 0; background: var(--c-bg); color: var(--c-text); font-family: sans-serif; overflow: hidden; display: flex; flex-direction: column; }
         .controls { padding: 5px; flex-shrink: 0; background: #222; border-bottom: 1px solid #444; }
         .tab-group { display: flex; gap: 4px; margin-bottom: 5px; overflow-x: auto; }
-        .tab { flex: 1; padding: 8px 4px; text-align: center; font-size: 11px; font-weight: bold; cursor: pointer; border-radius: 4px; border: 1px solid #444; opacity: 0.5; transition: all 0.2s; white-space: nowrap; min-width: 60px; }
-        .tab.active { opacity: 1; border-color: #888; box-shadow: 0 0 5px rgba(255,255,255,0.2); }
-        .stop-tab.active#t-left { background: #ffb7ce; color: #800020; }
-        .stop-tab.active#t-middle { background: #b3e5fc; color: #003c8f; }
-        .stop-tab.active#t-right { background: #c8e6c9; color: #1b5e20; }
-        .state-tab#s-bonus_unestablished.active { background: #fff; color: #000; }
-        .state-tab#s-x_big_established.active { background: #304ffe; color: #fff; }
-        .state-tab#s-seven_big_established.active { background: #d50000; color: #fff; }
-        .state-tab#s-reg_bonus_established.active { background: #222; color: #fff; border: 1px solid #fff; }
-        .workspace { display: flex; flex-direction: row-reverse; flex: 1; overflow: hidden; padding: 10px; gap: 10px; align-items: flex-start; justify-content: center; }
-        .reel-container { width: 100px; height: 420px; position: relative; background: #000; border: 2px solid #333; border-radius: 4px; flex-shrink: 0; overflow: hidden; touch-action: none; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        
+        /* ボタンの基本スタイル：非選択時は暗く */
+        .tab { flex: 1; padding: 8px 4px; text-align: center; font-size: 11px; font-weight: bold; cursor: pointer; border-radius: 4px; border: 2px solid #444; opacity: 0.6; transition: all 0.2s; white-space: nowrap; min-width: 60px; filter: brightness(0.7); }
+        
+        /* 選択時：明るくし、黄緑の枠をつける */
+        .tab.active { opacity: 1; filter: brightness(1); border-color: var(--c-active-border); box-shadow: 0 0 8px rgba(173, 255, 47, 0.4); }
+
+        /* リール選択ボタンのデフォルト色 */
+        #t-left { background: #ffb7ce; color: #800020; }
+        #t-middle { background: #b3e5fc; color: #003c8f; }
+        #t-right { background: #c8e6c9; color: #1b5e20; }
+
+        /* 状態選択ボタンのデフォルト色 */
+        #s-bonus_unestablished { background: #fff; color: #000; }
+        #s-x_big_established { background: #304ffe; color: #fff; }
+        #s-seven_big_established { background: #d50000; color: #fff; }
+        #s-reg_bonus_established { background: #444; color: #fff; }
+
+        .workspace { display: flex; flex-direction: row-reverse; flex: 1; overflow: hidden; padding: 10px; gap: 10px; align-items: stretch; justify-content: center; }
+        .reel-container { width: 100px; height: 100%; max-height: 100%; position: relative; background: #000; border: 2px solid #333; border-radius: 4px; flex-shrink: 0; overflow: hidden; touch-action: none; }
         .reel-strip { position: absolute; width: 100%; top: 0; left: 0; will-change: transform; }
-        .symbol { height: 60px; display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); position: relative; font-size: 10px; box-sizing: border-box; }
+        .symbol { height: 60px; display: flex; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); position: relative; }
         .sym-idx { width: 26px; flex-shrink: 0; text-align: center; color: var(--c-accent); font-weight: bold; height: 100%; display: flex; align-items: center; justify-content: center; background: #111; border-right: 1px solid #333; z-index: 2; font-size: 11px; }
-        .sym-bg { position: absolute; top: 0; left: 26px; right: 0; bottom: 0; z-index: 1; background-color: #000; background-repeat: no-repeat; background-position: center; }
+        .sym-bg { position: absolute; top: 0; left: 26px; right: 0; bottom: 0; z-index: 1; background-repeat: no-repeat; background-position: center; }
         .target-box { position: absolute; top: 120px; left: 0; width: 100%; height: 180px; border: 3px solid #ff0000; pointer-events: none; z-index: 10; }
-        .results { flex: 1; height: 420px; background: #1a1a1a; border: 1px solid #333; overflow-y: auto; border-radius: 4px; display: flex; flex-direction: column; }
-        .res-row { display: flex; border-bottom: 1px solid #333; min-height: 40px; align-items: center; padding: 0 8px; font-family: monospace; }
-        .res-name { width: 90px; font-size: 11px; font-weight: bold; flex-shrink: 0; }
-        .res-data { flex: 1; text-align: right; font-size: 13px; color: #ddd; }
-        .res-slip { display: inline-block; padding: 2px 6px; margin-left: 4px; background: #333; border-radius: 3px; font-weight: bold; color: #fff; }
+
+        /* 成立役表示部分：Y方向サイズ最大 */
+        .results { flex: 1; height: 100%; background: #1a1a1a; border: 1px solid #333; overflow-y: auto; border-radius: 4px; display: flex; flex-direction: column; }
+        .res-row { display: flex; border-bottom: 1px solid #000; min-height: 45px; align-items: center; padding: 0 10px; font-family: monospace; color: #000; font-weight: bold; }
+        .res-name { width: 100px; font-size: 12px; flex-shrink: 0; }
+        .res-data { flex: 1; text-align: right; font-size: 16px; letter-spacing: 2px; }
+
+        /* フラグごとの背景色 */
+        .f-hazure { background: #ffffff; }
+        .f-rep { background: #b3e5fc; }
+        .f-bell { background: #fff176; }
+        .f-suika { background: #81c784; }
+        .f-cher { background: #ef5350; }
+        .f-tok { background: #ba68c8; color: #fff; }
     </style>
 </head>
 <body>
@@ -41,9 +59,9 @@
             <div id="t-right" class="stop-tab tab" onclick="app.setStop('right')">右リール</div>
         </div>
         <div class="tab-group">
-            <div id="s-bonus_unestablished" class="state-tab tab active" onclick="app.setState('bonus_unestablished')">ボーナス未成立</div>
-            <div id="s-x_big_established" class="state-tab tab" onclick="app.setState('x_big_established')">Ｘビッグ成立</div>
-            <div id="s-seven_big_established" class="state-tab tab" onclick="app.setState('seven_big_established')">７ビッグ成立</div>
+            <div id="s-bonus_unestablished" class="state-tab tab active" onclick="app.setState('bonus_unestablished')">未成立</div>
+            <div id="s-x_big_established" class="state-tab tab" onclick="app.setState('x_big_established')">Ｘ成立</div>
+            <div id="s-seven_big_established" class="state-tab tab" onclick="app.setState('seven_big_established')">７成立</div>
             <div id="s-reg_bonus_established" class="state-tab tab" onclick="app.setState('reg_bonus_established')">Reg成立</div>
         </div>
     </div>
@@ -53,7 +71,6 @@
     </div>
 
 <script>
-// --- 絵柄定義 ---
 const REEL_SYMBOLS = {
     left: ["Rep","Cher","X","Bell","Sui","Rep","Bell","Sui","Seven","Bell","Rep","Cher","Bar","Bell","Sui","Rep","X","X","X","Sui","Bell"],
     middle: ["ベル","チェリー","リプレイ","ベル","チェリー","スイカ","赤７","リプ","ベル","ＢＡＲ","チェリー","リプレイ","ベル","チェリー","Ｘ","リプレイ","ベル","チェリー","スイカ","チェリー","リプレイ"],
@@ -69,7 +86,6 @@ const FLAG_INFO = {
     special_a:{n:"特役Ａ",c:"tok"}, special_b:{n:"特役Ｂ",c:"tok"}, special_c:{n:"特役Ｃ",c:"tok"}, special_d:{n:"特役Ｄ",c:"tok"}, special_e:{n:"特役Ｅ",c:"tok"} 
 };
 
-// --- マスタデータ ---
 // --- マスタデータ ---
 const LEFT_REEL_SLIP_MASTER = {
     hazure: {
@@ -356,43 +372,26 @@ const RIGHT_REEL_SLIP_MASTER = {
     }
 };
 
-// --- スベリ判定エンジン (静的参照のみ) ---
 class ReverseAuditor {
     audit(reel, state, currentStopNum) {
-        let master;
-        if (reel === 'left') master = LEFT_REEL_SLIP_MASTER;
-        else if (reel === 'middle') master = MIDDLE_REEL_SLIP_MASTER;
-        else if (reel === 'right') master = RIGHT_REEL_SLIP_MASTER;
-
-        const stateMap = { 
-            'bonus_unestablished': 'hazure', 
-            'x_big_established': 'Vsus', 
-            'seven_big_established': 'seven', 
-            'reg_bonus_established': 'reg' 
-        };
-        
+        if (typeof LEFT_REEL_SLIP_MASTER === 'undefined') return [];
+        let master = (reel==='left') ? LEFT_REEL_SLIP_MASTER : (reel==='middle' ? MIDDLE_REEL_SLIP_MASTER : RIGHT_REEL_SLIP_MASTER);
+        const stateMap = { 'bonus_unestablished':'hazure', 'x_big_established':'Vsus', 'seven_big_established':'seven', 'reg_bonus_established':'reg' };
         const modeTable = master[stateMap[state]];
         if (!modeTable || !modeTable[currentStopNum]) return [];
-
         const row = modeTable[currentStopNum];
         const results = [];
-        const flagKeys = Object.keys(FLAG_INFO);
-        
-        flagKeys.forEach((flagKey, fIdx) => {
+        Object.keys(FLAG_INFO).forEach((flagKey, fIdx) => {
             const start = fIdx * 5; 
             const found = [];
             for (let i = 0; i < 5; i++) {
                 const s = row[start + i];
-                // 空文字 "" ではなく数値（0含む）が存在する場合のみ抽出
-                if (s !== "" && s !== null && s !== undefined) {
-                    let push = currentStopNum - s;
-                    while (push <= 0) push += 21;
-                    found.push({ pushNum: push, slip: s });
-                }
+                if (s !== "" && s !== null && s !== undefined) found.push(s);
             }
-            if (found.length > 0) { 
-                found.sort((a, b) => b.slip - a.slip); 
-                results.push({ key: flagKey, info: FLAG_INFO[flagKey], matches: found }); 
+            if (found.length > 0) {
+                // スベリコマ数を集約して降順に並べる
+                found.sort((a, b) => b - a);
+                results.push({ key: flagKey, info: FLAG_INFO[flagKey], slips: found.join('') });
             }
         });
         return results;
@@ -400,7 +399,6 @@ class ReverseAuditor {
 }
 const Engine = new ReverseAuditor();
 
-// --- アプリ制御 ---
 const app = {
     state: { reel: 'left', flagMode: 'bonus_unestablished', stopNum: 21 },
     init() { this.renderReelStrip(); this.attachEvents(); this.updateView(); },
@@ -411,26 +409,23 @@ const app = {
         document.querySelectorAll('.state-tab').forEach(el => el.classList.toggle('active', el.id === `s-${this.state.flagMode}`));
         const list = document.getElementById('result-list'); list.innerHTML = '';
         const results = Engine.audit(this.state.reel, this.state.flagMode, this.state.stopNum);
-        
         if(results.length === 0) {
-            list.innerHTML = '<div style="padding:20px;text-align:center;color:#555;">データなし</div>';
+            list.innerHTML = '<div style="padding:20px;text-align:center;color:#555;">データ未装填</div>';
         } else {
             results.forEach(res => {
                 const row = document.createElement('div');
                 row.className = `res-row f-${res.info.c}`;
-                const matches = res.matches.map(m => `<span class="res-slip">[${m.slip}]</span>`).join('');
-                row.innerHTML = `<div class="res-name">${res.info.n}</div><div class="res-data">${matches}</div>`;
+                // スベリコマ数を [43210] のような形式に集約
+                row.innerHTML = `<div class="res-name">${res.info.n}</div><div class="res-data">[${res.slips}]</div>`;
                 list.appendChild(row);
             });
         }
-        
         const baseH = 21 * 60;
         const targetIdx = 21 - this.state.stopNum;
-        document.getElementById('reel-strip').style.transform = `translate3d(0, ${-baseH - (targetIdx * 60) + 180}px, 0)`;
+        document.getElementById('reel-strip').style.transform = `translate3d(0, ${-baseH - (targetIdx * 60) + 120}px, 0)`;
     },
     renderReelStrip() {
-        const container = document.getElementById('reel-strip');
-        container.innerHTML = '';
+        const container = document.getElementById('reel-strip'); container.innerHTML = '';
         const syms = REEL_SYMBOLS[this.state.reel];
         const assets = { left: "reel1.png", middle: "reel2.png", right: "reel3.png" };
         for(let loop=0; loop<3; loop++) {
