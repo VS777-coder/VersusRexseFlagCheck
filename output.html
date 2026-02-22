@@ -2,59 +2,47 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Versus Revise - Position Aligned Auditor</title>
     <style>
         body { 
             background: #0a0a0a; 
             color: #ffffff; 
-            font-family: "Helvetica Neue", Arial, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif; 
-            padding: 30px; 
-            width: fit-content; 
+            font-family: sans-serif; 
+            padding: 5px; 
+            margin: 0;
             line-height: 1.2;
+            width: fit-content;
         }
 
         .summary-table {
             border-collapse: collapse;
+            width: 100%;
             margin-bottom: 50px;
             background: #111;
             border: 1px solid #ffffff;
         }
         .summary-table th, .summary-table td {
             border: 1px solid #ffffff;
-            padding: 10px 20px;
-            font-size: 11px;
+            padding: 8px 2px;
+            font-size: 16px; 
+            font-weight: bold;
+            text-align: center;
             vertical-align: middle;
-            color: #ffffff; 
         }
         .summary-table thead th {
             background: #1a1a1a;
-            text-align: center;
-            font-weight: bold;
-        }
-        .summary-table tbody th {
-            text-align: center;
-            width: auto;
-            min-width: 60px;
-            font-weight: bold;
-        }
-        
-        .indent {
-            padding-left: 30px !important;
-            text-align: left !important;
         }
 
-        .summary-table td {
-            text-align: center;
-            font-family: "Consolas", "Monaco", monospace;
-            font-weight: bold;
-            min-width: 80px;
+        /* 設定列の幅を最小に */
+        .summary-table th:first-child, .summary-table td:first-child {
+            width: 1px;
+            white-space: nowrap;
+            padding: 8px 5px;
         }
-
-        .cherry-hit-row th, .cherry-hit-row td { color: #ff4081 !important; }
-        .rep-hit-row th, .rep-hit-row td { color: #00b0ff !important; }
 
         .flag-section { margin-bottom: 60px; }
-        .flag-title { color: #ffffff; padding: 6px 15px; font-size: 11px; display: inline-block; margin-bottom: 10px; border-radius: 2px; font-weight: bold; }
+        .flag-title { color: #ffffff; padding: 6px 15px; font-size: 18px; display: inline-block; margin-bottom: 10px; border-radius: 2px; font-weight: bold; }
         
         .title-cherry { background: #ff4081; }
         .title-rep { background: #00b0ff; }
@@ -67,7 +55,7 @@
         .bg-light-blue { background-color: #002244 !important; } /* 薄い水色 */
         .bg-light-red { background-color: #440011 !important; }  /* 薄い赤 */
 
-        /* XBB詳細 列の色設定 (タイトルthとデータtd両方) */
+        /* XBB詳細 列の色 */
         .xbig-table th:nth-child(2), .xbig-table td:nth-child(2) { color: #448aff !important; }
         .xbig-table th:nth-child(3), .xbig-table td:nth-child(3) { color: #81d4fa !important; }
         .xbig-table th:nth-child(4), .xbig-table td:nth-child(4) { color: #81d4fa !important; }
@@ -77,7 +65,7 @@
         .xbig-table th:nth-child(8), .xbig-table td:nth-child(8) { color: #e1bee7 !important; }
         .xbig-table th:nth-child(9), .xbig-table td:nth-child(9) { color: #448aff !important; }
 
-        /* 7BB詳細 列の色設定 (タイトルthとデータtd両方) */
+        /* 7BB詳細 列の色 */
         .sevenbig-table th:nth-child(2), .sevenbig-table td:nth-child(2) { color: #ff4081 !important; }
         .sevenbig-table th:nth-child(3), .sevenbig-table td:nth-child(3) { color: #81d4fa !important; }
         .sevenbig-table th:nth-child(4), .sevenbig-table td:nth-child(4) { color: #81d4fa !important; }
@@ -88,7 +76,7 @@
         .sevenbig-table th:nth-child(9), .sevenbig-table td:nth-child(9) { color: #e1bee7 !important; }
         .sevenbig-table th:nth-child(10), .sevenbig-table td:nth-child(10) { color: #ff4081 !important; }
 
-        /* レギュラーボーナス詳細 列の色設定 (タイトルthとデータtd両方) */
+        /* REG詳細 列の色 */
         .reg-table th:nth-child(2), .reg-table td:nth-child(2) { color: #ffffff !important; }
         .reg-table th:nth-child(3), .reg-table td:nth-child(3) { color: #81d4fa !important; }
         .reg-table th:nth-child(4), .reg-table td:nth-child(4) { color: #ff4081 !important; }
@@ -97,26 +85,19 @@
         .reg-table th:nth-child(7), .reg-table td:nth-child(7) { color: #ffffff !important; }
 
         .comparison-table { border-collapse: collapse; background: #111; border: 1px solid #ffffff; }
-        .comparison-table th { padding: 10px; border: 1px solid #ffffff; background: #1a1a1a; color: #ffffff; font-size: 11px; text-align: center; vertical-align: middle; }
-        .comparison-table td { padding: 8px; border: 1px solid #ffffff; vertical-align: middle; text-align: center; color: #ffffff; }
-        
-        .mode-label-black { 
-            background: #000000 !important; 
-            font-weight: bold; 
-            text-align: center !important; 
-            min-width: 160px !important; 
-            font-size: 11px; 
-        }
-
+        .comparison-table th { padding: 10px; border: 1px solid #ffffff; background: #1a1a1a; font-size: 12px; }
+        .comparison-table td { padding: 8px; border: 1px solid #ffffff; text-align: center; vertical-align: middle; }
+        .mode-label-black { background: #000 !important; font-weight: bold; min-width: 120px; font-size: 11px; }
         .stop-box { background: #000; padding: 5px; border-radius: 2px; display: inline-block; }
         .bg-blue { background: #0000ff !important; }
-
         .reel-unit { border-collapse: collapse; margin-top: 5px; background: #000; }
-        .reel-unit td { border: 1px solid #555; padding: 0; width: 50px; height: auto; }
-        .reel-unit img { width: 50px; display: block; }
+        .reel-unit td { border: 1px solid #555; padding: 0; width: 40px; height: auto; }
+        .reel-unit img { width: 40px; display: block; }
         .slip-tag { color: #ff4081; font-weight: bold; font-size: 10px; display: block; margin-bottom: 3px; }
         .rep-tag { color: #00b0ff; }
-        .empty { color: #444; font-size: 20px; vertical-align: middle; }
+        .cherry-hit-row { color: #ff4081 !important; }
+        .rep-hit-row { color: #00b0ff !important; }
+        .empty { color: #444; font-size: 20px; }
     </style>
 </head>
 <body>
@@ -137,10 +118,10 @@
         </tr>
     </thead>
     <tbody>
-        <tr><th>1</th><td>1/1524.1</td><td>1/4096.0</td><td class="bg-light-blue">1/5957.8</td><td>1/16384.0</td><td class="bg-light-red">1/5957.8</td><td>1/4096.0</td><td>1/5957.8</td><td>1/585.1</td></tr>
-        <tr><th>2</th><td>1/1489.5</td><td>1/3855.1</td><td class="bg-light-blue">1/5957.8</td><td>1/16384.0</td><td class="bg-light-red">1/5957.8</td><td>1/3855.1</td><td>1/5957.8</td><td>1/569.9</td></tr>
-        <tr><th>5</th><td>1/1456.4</td><td>1/3855.1</td><td class="bg-light-blue">1/5461.3</td><td>1/16384.0</td><td class="bg-light-red">1/5461.3</td><td>1/3855.1</td><td>1/5461.3</td><td>1/550.7</td></tr>
-        <tr><th>6</th><td>1/1394.4</td><td>1/3640.9</td><td class="bg-light-blue">1/5461.3</td><td>1/13107.2</td><td class="bg-light-red">1/5461.3</td><td>1/3640.9</td><td>1/5461.3</td><td>1/528.5</td></tr>
+        <tr><td>1</td><td>1/1524.1</td><td>1/4096.0</td><td class="bg-light-blue">1/5957.8</td><td>1/16384.0</td><td class="bg-light-red">1/5957.8</td><td>1/4096.0</td><td>1/5957.8</td><td>1/585.1</td></tr>
+        <tr><td>2</td><td>1/1489.5</td><td>1/3855.1</td><td class="bg-light-blue">1/5957.8</td><td>1/16384.0</td><td class="bg-light-red">1/5957.8</td><td>1/3855.1</td><td>1/5957.8</td><td>1/569.9</td></tr>
+        <tr><td>5</td><td>1/1456.4</td><td>1/3855.1</td><td class="bg-light-blue">1/5461.3</td><td>1/16384.0</td><td class="bg-light-red">1/5461.3</td><td>1/3855.1</td><td>1/5461.3</td><td>1/550.7</td></tr>
+        <tr><td>6</td><td>1/1394.4</td><td>1/3640.9</td><td class="bg-light-blue">1/5461.3</td><td>1/13107.2</td><td class="bg-light-red">1/5461.3</td><td>1/3640.9</td><td>1/5461.3</td><td>1/528.5</td></tr>
     </tbody>
 </table>
 
@@ -161,10 +142,10 @@
         </tr>
     </thead>
     <tbody>
-        <tr><th>1</th><td>1/3449.3</td><td>1/8192.0</td><td class="bg-light-blue">1/5957.8</td><td>1/16384.0</td><td class="bg-light-red">1/5957.8</td><td>1/8192.0</td><td>1/5957.8</td><td>1/1638.4</td><td>1/585.1</td></tr>
-        <tr><th>2</th><td>1/3276.8</td><td>1/8192.0</td><td class="bg-light-blue">1/5957.8</td><td>1/16384.0</td><td class="bg-light-red">1/5957.8</td><td>1/8192.0</td><td>1/5957.8</td><td>1/1560.4</td><td>1/569.9</td></tr>
-        <tr><th>5</th><td>1/3276.8</td><td>1/8192.0</td><td class="bg-light-blue">1/5461.3</td><td>1/16384.0</td><td class="bg-light-red">1/5461.3</td><td>1/8192.0</td><td>1/5461.3</td><td>1/1524.1</td><td>1/550.7</td></tr>
-        <tr><th>6</th><td>1/3120.8</td><td>1/7281.8</td><td class="bg-light-blue">1/5461.3</td><td>1/13107.2</td><td class="bg-light-red">1/5461.3</td><td>1/7281.8</td><td>1/5461.3</td><td>1/1489.5</td><td>1/528.5</td></tr>
+        <tr><td>1</td><td>1/3449.3</td><td>1/8192.0</td><td class="bg-light-blue">1/5957.8</td><td>1/16384.0</td><td class="bg-light-red">1/5957.8</td><td>1/8192.0</td><td>1/5957.8</td><td>1/1638.4</td><td>1/585.1</td></tr>
+        <tr><td>2</td><td>1/3276.8</td><td>1/8192.0</td><td class="bg-light-blue">1/5957.8</td><td>1/16384.0</td><td class="bg-light-red">1/5957.8</td><td>1/8192.0</td><td>1/5957.8</td><td>1/1560.4</td><td>1/569.9</td></tr>
+        <tr><td>5</td><td>1/3276.8</td><td>1/8192.0</td><td class="bg-light-blue">1/5461.3</td><td>1/16384.0</td><td class="bg-light-red">1/5461.3</td><td>1/8192.0</td><td>1/5461.3</td><td>1/1524.1</td><td>1/550.7</td></tr>
+        <tr><td>6</td><td>1/3120.8</td><td>1/7281.8</td><td class="bg-light-blue">1/5461.3</td><td>1/13107.2</td><td class="bg-light-red">1/5461.3</td><td>1/7281.8</td><td>1/5461.3</td><td>1/1489.5</td><td>1/528.5</td></tr>
     </tbody>
 </table>
 
@@ -182,33 +163,25 @@
         </tr>
     </thead>
     <tbody>
-        <tr><th>1</th><td>1/1456.4</td><td class="bg-light-blue">1/3276.8</td><td class="bg-light-red">1/3276.8</td><td>1/2427.3</td><td>1/1040.3</td><td>1/374.5</td></tr>
-        <tr><th>2</th><td>1/1310.7</td><td class="bg-light-blue">1/3120.8</td><td class="bg-light-red">1/3120.8</td><td>1/2259.9</td><td>1/923.0</td><td>1/341.3</td></tr>
-        <tr><th>5</th><td>1/1236.5</td><td class="bg-light-blue">1/2978.9</td><td class="bg-light-red">1/2978.9</td><td>1/2114.1</td><td>1/851.1</td><td>1/319.7</td></tr>
-        <tr><th>6</th><td>1/1149.8</td><td class="bg-light-blue">1/2730.7</td><td class="bg-light-red">1/2930.7</td><td>1/1820.4</td><td>1/789.6</td><td>1/292.6</td></tr>
+        <tr><td>1</td><td>1/1456.4</td><td class="bg-light-blue">1/3276.8</td><td class="bg-light-red">1/3276.8</td><td>1/2427.3</td><td>1/1040.3</td><td>1/374.5</td></tr>
+        <tr><td>2</td><td>1/1310.7</td><td class="bg-light-blue">1/3120.8</td><td class="bg-light-red">1/3120.8</td><td>1/2259.9</td><td>1/923.0</td><td>1/341.3</td></tr>
+        <tr><td>5</td><td>1/1236.5</td><td class="bg-light-blue">1/2978.9</td><td class="bg-light-red">1/2978.9</td><td>1/2114.1</td><td>1/851.1</td><td>1/319.7</td></tr>
+        <tr><td>6</td><td>1/1149.8</td><td class="bg-light-blue">1/2730.7</td><td class="bg-light-red">1/2930.7</td><td>1/1820.4</td><td>1/789.6</td><td>1/292.6</td></tr>
     </tbody>
 </table>
 
 <div class="flag-title title-vc">バーサスチャレンジ</div>
-
 <table class="summary-table">
-    <thead>
-        <tr>
-            <th>項目</th>
-            <th>確率</th>
-        </tr>
-    </thead>
     <tbody>
-        <tr><th class="indent">チェリーB＋ バーサスチャレンジ</th><td>1/479.9</td></tr>
-        <tr><th class="indent" style="padding-left:60px !important;">└ボーナス成立</th><td class="cherry-hit-row">1/1599.7</td></tr>
-        <tr><th class="indent">リプレイ＋ バーサスチャレンジ</th><td>1/472.1</td></tr>
-        <tr><th class="indent" style="padding-left:60px !important;">└ボーナス成立</th><td class="rep-hit-row">1/1573.7</td></tr>
-        <tr><th class="indent">バーサスチャレンジ合算</th><td>1/238.0</td></tr>
+        <tr><td style="text-align:left; padding-left:10px;">チェリーB＋ バーサスチャレンジ</td><td>1/479.9</td></tr>
+        <tr class="cherry-hit-row"><td style="text-align:left; padding-left:30px;">└ボーナス成立</td><td>1/1599.7</td></tr>
+        <tr><td style="text-align:left; padding-left:10px;">リプレイ＋ バーサスチャレンジ</td><td>1/472.1</td></tr>
+        <tr class="rep-hit-row"><td style="text-align:left; padding-left:30px;">└ボーナス成立</td><td>1/1573.7</td></tr>
+        <tr><td style="text-align:left; padding-left:10px;">バーサスチャレンジ合算</td><td>1/238.0</td></tr>
     </tbody>
 </table>
 
 <script>
-// (以下、JavaScriptロジック部分は変更なし)
 const IMG_FILES = { "リプレイ":"r.png", "チェリー":"c.png", "赤Ｘ":"xr.png", "ベル":"be.png", "スイカ":"w.png", "７":"7.png", "ＢＡＲ":"ba.png", "黄Ｘ":"xy.png" };
 const REEL_MAP = { 21:"リプレイ", 20:"チェリー", 19:"赤Ｘ", 18:"ベル", 17:"スイカ", 16:"リプレイ", 15:"ベル", 14:"スイカ", 13:"７", 12:"ベル", 11:"リプレイ", 10:"チェリー", 9:"ＢＡＲ", 8:"ベル", 7:"スイカ", 6:"リプレイ", 5:"黄Ｘ", 4:"赤Ｘ", 3:"黄Ｘ", 2:"スイカ", 1:"ベル" };
 
