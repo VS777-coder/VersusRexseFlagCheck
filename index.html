@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Versus Revise - Auditor Final Clean</title>
+    <title>Versus Revise - Auditor Final Fixed</title>
     <style>
         :root { --c-bg: #111; --c-text: #eee; --c-accent: #ffd700; --c-active-border: #adff2f; }
         * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
@@ -11,7 +11,6 @@
         .controls { padding: 5px; flex-shrink: 0; background: #222; border-bottom: 1px solid #444; }
         .tab-group { display: flex; gap: 4px; margin-bottom: 5px; overflow-x: auto; }
         
-        /* ボタン設定 */
         .tab { flex: 1; padding: 8px 4px; text-align: center; font-size: 11px; font-weight: bold; cursor: pointer; border-radius: 4px; border: 2px solid #444; opacity: 0.6; transition: all 0.2s; white-space: nowrap; min-width: 60px; filter: brightness(0.6); }
         .tab.active { opacity: 1; filter: brightness(1); border-color: var(--c-active-border); box-shadow: 0 0 8px rgba(173, 255, 47, 0.5); }
 
@@ -24,7 +23,6 @@
         #s-seven_big_established { background: #d50000; color: #fff; }
         #s-reg_bonus_established { background: #333; color: #fff; border: 2px solid #666; }
 
-        /* レイアウト設定 */
         .workspace { display: flex; flex-direction: row-reverse; flex: 1; overflow: hidden; padding: 10px; gap: 10px; align-items: stretch; justify-content: center; }
         .reel-container { width: 100px; height: 540px; position: relative; background: #000; border: 2px solid #333; border-radius: 4px; flex-shrink: 0; overflow: hidden; touch-action: none; }
         .reel-strip { position: absolute; width: 100%; top: 0; left: 0; will-change: transform; }
@@ -33,13 +31,11 @@
         .sym-bg { position: absolute; top: 0; left: 26px; right: 0; bottom: 0; z-index: 1; background-repeat: no-repeat; background-position: center; }
         .target-box { position: absolute; top: 180px; left: 0; width: 100%; height: 180px; border: 3px solid #ff0000; pointer-events: none; z-index: 10; }
 
-        /* 成立役表示：13個ジャストサイズ */
         .results { flex: 1; height: 540px; background: #1a1a1a; border: 1px solid #333; overflow-y: hidden; border-radius: 4px; display: flex; flex-direction: column; }
         .res-row { display: flex; border-bottom: 1px solid rgba(0,0,0,0.1); height: 41.5px; align-items: center; padding: 0 10px; font-family: monospace; font-weight: bold; flex-shrink: 0; }
         .res-name { width: 90px; font-size: 11px; flex-shrink: 0; line-height: 1; }
         .res-data { flex: 1; text-align: right; font-size: 16px; letter-spacing: 1px; line-height: 1; }
 
-        /* 成立役配色 */
         .f-hazure { background: #ffffff; color: #333333; }
         .f-rep { background: #b3e5fc; color: #01579b; }
         .f-bell { background: #fff176; color: #827717; }
@@ -68,6 +64,23 @@
     </div>
 
 <script>
+// 1. 基本定義（最優先）
+const FLAG_INFO = { 
+    hazure:{n:"ハズレ",c:"hazure"}, 
+    replay_normal:{n:"通常リプ",c:"rep"}, replay_jac:{n:"JACリプ",c:"rep"}, replay_rt:{n:"RTリプ",c:"rep"}, 
+    bell_a:{n:"ベルＡ",c:"bell"}, bell_b:{n:"ベルＢ",c:"bell"}, 
+    watermelon_a:{n:"スイカＡ",c:"suika"}, watermelon_b:{n:"スイカＢ",c:"suika"}, 
+    cherry_a:{n:"チェリＡ",c:"cher"}, cherry_b:{n:"チェリＢ",c:"cher"}, 
+    special_a:{n:"特役Ａ",c:"tok"}, special_b:{n:"特役Ｂ",c:"tok"}, special_c:{n:"特役Ｃ",c:"tok"}, special_d:{n:"特役Ｄ",c:"tok"}, special_e:{n:"特役Ｅ",c:"tok"} 
+};
+
+const REEL_SYMBOLS = {
+    left: ["Rep","Cher","X","Bell","Sui","Rep","Bell","Sui","Seven","Bell","Rep","Cher","Bar","Bell","Sui","Rep","X","X","X","Sui","Bell"],
+    middle: ["ベル","チェリー","リプレイ","ベル","チェリー","スイカ","赤７","リプ","ベル","ＢＡＲ","チェリー","リプレイ","ベル","チェリー","Ｘ","リプレイ","ベル","チェリー","スイカ","チェリー","リプレイ"],
+    right: ["Cher","Bell","Sui","Rep","Cher","Seven","Bell","Sui","Rep","Cher","Bell","Rep","Bar","Cher","Bell","Sui","Rep","X","Bell","Sui","Rep"]
+};
+
+// 2. マスタデータ（あなたが提示した全データをここに結合済み）
 const LEFT_REEL_SLIP_MASTER = {
     hazure: {
         21: [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,0,1,,,,0,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
@@ -325,7 +338,7 @@ const RIGHT_REEL_SLIP_MASTER = {
         5: [,,2,,,,,,,,0,1,2,3,,,,,,,,,,,,,,,,,,,2,,,,,2,,,,,2,3,,,,2,3,,,,,,,,1,,,,,,2,,,,,2,,,,,2,,],
         4: [,,,,,0,1,2,3,,,,,,,0,1,2,3,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,],
         3: [,1,,,,,,,,,,,,,,,,,,,0,1,2,3,,0,1,2,3,,,1,,3,,,1,,3,,,,2,3,,,,2,3,,0,1,2,3,,,,,,,,1,2,3,,,1,2,3,,,1,2,3,],
-        2: [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,0,1,2,,,,,,,,,,,,,,,,,],
+        2: [,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,0,1,2,,,,,,,,,,,,,,,,,],
         1: [0,1,,3,,,,,,,0,1,2,3,,,,,,,,,,,,,,,,,0,,,3,,0,,,3,,,,,,,,,,,,,,,3,,,,2,3,,,,,3,,,,,3,,,,,3,],
     },
     reg: {
@@ -353,7 +366,7 @@ const RIGHT_REEL_SLIP_MASTER = {
     }
 };
 
-
+// 3. ロジックとアプリケーション
 class ReverseAuditor {
     audit(reel, state, stopNum) {
         if (typeof LEFT_REEL_SLIP_MASTER === 'undefined') return [];
@@ -386,16 +399,30 @@ const app = {
         flagMode: 'bonus_unestablished', 
         pos: { left: 8, middle: 15, right: 15 } 
     },
-    init() { this.renderReelStrip(); this.attachEvents(); this.updateView(); },
-    setStop(side) { this.state.reel = side; this.renderReelStrip(); this.updateView(); },
-    setState(mode) { this.state.flagMode = mode; this.updateView(); },
+    init() { 
+        this.renderReelStrip(); 
+        this.attachEvents(); 
+        this.updateView(); 
+    },
+    setStop(side) { 
+        this.state.reel = side; 
+        this.renderReelStrip(); 
+        this.updateView(); 
+    },
+    setState(mode) { 
+        this.state.flagMode = mode; 
+        this.updateView(); 
+    },
     updateView() {
         const curReel = this.state.reel;
         const stopNum = this.state.pos[curReel]; 
+        
         document.querySelectorAll('.stop-tab').forEach(el => el.classList.toggle('active', el.id === `t-${curReel}`));
         document.querySelectorAll('.state-tab').forEach(el => el.classList.toggle('active', el.id === `s-${this.state.flagMode}`));
+        
         const list = document.getElementById('result-list'); list.innerHTML = '';
         const results = Engine.audit(curReel, this.state.flagMode, stopNum);
+        
         if(results.length === 0) {
             list.innerHTML = '<div style="padding:20px;text-align:center;color:#555;">データ未装填</div>';
         } else {
@@ -406,6 +433,7 @@ const app = {
                 list.appendChild(row);
             });
         }
+        
         const baseH = 21 * 60;
         const offsetIdx = 21 - stopNum; 
         document.getElementById('reel-strip').style.transform = `translate3d(0, ${-baseH - (offsetIdx * 60) + 240}px, 0)`;
@@ -433,6 +461,7 @@ const app = {
             let nextNum = startNum - moveFrame;
             while(nextNum > 21) nextNum -= 21;
             while(nextNum < 1) nextNum += 21;
+            
             const curReel = this.state.reel;
             if(this.state.pos[curReel] !== nextNum) {
                 this.state.pos[curReel] = nextNum; 
