@@ -413,7 +413,7 @@ const app = {
         this.state.flagMode = mode; 
         this.updateView(); 
     },
-    updateView() {
+updateView() {
         const curReel = this.state.reel;
         const stopNum = this.state.pos[curReel]; 
         
@@ -423,8 +423,9 @@ const app = {
         const list = document.getElementById('result-list'); list.innerHTML = '';
         const results = Engine.audit(curReel, this.state.flagMode, stopNum);
         
+        // --- 修正箇所：データがない場合の文言を「停止しません」に変更 ---
         if(results.length === 0) {
-            list.innerHTML = '<div style="padding:20px;text-align:center;color:#555;">データ未装填</div>';
+            list.innerHTML = '<div style="padding:20px;text-align:center;color:#888;font-weight:bold;">停止しません</div>';
         } else {
             results.forEach(res => {
                 const row = document.createElement('div');
