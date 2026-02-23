@@ -16,8 +16,8 @@
         #t-middle { background: #b3e5fc; color: #002c6f; }
         #t-right { background: #c8e6c9; color: #0b3e10; }
         #s-hazure { background: #ffffff; color: #333; }
-        #s-v_big { background: #304ffe; color: #fff; }
-        #s-seven_big { background: #d50000; color: #fff; }
+        #s-don { background: #304ffe; color: #fff; }
+        #s-seven { background: #d50000; color: #fff; }
         #s-reg { background: #333; color: #fff; border: 2px solid #666; }
         .workspace { display: flex; flex-direction: row-reverse; flex: 1; overflow: hidden; padding: 10px; gap: 10px; align-items: stretch; justify-content: center; }
         .reel-container { width: 100px; height: 540px; position: relative; background: #000; border: 2px solid #333; border-radius: 4px; flex-shrink: 0; overflow: hidden; touch-action: none; }
@@ -36,10 +36,6 @@
         .f-suika { background: #a5d6a7; color: #1b5e20; }
         .f-cher { background: #ef9a9a; color: #b71c1c; }
         .f-tok { background: #e1bee7; color: #4a148c; }
-        
-        .footer-nav { padding: 5px; background: #222; border-top: 1px solid #444; flex-shrink: 0; }
-        /* ボタンの色を青に変更 */
-        .analysis-btn { display: block; width: 100%; padding: 12px; background: #0056b3; color: #fff; text-decoration: none; text-align: center; border-radius: 4px; font-weight: bold; font-size: 14px; border: 1px solid #004085; }
     </style>
 </head>
 <body>
@@ -51,18 +47,14 @@
         </div>
         <div class="tab-group">
             <div id="s-hazure" class="state-tab tab active" onclick="app.setState('hazure')">未成立</div>
-            <div id="s-v_big" class="state-tab tab" onclick="app.setState('v_big')">Ｘビッグ成立</div>
-            <div id="s-seven_big" class="state-tab tab" onclick="app.setState('seven_big')">７ビッグ成立</div>
+            <div id="s-don" class="state-tab tab" onclick="app.setState('don')">Ｘビッグ成立</div>
+            <div id="s-seven" class="state-tab tab" onclick="app.setState('seven')">７ビッグ成立</div>
             <div id="s-reg" class="state-tab tab" onclick="app.setState('reg')">Reg成立</div>
         </div>
     </div>
     <div class="workspace">
         <div id="touch-area" class="reel-container"><div class="target-box"></div><div id="reel-strip" class="reel-strip"></div></div>
         <div class="results" id="result-list"></div>
-    </div>
-    
-    <div class="footer-nav">
-        <a href="output.html" class="analysis-btn">解析値</a>
     </div>
 
 <script>
@@ -90,6 +82,7 @@ const REEL_SYMBOLS = {
     right: ["Cher","Bell","Sui","Rep","Cher","Seven","Bell","Sui","Rep","Cher","Bell","Rep","Bar","Cher","Bell","Sui","Rep","X","Bell","Sui","Rep"]
 };
 
+// --- マスタデータ ---
 // --- マスタデータ ---
 const LEFT_REEL_SLIP_MASTER = {
     hazure: {
@@ -376,7 +369,6 @@ const RIGHT_REEL_SLIP_MASTER = {
     }
 };
 
-
 const app = {
     state: { reel: 'left', flagMode: 'hazure', positions: { left: 8, middle: 15, right: 15 } },
     init() { this.render(); this.attach(); this.update(); },
@@ -388,7 +380,7 @@ const app = {
             syms.forEach((s, i) => {
                 const el = document.createElement('div'); el.className = 'symbol';
                 const p = 21 - i;
-                el.innerHTML = `<div class=\"sym-idx\">${p}</div><div class=\"sym-bg\" style=\"background-image:url('${assets[this.state.reel]}');background-size:100% 1260px;background-position:center -${i*60}px\"></div>`;
+                el.innerHTML = `<div class="sym-idx">${p}</div><div class="sym-bg" style="background-image:url('${assets[this.state.reel]}');background-size:100% 1260px;background-position:center -${i*60}px"></div>`;
                 win.appendChild(el);
             });
         }
@@ -399,8 +391,9 @@ const app = {
         document.querySelectorAll('.state-tab').forEach(el => el.classList.toggle('active', el.id === `s-${this.state.flagMode}`));
         const list = document.getElementById('result-list'); list.innerHTML = '';
         let master = (this.state.reel === 'left') ? LEFT_REEL_SLIP_MASTER : (this.state.reel === 'middle' ? MIDDLE_REEL_SLIP_MASTER : RIGHT_REEL_SLIP_MASTER);
-        const mode = (this.state.flagMode === 'v_big') ? 'Vsus' : this.state.flagMode;
-        const modeData = master[mode] || (this.state.flagMode === 'v_big' ? master['don'] : null);
+        const stateMap = { 'hazure':'hazure', 'don':'Vsus', 'seven':'seven', 'reg':'reg' };
+        const mode = stateMap[this.state.flagMode];
+        const modeData = master[mode];
         const row = modeData ? modeData[stopNum] : null;
         let foundAny = false;
         if (row) {
@@ -413,12 +406,12 @@ const app = {
                 if (slips.length > 0) {
                     foundAny = true;
                     const el = document.createElement('div'); el.className = `res-row f-${fd.c}`;
-                    el.innerHTML = `<div class=\"res-name\">${fd.n}</div><div class=\"res-data\">[${slips.sort((a,b)=>b-a).join('')}]</div>`;
+                    el.innerHTML = `<div class="res-name">${fd.n}</div><div class="res-data">[${slips.sort((a,b)=>b-a).join('')}]</div>`;
                     list.appendChild(el);
                 }
             });
         }
-        if (!foundAny) list.innerHTML = '<div style=\"padding:20px;text-align:center;color:#555;\">停止しません</div>';
+        if (!foundAny) list.innerHTML = '<div style="padding:20px;text-align:center;color:#555;">停止しません</div>';
         const y = -(21 * 60) - ((21 - stopNum) * 60) + 240;
         document.getElementById('reel-strip').style.transform = `translate3d(0, ${y}px, 0)`;
     },
