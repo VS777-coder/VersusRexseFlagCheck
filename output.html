@@ -11,7 +11,7 @@
             font-family: sans-serif; 
             padding: 5px; 
             margin: 0;
-            line-height: 1.1;
+            line-height: 1;
             overflow-x: hidden;
         }
 
@@ -21,67 +21,63 @@
            勝手に進めず、ソース出力の指示があるまで待機します。
         */
 
-        /* --- フレーム1: 上3つの詳細表（最小文字サイズ・名称完全維持） --- */
         .frame-top {
             width: 100%;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
         }
 
         .summary-table-top {
             border-collapse: collapse;
             width: 100%;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             background: #111;
             border: 1px solid #ffffff;
-            table-layout: auto; /* 名称を維持するため自動計算 */
+            table-layout: auto;
         }
+
+        /* 文字サイズを絶対的最小（極小）に固定 */
         .summary-table-top th, .summary-table-top td {
             border: 1px solid #ffffff;
-            padding: 4px 1px;
-            /* Webで見える最小文字サイズに固定 */
-            font-size: 9px; 
+            padding: 2px 0;
             font-weight: bold;
             text-align: center;
             vertical-align: middle;
             white-space: nowrap;
-        }
-        .summary-table-top thead th {
-            background: #1a1a1a;
-            font-size: 9px;
-        }
-        .summary-table-top th:first-child, .summary-table-top td:first-child {
-            width: 1px;
-            white-space: nowrap;
-            padding: 4px;
+            font-size: 7px; 
+            transform: scale(0.85);
+            transform-origin: center;
+            letter-spacing: -1.5px;
         }
 
-        /* 横幅に収まらない場合はスクロールを許容し、重なりを防止 */
+        .summary-table-top thead th {
+            background: #1a1a1a;
+            font-size: 6px;
+        }
+
         .scroll-wrapper-top {
             width: 100%;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
         }
 
-        /* --- フレーム2: 以降のコンテンツ（現状維持） --- */
         .frame-bottom {
             width: 100%;
-            border-top: 2px solid #444;
-            padding-top: 20px;
+            border-top: 1px solid #444;
+            padding-top: 10px;
         }
 
         .flag-section { margin-bottom: 50px; }
-        .flag-title { color: #ffffff; padding: 6px 15px; font-size: 18px; display: inline-block; margin-bottom: 10px; border-radius: 2px; font-weight: bold; }
+        .flag-title { color: #ffffff; padding: 4px 10px; font-size: 18px; display: inline-block; margin-bottom: 10px; border-radius: 2px; font-weight: bold; }
         
-        .title-cherry { background: #ff4081; }
-        .title-rep { background: #00b0ff; }
-        .title-vc { background: #000080; }
         .title-xbig { background: #0056b3; }
         .title-sevenbig { background: #d50000; }
         .title-reg { background: #333; }
+        .title-vc { background: #000080; }
+        .title-cherry { background: #ff4081; }
+        .title-rep { background: #00b0ff; }
 
         .bg-light-blue { background-color: #002244 !important; }
         .bg-light-red { background-color: #440011 !important; }
-
         .c-blue { color: #448aff !important; }
         .c-sky { color: #81d4fa !important; }
         .c-yellow { color: #fff176 !important; }
@@ -89,12 +85,7 @@
         .c-purple { color: #e1bee7 !important; }
         .c-white { color: #ffffff !important; }
 
-        .scroll-container {
-            width: 100vw;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
+        .scroll-container { width: 100vw; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .comparison-table { border-collapse: collapse; background: #111; border: 1px solid #ffffff; width: auto; }
         .comparison-table th { padding: 10px; border: 1px solid #ffffff; background: #1a1a1a; font-size: 12px; }
         .comparison-table td { padding: 8px; border: 1px solid #ffffff; text-align: center; vertical-align: middle; }
