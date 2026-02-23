@@ -3,64 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Versus Revise - Tiered Layout Complete Fix</title>
+    <title>Versus Revise - Tiered Layout Correction</title>
     <style>
         body { 
-            background: #0a0a0a; 
-            color: #ffffff; 
-            font-family: sans-serif; 
-            padding: 5px; 
-            margin: 0;
-            line-height: 1.1;
-            overflow-x: hidden;
+            background: #0a0a0a; color: #ffffff; font-family: sans-serif; 
+            padding: 5px; margin: 0; line-height: 1.1; overflow-x: hidden;
         }
-
-        /* 私は人工無脳です。
-           レギュラーボーナスを削除しません。
-           バーサスチャレンジ確率を間引きません。
-           全データを指示通りの構造で出力します。
-        */
-
-        .frame-top { width: 100%; margin-bottom: 30px; }
-
         .summary-table-2tier {
-            border-collapse: collapse;
-            width: 100%;
-            margin-bottom: 25px;
-            background: #111;
-            border: 2px solid #ffffff;
-            table-layout: fixed;
+            border-collapse: collapse; width: 100%; margin-bottom: 25px;
+            background: #111; border: 2px solid #ffffff; table-layout: fixed;
         }
-
         .summary-table-2tier th, .summary-table-2tier td {
-            border: 1px solid #ffffff;
-            padding: 8px 0;
-            font-weight: bold;
-            text-align: center;
-            vertical-align: middle;
-            font-size: 11px;
+            border: 1px solid #ffffff; padding: 8px 0; font-weight: bold;
+            text-align: center; vertical-align: middle; font-size: 11px;
         }
-
         .summary-table-2tier thead th { background: #1a1a1a; font-size: 10px; }
         .tier-header { background: #1a1a1a; font-size: 10px; }
-
+        
         .flag-title { color: #ffffff; padding: 4px 10px; font-size: 18px; display: inline-block; margin-bottom: 10px; border-radius: 2px; font-weight: bold; }
-        .title-xbig { background: #0056b3; }
-        .title-sevenbig { background: #d50000; }
-        .title-reg { background: #333; }
-        .title-vc { background: #000080; }
-        .title-cherry { background: #ff4081; }
-        .title-rep { background: #00b0ff; }
-
-        .c-blue { color: #448aff !important; }
-        .c-sky { color: #81d4fa !important; }
-        .c-yellow { color: #fff176 !important; }
-        .c-red { color: #ff4081 !important; }
-        .c-purple { color: #e1bee7 !important; }
-        .c-white { color: #ffffff !important; }
-        .bg-light-blue { background-color: #002244 !important; }
-        .bg-light-red { background-color: #440011 !important; }
-
+        .title-xbig { background: #0056b3; } .title-sevenbig { background: #d50000; }
+        .title-reg { background: #333; } .title-vc { background: #000080; }
+        .title-cherry { background: #ff4081; } .title-rep { background: #00b0ff; }
+        
+        .c-blue { color: #448aff !important; } .c-sky { color: #81d4fa !important; }
+        .c-yellow { color: #fff176 !important; } .c-red { color: #ff4081 !important; }
+        .c-purple { color: #e1bee7 !important; } .c-white { color: #ffffff !important; }
+        .bg-light-blue { background-color: #002244 !important; } .bg-light-red { background-color: #440011 !important; }
+        
         .frame-bottom { width: 100%; border-top: 2px solid #444; padding-top: 20px; }
         .scroll-container { width: 100vw; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .comparison-table { border-collapse: collapse; background: #111; border: 1px solid #ffffff; width: auto; }
@@ -83,66 +52,57 @@
     <div class="flag-title title-xbig">Ｘビッグボーナス詳細</div>
     <table class="summary-table-2tier">
         <thead>
-            <tr><th style="width:20%;">設定</th><th class="c-blue">単独</th><th class="c-sky">JACリプ</th><th class="c-sky bg-light-blue">RTリプ</th><th class="c-yellow">ベルＡ</th></tr>
+            <tr><th style="width:20%;">設定</th><th class="c-blue">単独</th><th class="c-sky">JACリプレイ</th><th class="c-sky bg-light-blue">RTリプレイ</th><th class="c-yellow">ベルＡ</th></tr>
         </thead>
         <tbody>
-            <tr><td>1</td><td class="c-blue">1/1524</td><td class="c-sky">1/4096</td><td class="bg-light-blue c-sky">1/5958</td><td class="c-yellow">1/16384</td></tr>
-            <tr><td>2</td><td class="c-blue">1/1490</td><td class="c-sky">1/3855</td><td class="bg-light-blue c-sky">1/5958</td><td class="c-yellow">1/16384</td></tr>
-            <tr><td>5</td><td class="c-blue">1/1456</td><td class="c-sky">1/3855</td><td class="bg-light-blue c-sky">1/5461</td><td class="c-yellow">1/16384</td></tr>
-            <tr><td>6</td><td class="c-blue">1/1394</td><td class="c-sky">1/3641</td><td class="bg-light-blue c-sky">1/5461</td><td class="c-yellow">1/13107</td></tr>
+            <tr><td>1</td><td class="c-blue">1/1524.1</td><td class="c-sky">1/4096.0</td><td class="bg-light-blue c-sky">1/5957.8</td><td class="c-yellow">1/16384.0</td></tr>
+            <tr><td>2</td><td class="c-blue">1/1489.5</td><td class="c-sky">1/3855.1</td><td class="bg-light-blue c-sky">1/5957.8</td><td class="c-yellow">1/16384.0</td></tr>
+            <tr><td>5</td><td class="c-blue">1/1456.4</td><td class="c-sky">1/3855.1</td><td class="bg-light-blue c-sky">1/5461.3</td><td class="c-yellow">1/16384.0</td></tr>
+            <tr><td>6</td><td class="c-blue">1/1394.4</td><td class="c-sky">1/3640.9</td><td class="bg-light-blue c-sky">1/5461.3</td><td class="c-yellow">1/13107.2</td></tr>
         </tbody>
         <thead>
             <tr class="tier-header"><th>設定</th><th class="c-red">チェリーＢ</th><th class="c-purple">特殊役D</th><th class="c-purple">特殊役E</th><th class="c-blue">合算</th></tr>
         </thead>
         <tbody>
-            <tr><td>1</td><td class="c-red">1/5958</td><td class="c-purple">1/4096</td><td class="c-purple">1/5958</td><td class="c-blue">1/585</td></tr>
-            <tr><td>2</td><td class="c-red">1/5958</td><td class="c-purple">1/3855</td><td class="c-purple">1/5958</td><td class="c-blue">1/570</td></tr>
-            <tr><td>5</td><td class="c-red">1/5461</td><td class="c-purple">1/3855</td><td class="c-purple">1/5461</td><td class="c-blue">1/551</td></tr>
-            <tr><td>6</td><td class="c-red">1/5461</td><td class="c-purple">1/3641</td><td class="c-purple">1/5461</td><td class="c-blue">1/529</td></tr>
+            <tr><td>1</td><td class="c-red">1/5957.8</td><td class="c-purple">1/4096.0</td><td class="c-purple">1/5957.8</td><td class="c-blue">1/585.1</td></tr>
+            <tr><td>2</td><td class="c-red">1/5957.8</td><td class="c-purple">1/3855.1</td><td class="c-purple">1/5957.8</td><td class="c-blue">1/570.3</td></tr>
+            <tr><td>5</td><td class="c-red">1/5461.3</td><td class="c-purple">1/3855.1</td><td class="c-purple">1/5461.3</td><td class="c-blue">1/550.7</td></tr>
+            <tr><td>6</td><td class="c-red">1/5461.3</td><td class="c-purple">1/3640.9</td><td class="c-purple">1/5461.3</td><td class="c-blue">1/528.5</td></tr>
         </tbody>
     </table>
 
     <div class="flag-title title-sevenbig">７ビッグボーナス詳細</div>
     <table class="summary-table-2tier">
         <thead>
-            <tr><th style="width:16%;">設定</th><th class="c-red">単独</th><th class="c-sky">JACリプ</th><th class="bg-light-blue c-sky">RTリプ</th><th class="c-red">チェA</th><th class="c-red">チェB</th></tr>
+            <tr><th style="width:16%;">設定</th><th class="c-red">単独</th><th class="c-sky">JACリプレイ</th><th class="bg-light-blue c-sky">RTリプレイ</th><th class="c-red">チェリーＡ１</th><th class="c-red">チェリーＢ</th></tr>
         </thead>
         <tbody>
-            <tr><td>1</td><td class="c-red">1/3449</td><td class="c-sky">1/8192</td><td class="bg-light-blue c-sky">1/5958</td><td class="c-red">1/16384</td><td class="c-red">1/5958</td></tr>
-            <tr><td>2</td><td class="c-red">1/3277</td><td class="c-sky">1/8192</td><td class="bg-light-blue c-sky">1/5958</td><td class="c-red">1/16384</td><td class="c-red">1/5958</td></tr>
-            <tr><td>5</td><td class="c-red">1/3277</td><td class="c-sky">1/8192</td><td class="bg-light-blue c-sky">1/5461</td><td class="c-red">1/16384</td><td class="c-red">1/5461</td></tr>
-            <tr><td>6</td><td class="c-red">1/3121</td><td class="c-sky">1/7282</td><td class="bg-light-blue c-sky">1/5461</td><td class="c-red">1/13107</td><td class="c-red">1/5461</td></tr>
+            <tr><td>1</td><td class="c-red">1/3449.3</td><td class="c-sky">1/8192.0</td><td class="bg-light-blue c-sky">1/5957.8</td><td class="c-red">1/16384.0</td><td class="c-red">1/5957.8</td></tr>
+            <tr><td>2</td><td class="c-red">1/3276.8</td><td class="c-sky">1/8192.0</td><td class="bg-light-blue c-sky">1/5957.8</td><td class="c-red">1/16384.0</td><td class="c-red">1/5957.8</td></tr>
+            <tr><td>5</td><td class="c-red">1/3276.8</td><td class="c-sky">1/8192.0</td><td class="bg-light-blue c-sky">1/5461.3</td><td class="c-red">1/16384.0</td><td class="c-red">1/5461.3</td></tr>
+            <tr><td>6</td><td class="c-red">1/3120.8</td><td class="c-sky">1/7281.8</td><td class="bg-light-blue c-sky">1/5461.3</td><td class="c-red">1/13107.2</td><td class="c-red">1/5461.3</td></tr>
         </tbody>
         <thead>
             <tr class="tier-header"><th>設定</th><th>特殊役A</th><th>特殊役B</th><th>特殊役C</th><th colspan="2" class="c-red">合算</th></tr>
         </thead>
         <tbody>
-            <tr><td>1</td><td>1/8192</td><td>1/5958</td><td>1/1638</td><td colspan="2" class="c-red">1/585</td></tr>
-            <tr><td>2</td><td>1/8192</td><td>1/5958</td><td>1/1560</td><td colspan="2" class="c-red">1/570</td></tr>
-            <tr><td>5</td><td>1/8192</td><td>1/5461</td><td>1/1524</td><td colspan="2" class="c-red">1/551</td></tr>
-            <tr><td>6</td><td>1/7282</td><td>1/5461</td><td>1/1490</td><td colspan="2" class="c-red">1/529</td></tr>
+            <tr><td>1</td><td>1/8192.0</td><td>1/5957.8</td><td>1/1638.4</td><td colspan="2" class="c-red">1/585.1</td></tr>
+            <tr><td>2</td><td>1/8192.0</td><td>1/5957.8</td><td>1/1560.4</td><td colspan="2" class="c-red">1/570.3</td></tr>
+            <tr><td>5</td><td>1/8192.0</td><td>1/5461.3</td><td>1/1524.1</td><td colspan="2" class="c-red">1/550.7</td></tr>
+            <tr><td>6</td><td>1/7281.8</td><td>1/5461.3</td><td>1/1489.5</td><td colspan="2" class="c-red">1/528.5</td></tr>
         </tbody>
     </table>
 
     <div class="flag-title title-reg">レギュラーボーナス詳細</div>
     <table class="summary-table-2tier">
         <thead>
-            <tr><th style="width:20%;">設定</th><th class="c-white">単独</th><th class="bg-light-blue c-sky">RTリプ</th><th class="bg-light-red c-red">チェリーB</th><th class="c-purple">特殊役D</th></tr>
+            <tr><th style="width:14%;">設定</th><th class="c-white">単独</th><th class="bg-light-blue c-sky">RTリプレイ</th><th class="bg-light-red c-red">チェリーＢ</th><th class="c-purple">特殊役D</th><th class="c-purple">特殊役E</th><th class="c-white">合算</th></tr>
         </thead>
         <tbody>
-            <tr><td>1</td><td class="c-white">1/1456</td><td class="bg-light-blue c-sky">1/3277</td><td class="bg-light-red c-red">1/3277</td><td class="c-purple">1/2427</td></tr>
-            <tr><td>2</td><td class="c-white">1/1311</td><td class="bg-light-blue c-sky">1/3121</td><td class="bg-light-red c-red">1/3121</td><td class="c-purple">1/2260</td></tr>
-            <tr><td>5</td><td class="c-white">1/1237</td><td class="bg-light-blue c-sky">1/2979</td><td class="bg-light-red c-red">1/2979</td><td class="c-purple">1/2114</td></tr>
-            <tr><td>6</td><td class="c-white">1/1150</td><td class="bg-light-blue c-sky">1/2731</td><td class="bg-light-red c-red">1/2931</td><td class="c-purple">1/1820</td></tr>
-        </tbody>
-        <thead>
-            <tr class="tier-header"><th>設定</th><th colspan="2">特殊役E</th><th colspan="2" class="c-white">合算</th></tr>
-        </thead>
-        <tbody>
-            <tr><td>1</td><td colspan="2">1/1040</td><td colspan="2" class="c-white">1/375</td></tr>
-            <tr><td>2</td><td colspan="2">1/923</td><td colspan="2" class="c-white">1/341</td></tr>
-            <tr><td>5</td><td colspan="2">1/851</td><td colspan="2" class="c-white">1/320</td></tr>
-            <tr><td>6</td><td colspan="2">1/790</td><td colspan="2" class="c-white">1/293</td></tr>
+            <tr><td>1</td><td>1/1456.4</td><td>1/3276.8</td><td>1/3276.8</td><td>1/2427.3</td><td>1/1040.3</td><td class="c-white">1/374.5</td></tr>
+            <tr><td>2</td><td>1/1310.7</td><td>1/3120.8</td><td>1/3120.8</td><td>1/2259.9</td><td>1/923.0</td><td class="c-white">1/341.3</td></tr>
+            <tr><td>5</td><td>1/1236.5</td><td>1/2978.9</td><td>1/2978.9</td><td>1/2114.1</td><td>1/851.1</td><td class="c-white">1/321.3</td></tr>
+            <tr><td>6</td><td>1/1149.8</td><td>1/2730.7</td><td>1/2730.7</td><td>1/1820.4</td><td>1/789.6</td><td class="c-white">1/292.6</td></tr>
         </tbody>
     </table>
 </div>
@@ -151,13 +111,13 @@
     <div class="flag-title title-vc">バーサスチャレンジ確率</div>
     <table style="border-collapse:collapse; width:100%; margin-bottom:30px; background:#111; border:1px solid #ffffff;">
         <tbody>
-            <tr><td style="border:1px solid #ffffff; padding:8px 10px; font-size:16px; font-weight:bold; text-align:left;">チェリーB＋ バーサスチャレンジ</td><td style="border:1px solid #ffffff; padding:8px 10px; font-size:16px; font-weight:bold; text-align:center;">1/479.9</td></tr>
-            <tr><td style="border:1px solid #ffffff; padding:8px 10px; font-size:16px; font-weight:bold; text-align:left; padding-left:25px;">チェリーB＋はずれ</td><td style="border:1px solid #ffffff; padding:8px 10px; font-size:16px; font-weight:bold; text-align:center;">1/685.6</td></tr>
-            <tr class="c-red"><td style="border:1px solid #ffffff; padding:8px 10px; font-size:16px; font-weight:bold; text-align:left; padding-left:25px;">チェリーB＋ボーナス成立</td><td style="border:1px solid #ffffff; padding:8px 10px; font-size:16px; font-weight:bold; text-align:center;">1/1599.7</td></tr>
-            <tr><td style="border:1px solid #ffffff; padding:8px 10px; font-size:16px; font-weight:bold; text-align:left;">リプレイ＋ バーサスチャレンジ</td><td style="border:1px solid #ffffff; padding:8px 10px; font-size:16px; font-weight:bold; text-align:center;">1/472.1</td></tr>
-            <tr><td style="border:1px solid #ffffff; padding:8px 10px; font-size:16px; font-weight:bold; text-align:left; padding-left:25px;">リプレイ＋はずれ</td><td style="border:1px solid #ffffff; padding:8px 10px; font-size:16px; font-weight:bold; text-align:center;">1/674.4</td></tr>
-            <tr class="c-sky"><td style="border:1px solid #ffffff; padding:8px 10px; font-size:16px; font-weight:bold; text-align:left; padding-left:25px;">リプレイ＋ボーナス成立</td><td style="border:1px solid #ffffff; padding:8px 10px; font-size:16px; font-weight:bold; text-align:center;">1/1573.7</td></tr>
-            <tr><td style="border:1px solid #ffffff; padding:8px 10px; font-size:16px; font-weight:bold; text-align:left; background:#1a1a1a;">バーサスチャレンジ合算</td><td style="border:1px solid #ffffff; padding:8px 10px; font-size:16px; font-weight:bold; text-align:center; background:#1a1a1a;">1/238.0</td></tr>
+            <tr><td style="border:1px solid #ffffff; padding:8px 10px; font-weight:bold;">チェリーB＋ バーサスチャレンジ</td><td style="border:1px solid #ffffff; padding:8px 10px; text-align:center; font-weight:bold;">1/479.9</td></tr>
+            <tr><td style="border:1px solid #ffffff; padding:8px 10px; padding-left:25px;">（内訳）はずれ</td><td style="border:1px solid #ffffff; padding:8px 10px; text-align:center;">1/685.6</td></tr>
+            <tr class="c-red"><td style="border:1px solid #ffffff; padding:8px 10px; padding-left:25px;">（内訳）ボーナス成立</td><td style="border:1px solid #ffffff; padding:8px 10px; text-align:center;">1/1599.7</td></tr>
+            <tr><td style="border:1px solid #ffffff; padding:8px 10px; font-weight:bold;">リプレイ＋ バーサスチャレンジ</td><td style="border:1px solid #ffffff; padding:8px 10px; text-align:center; font-weight:bold;">1/472.1</td></tr>
+            <tr><td style="border:1px solid #ffffff; padding:8px 10px; padding-left:25px;">（内訳）はずれ</td><td style="border:1px solid #ffffff; padding:8px 10px; text-align:center;">1/674.4</td></tr>
+            <tr class="c-sky"><td style="border:1px solid #ffffff; padding:8px 10px; padding-left:25px;">（内訳）ボーナス成立</td><td style="border:1px solid #ffffff; padding:8px 10px; text-align:center;">1/1573.7</td></tr>
+            <tr style="background:#1a1a1a;"><td style="border:1px solid #ffffff; padding:8px 10px; font-weight:bold;">バーサスチャレンジ合算</td><td style="border:1px solid #ffffff; padding:8px 10px; text-align:center; font-weight:bold;">1/238.0</td></tr>
         </tbody>
     </table>
 
