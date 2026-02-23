@@ -21,6 +21,7 @@
            勝手に進めず、ソース出力の指示があるまで待機します。
         */
 
+        /* --- フレーム1: 上3つの詳細表（横幅最適化・重なりと名称変更を完全排除） --- */
         .frame-top {
             width: 100%;
             margin-bottom: 40px;
@@ -32,30 +33,29 @@
             margin-bottom: 30px;
             background: #111;
             border: 1px solid #ffffff;
-            table-layout: fixed; /* 枠を固定して突き抜けを防止 */
+            table-layout: auto; /* 省略なしの名称を維持するため自動計算 */
         }
         .summary-table-top th, .summary-table-top td {
             border: 1px solid #ffffff;
-            padding: 10px 0;
-            /* 画面幅に合わせて文字サイズを8px〜12pxの間で可変させ、重なりを防止 */
-            font-size: clamp(8px, 2.5vw, 12px); 
+            padding: 8px 1px;
+            /* 名称を一切変えずに1画面に収めるためのサイズ調整 */
+            font-size: 10px; 
             font-weight: bold;
             text-align: center;
             vertical-align: middle;
             white-space: nowrap;
-            letter-spacing: -1.5px; /* 文字間を詰め、物理的な幅を圧縮 */
         }
         .summary-table-top thead th {
             background: #1a1a1a;
-            font-size: clamp(7px, 2vw, 10px);
+            font-size: 9px;
         }
-        /* 設定列のみ少し幅を持たせる */
         .summary-table-top th:first-child, .summary-table-top td:first-child {
-            width: 22px;
-            letter-spacing: 0;
-            font-size: 13px;
+            width: 1px;
+            white-space: nowrap;
+            padding: 8px 4px;
         }
 
+        /* --- フレーム2: 以降のコンテンツ（完全復元・現状維持） --- */
         .frame-bottom {
             width: 100%;
             border-top: 2px solid #444;
@@ -106,72 +106,78 @@
 
 <div class="frame-top">
     <div class="flag-title title-xbig">Ｘビッグボーナス詳細</div>
-    <table class="summary-table-top">
-        <thead>
-            <tr>
-                <th>設</th>
-                <th class="c-blue">単独</th>
-                <th class="c-sky">JAC</th>
-                <th class="c-sky bg-light-blue">RT</th>
-                <th class="c-yellow">ベルＡ</th>
-                <th class="c-red bg-light-red">チェB</th>
-                <th class="c-purple">特D</th>
-                <th class="c-purple">特E</th>
-                <th class="c-blue">合算</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><td>1</td><td class="c-blue">1/1524</td><td class="c-sky">1/4096</td><td class="bg-light-blue c-sky">1/5958</td><td class="c-yellow">1/16384</td><td class="bg-light-red c-red">1/5958</td><td class="c-purple">1/4096</td><td class="c-purple">1/5958</td><td class="c-blue">1/585</td></tr>
-            <tr><td>2</td><td class="c-blue">1/1490</td><td class="c-sky">1/3855</td><td class="bg-light-blue c-sky">1/5958</td><td class="c-yellow">1/16384</td><td class="bg-light-red c-red">1/5958</td><td class="c-purple">1/3855</td><td class="c-purple">1/5958</td><td class="c-blue">1/570</td></tr>
-            <tr><td>5</td><td class="c-blue">1/1456</td><td class="c-sky">1/3855</td><td class="bg-light-blue c-sky">1/5461</td><td class="c-yellow">1/16384</td><td class="bg-light-red c-red">1/5461</td><td class="c-purple">1/3855</td><td class="c-purple">1/5461</td><td class="c-blue">1/551</td></tr>
-            <tr><td>6</td><td class="c-blue">1/1394</td><td class="c-sky">1/3641</td><td class="bg-light-blue c-sky">1/5461</td><td class="c-yellow">1/13107</td><td class="bg-light-red c-red">1/5461</td><td class="c-purple">1/3641</td><td class="c-purple">1/5461</td><td class="c-blue">1/529</td></tr>
-        </tbody>
-    </table>
+    <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+        <table class="summary-table-top">
+            <thead>
+                <tr>
+                    <th>設定</th>
+                    <th class="c-blue">単独</th>
+                    <th class="c-sky">JACリプレイ</th>
+                    <th class="c-sky bg-light-blue">RTリプレイ</th>
+                    <th class="c-yellow">ベルＡ</th>
+                    <th class="c-red bg-light-red">チェリーＢ</th>
+                    <th class="c-purple">特殊役D</th>
+                    <th class="c-purple">特殊役E</th>
+                    <th class="c-blue">合算</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td class="c-blue">1/1524</td><td class="c-sky">1/4096</td><td class="bg-light-blue c-sky">1/5958</td><td class="c-yellow">1/16384</td><td class="bg-light-red c-red">1/5958</td><td class="c-purple">1/4096</td><td class="c-purple">1/5958</td><td class="c-blue">1/585</td></tr>
+                <tr><td>2</td><td class="c-blue">1/1490</td><td class="c-sky">1/3855</td><td class="bg-light-blue c-sky">1/5958</td><td class="c-yellow">1/16384</td><td class="bg-light-red c-red">1/5958</td><td class="c-purple">1/3855</td><td class="c-purple">1/5958</td><td class="c-blue">1/570</td></tr>
+                <tr><td>5</td><td class="c-blue">1/1456</td><td class="c-sky">1/3855</td><td class="bg-light-blue c-sky">1/5461</td><td class="c-yellow">1/16384</td><td class="bg-light-red c-red">1/5461</td><td class="c-purple">1/3855</td><td class="c-purple">1/5461</td><td class="c-blue">1/551</td></tr>
+                <tr><td>6</td><td class="c-blue">1/1394</td><td class="c-sky">1/3641</td><td class="bg-light-blue c-sky">1/5461</td><td class="c-yellow">1/13107</td><td class="bg-light-red c-red">1/5461</td><td class="c-purple">1/3641</td><td class="c-purple">1/5461</td><td class="c-blue">1/529</td></tr>
+            </tbody>
+        </table>
+    </div>
 
     <div class="flag-title title-sevenbig">７ビッグボーナス詳細</div>
-    <table class="summary-table-top">
-        <thead>
-            <tr>
-                <th>設</th>
-                <th class="c-red">単独</th>
-                <th class="c-sky">JAC</th>
-                <th class="bg-light-blue c-sky">RT</th>
-                <th class="c-red">チェA</th>
-                <th class="bg-light-red c-red">チェB</th>
-                <th class="c-purple">特A</th>
-                <th class="c-purple">特B</th>
-                <th class="c-purple">特C</th>
-                <th class="c-red">合算</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><td>1</td><td class="c-red">1/3449</td><td class="c-sky">1/8192</td><td class="bg-light-blue c-sky">1/5958</td><td class="c-red">1/16384</td><td class="bg-light-red c-red">1/5958</td><td class="c-purple">1/8192</td><td class="c-purple">1/5958</td><td class="c-purple">1/1638</td><td class="c-red">1/585</td></tr>
-            <tr><td>2</td><td class="c-red">1/3277</td><td class="c-sky">1/8192</td><td class="bg-light-blue c-sky">1/5958</td><td class="c-red">1/16384</td><td class="bg-light-red c-red">1/5958</td><td class="c-purple">1/8192</td><td class="c-purple">1/5958</td><td class="c-purple">1/1560</td><td class="c-red">1/570</td></tr>
-            <tr><td>5</td><td class="c-red">1/3277</td><td class="c-sky">1/8192</td><td class="bg-light-blue c-sky">1/5461</td><td class="c-red">1/16384</td><td class="bg-light-red c-red">1/5461</td><td class="c-purple">1/8192</td><td class="c-purple">1/5461</td><td class="c-purple">1/1524</td><td class="c-red">1/551</td></tr>
-            <tr><td>6</td><td class="c-red">1/3121</td><td class="c-sky">1/7282</td><td class="bg-light-blue c-sky">1/5461</td><td class="c-red">1/13107</td><td class="bg-light-red c-red">1/5461</td><td class="c-purple">1/7282</td><td class="c-purple">1/5461</td><td class="c-purple">1/1490</td><td class="c-red">1/529</td></tr>
-        </tbody>
-    </table>
+    <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+        <table class="summary-table-top">
+            <thead>
+                <tr>
+                    <th>設定</th>
+                    <th class="c-red">単独</th>
+                    <th class="c-sky">JACリプレイ</th>
+                    <th class="bg-light-blue c-sky">RTリプレイ</th>
+                    <th class="c-red">チェリーA</th>
+                    <th class="bg-light-red c-red">チェリーB</th>
+                    <th class="c-purple">特殊役A</th>
+                    <th class="c-purple">特殊役B</th>
+                    <th class="c-purple">特殊役C</th>
+                    <th class="c-red">合算</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td class="c-red">1/3449</td><td class="c-sky">1/8192</td><td class="bg-light-blue c-sky">1/5958</td><td class="c-red">1/16384</td><td class="bg-light-red c-red">1/5958</td><td class="c-purple">1/8192</td><td class="c-purple">1/5958</td><td class="c-purple">1/1638</td><td class="c-red">1/585</td></tr>
+                <tr><td>2</td><td class="c-red">1/3277</td><td class="c-sky">1/8192</td><td class="bg-light-blue c-sky">1/5958</td><td class="c-red">1/16384</td><td class="bg-light-red c-red">1/5958</td><td class="c-purple">1/8192</td><td class="c-purple">1/5958</td><td class="c-purple">1/1560</td><td class="c-red">1/570</td></tr>
+                <tr><td>5</td><td class="c-red">1/3277</td><td class="c-sky">1/8192</td><td class="bg-light-blue c-sky">1/5461</td><td class="c-red">1/16384</td><td class="bg-light-red c-red">1/5461</td><td class="c-purple">1/8192</td><td class="c-purple">1/5461</td><td class="c-purple">1/1524</td><td class="c-red">1/551</td></tr>
+                <tr><td>6</td><td class="c-red">1/3121</td><td class="c-sky">1/7282</td><td class="bg-light-blue c-sky">1/5461</td><td class="c-red">1/13107</td><td class="bg-light-red c-red">1/5461</td><td class="c-purple">1/7282</td><td class="c-purple">1/5461</td><td class="c-purple">1/1490</td><td class="c-red">1/529</td></tr>
+            </tbody>
+        </table>
+    </div>
 
     <div class="flag-title title-reg">レギュラーボーナス詳細</div>
-    <table class="summary-table-top">
-        <thead>
-            <tr>
-                <th>設</th>
-                <th class="c-white">単独</th>
-                <th class="bg-light-blue c-sky">RT</th>
-                <th class="bg-light-red c-red">チェB</th>
-                <th class="c-purple">特D</th>
-                <th class="c-purple">特E</th>
-                <th class="c-white">合算</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><td>1</td><td class="c-white">1/1456</td><td class="bg-light-blue c-sky">1/3277</td><td class="bg-light-red c-red">1/3277</td><td class="c-purple">1/2427</td><td class="c-purple">1/1040</td><td class="c-white">1/375</td></tr>
-            <tr><td>2</td><td class="c-white">1/1311</td><td class="bg-light-blue c-sky">1/3121</td><td class="bg-light-red c-red">1/3121</td><td class="c-purple">1/2260</td><td class="c-purple">1/923</td><td class="c-white">1/341</td></tr>
-            <tr><td>5</td><td class="c-white">1/1237</td><td class="bg-light-blue c-sky">1/2979</td><td class="bg-light-red c-red">1/2979</td><td class="c-purple">1/2114</td><td class="c-purple">1/851</td><td class="c-white">1/320</td></tr>
-            <tr><td>6</td><td class="c-white">1/1150</td><td class="bg-light-blue c-sky">1/2731</td><td class="bg-light-red c-red">1/2931</td><td class="c-purple">1/1820</td><td class="c-purple">1/790</td><td class="c-white">1/293</td></tr>
-        </tbody>
-    </table>
+    <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+        <table class="summary-table-top">
+            <thead>
+                <tr>
+                    <th>設定</th>
+                    <th class="c-white">単独</th>
+                    <th class="bg-light-blue c-sky">RTリプレイ</th>
+                    <th class="bg-light-red c-red">チェリーB</th>
+                    <th class="c-purple">特殊役D</th>
+                    <th class="c-purple">特殊役E</th>
+                    <th class="c-white">合算</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td class="c-white">1/1456</td><td class="bg-light-blue c-sky">1/3277</td><td class="bg-light-red c-red">1/3277</td><td class="c-purple">1/2427</td><td class="c-purple">1/1040</td><td class="c-white">1/375</td></tr>
+                <tr><td>2</td><td class="c-white">1/1311</td><td class="bg-light-blue c-sky">1/3121</td><td class="bg-light-red c-red">1/3121</td><td class="c-purple">1/2260</td><td class="c-purple">1/923</td><td class="c-white">1/341</td></tr>
+                <tr><td>5</td><td class="c-white">1/1237</td><td class="bg-light-blue c-sky">1/2979</td><td class="bg-light-red c-red">1/2979</td><td class="c-purple">1/2114</td><td class="c-purple">1/851</td><td class="c-white">1/320</td></tr>
+                <tr><td>6</td><td class="c-white">1/1150</td><td class="bg-light-blue c-sky">1/2731</td><td class="bg-light-red c-red">1/2931</td><td class="c-purple">1/1820</td><td class="c-purple">1/790</td><td class="c-white">1/293</td></tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <div class="frame-bottom">
@@ -187,11 +193,84 @@
             <tr><td style="border:1px solid #ffffff; padding:8px 10px; font-size:16px; font-weight:bold; text-align:left;">バーサスチャレンジ合算</td><td style="border:1px solid #ffffff; padding:8px 10px; font-size:16px; font-weight:bold; text-align:center;">1/238.0</td></tr>
         </tbody>
     </table>
+
     <div class="scroll-container">
-        <script>
-        // RAW_DATA および表示ロジック
-        // (以前の完全なスクリプトをここに含みます)
-        </script>
+    <script>
+    const IMG_FILES = { "リプレイ":"r.png", "チェリー":"c.png", "赤Ｘ":"xr.png", "ベル":"be.png", "スイカ":"w.png", "７":"7.png", "ＢＡＲ":"ba.png", "黄Ｘ":"xy.png" };
+    const REEL_MAP = { 21:"リプレイ", 20:"チェリー", 19:"赤Ｘ", 18:"ベル", 17:"スイカ", 16:"リプレイ", 15:"ベル", 14:"スイカ", 13:"７", 12:"ベル", 11:"リプレイ", 10:"チェリー", 9:"ＢＡＲ", 8:"ベル", 7:"スイカ", 6:"リプレイ", 5:"黄Ｘ", 4:"赤Ｘ", 3:"黄Ｘ", 2:"スイカ", 1:"ベル" };
+    const RAW_DATA = {
+      "チェリーＢ": {
+        "ボーナス未成立": {21:4,20:0,19:1,18:0,17:1,16:2,15:3,14:4,13:0,12:1,11:2,10:0,9:1,8:0,7:1,6:2,5:3,4:4,3:1,2:2,1:3},
+        "Ｘビッグ成立": {21:4,20:0,19:1,18:0,17:1,16:2,15:3,14:4,13:4,12:1,11:2,10:0,9:1,8:0,7:1,6:2,5:3,4:4,3:1,2:2,1:3},
+        "７ビッグ成立": {21:4,20:0,19:1,18:0,17:1,16:2,15:3,14:4,13:0,12:1,11:2,10:0,9:1,8:0,7:1,6:2,5:3,4:4,3:1,2:2,1:3},
+        "Regボーナス成立": {21:4,20:0,19:1,18:0,17:1,16:2,15:3,14:4,13:0,12:1,11:2,10:0,9:1,8:0,7:1,6:2,5:3,4:4,3:4,2:2,1:3}
+      },
+      "通常リプ": {
+        "ボーナス未成立": {21:0,20:1,19:2,18:3,17:4,16:0,15:1,14:0,13:1,12:2,11:0,10:1,9:2,8:3,7:4,6:0,5:1,4:0,3:1,2:2,1:3},
+        "Ｘビッグ成立": {21:0,20:1,19:2,18:3,17:4,16:0,15:1,14:2,13:3,12:4,11:0,10:4,9:2,8:3,7:4,6:0,5:1,4:0,3:3,2:2,1:3},
+        "７ビッグ成立": {21:0,20:1,19:2,18:3,17:4,16:0,15:1,14:0,13:1,12:2,11:0,10:1,9:2,8:3,7:4,6:0,5:1,4:0,3:1,2:2,1:3},
+        "Regボーナス成立": {21:0,20:1,19:2,18:3,17:4,16:0,15:1,14:0,13:1,12:2,11:0,10:1,9:2,8:3,7:4,6:0,5:1,4:0,3:1,2:2,1:3}
+      }
+    };
+    function getReelHTML(n) {
+        let num = ((n - 1) % 21 + 21) % 21 + 1;
+        return '<td><img src="' + IMG_FILES[REEL_MAP[num]] + '"></td>';
+    }
+    const modeKeys = ["ボーナス未成立", "Ｘビッグ成立", "７ビッグ成立", "Regボーナス成立"];
+    ["チェリーＢ", "通常リプ"].forEach(flagName => {
+        const isCherryFlag = flagName === "チェリーＢ";
+        document.write('<div class="flag-section"><div class="flag-title ' + (isCherryFlag ? 'title-cherry' : 'title-rep') + '">' + flagName + '</div>');
+        const modes = RAW_DATA[flagName];
+        let allS = new Set();
+        modeKeys.forEach(m => {
+            const table = modes[m];
+            if(!table) return;
+            for (let S = 21; S >= 1; S--) {
+                for (let L of [4,3,2,1,0]) {
+                    let P = S - L; if (P < 1) P += 21;
+                    if (table[P] !== undefined && table[P] === L) { allS.add(S); break; }
+                }
+            }
+        });
+        const sortedS = Array.from(allS).sort((a, b) => b - a);
+        document.write('<table class="comparison-table"><thead><tr><th class="mode-label-black">状態</th>');
+        sortedS.forEach(S => document.write('<th>' + S + '</th>'));
+        document.write('</tr></thead><tbody>');
+        modeKeys.forEach(m => {
+            if(!modes[m]) return;
+            document.write('<tr><td class="mode-label-black">' + m + '</td>');
+            const table = modes[m];
+            sortedS.forEach(S => {
+                let validSlips = [];
+                for (let L of [4,3,2,1,0]) {
+                    let P = S - L; if (P < 1) P += 21;
+                    if (table[P] !== undefined && table[P] === L) validSlips.push(L);
+                }
+                let cellClass = "";
+                const baseL = RAW_DATA[flagName]["ボーナス未成立"];
+                if (isCherryFlag) {
+                    if ((S === 17 && m === "Ｘビッグ成立") || (S === 7 && m === "Regボーナス成立")) cellClass = "bg-blue";
+                } else {
+                    let isDiff = false;
+                    for(let L of validSlips){
+                        let P = S - L; if (P < 1) P += 21;
+                        if (baseL[P] !== L) { isDiff = true; break; }
+                    }
+                    if (isDiff) cellClass = "bg-blue";
+                }
+                document.write('<td class="' + cellClass + '">');
+                if (validSlips.length > 0) {
+                    const mid = (S % 21) + 1;
+                    const top = (mid % 21) + 1;
+                    document.write('<div class="stop-box"><span class="slip-tag ' + (flagName.includes("リプ")?'rep-tag':'') + '">[' + validSlips.join('') + ']</span><table class="reel-unit"><tr>' + getReelHTML(top) + '</tr><tr>' + getReelHTML(mid) + '</tr><tr>' + getReelHTML(S) + '</tr></table></div>');
+                } else { document.write('<div class="empty">―</div>'); }
+                document.write('</td>');
+            });
+            document.write('</tr>');
+        });
+        document.write('</tbody></table></div>');
+    });
+    </script>
     </div>
 </div>
 
