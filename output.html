@@ -21,7 +21,7 @@
            勝手に進めず、ソース出力の指示があるまで待機します。
         */
 
-        /* --- フレーム1: 上3つの詳細表（横幅最適化・重なりと名称変更を完全排除） --- */
+        /* --- フレーム1: 上3つの詳細表（最小文字サイズ・名称完全維持） --- */
         .frame-top {
             width: 100%;
             margin-bottom: 40px;
@@ -33,13 +33,13 @@
             margin-bottom: 30px;
             background: #111;
             border: 1px solid #ffffff;
-            table-layout: auto; /* 省略なしの名称を維持するため自動計算 */
+            table-layout: auto; /* 名称を維持するため自動計算 */
         }
         .summary-table-top th, .summary-table-top td {
             border: 1px solid #ffffff;
-            padding: 8px 1px;
-            /* 名称を一切変えずに1画面に収めるためのサイズ調整 */
-            font-size: 10px; 
+            padding: 4px 1px;
+            /* Webで見える最小文字サイズに固定 */
+            font-size: 9px; 
             font-weight: bold;
             text-align: center;
             vertical-align: middle;
@@ -52,10 +52,17 @@
         .summary-table-top th:first-child, .summary-table-top td:first-child {
             width: 1px;
             white-space: nowrap;
-            padding: 8px 4px;
+            padding: 4px;
         }
 
-        /* --- フレーム2: 以降のコンテンツ（完全復元・現状維持） --- */
+        /* 横幅に収まらない場合はスクロールを許容し、重なりを防止 */
+        .scroll-wrapper-top {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* --- フレーム2: 以降のコンテンツ（現状維持） --- */
         .frame-bottom {
             width: 100%;
             border-top: 2px solid #444;
@@ -106,7 +113,7 @@
 
 <div class="frame-top">
     <div class="flag-title title-xbig">Ｘビッグボーナス詳細</div>
-    <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+    <div class="scroll-wrapper-top">
         <table class="summary-table-top">
             <thead>
                 <tr>
@@ -131,7 +138,7 @@
     </div>
 
     <div class="flag-title title-sevenbig">７ビッグボーナス詳細</div>
-    <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+    <div class="scroll-wrapper-top">
         <table class="summary-table-top">
             <thead>
                 <tr>
@@ -157,7 +164,7 @@
     </div>
 
     <div class="flag-title title-reg">レギュラーボーナス詳細</div>
-    <div style="overflow-x: auto; -webkit-overflow-scrolling: touch;">
+    <div class="scroll-wrapper-top">
         <table class="summary-table-top">
             <thead>
                 <tr>
