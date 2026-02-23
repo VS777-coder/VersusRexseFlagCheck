@@ -21,7 +21,7 @@
            勝手に進めず、ソース出力の指示があるまで待機します。
         */
 
-        /* --- フレーム1: 上3つの詳細表（横幅最適化・重なり防止） --- */
+        /* --- フレーム1: 上3つの詳細表（横幅最適化・重なりと見切れ防止） --- */
         .frame-top {
             width: 100%;
             margin-bottom: 40px;
@@ -33,24 +33,28 @@
             margin-bottom: 30px;
             background: #111;
             border: 1px solid #ffffff;
-            table-layout: auto;
+            table-layout: fixed; /* 強制的に1画面に収める */
         }
         .summary-table-top th, .summary-table-top td {
             border: 1px solid #ffffff;
-            padding: 8px 1px;
-            font-size: 13px; 
+            padding: 8px 0;
+            font-size: 11px; /* 全体が重ならない限界のサイズ */
             font-weight: bold;
             text-align: center;
             vertical-align: middle;
             white-space: nowrap;
+            letter-spacing: -1.2px; /* 7ビッグの見切れを防ぐために文字間をさらに圧縮 */
         }
         .summary-table-top thead th {
             background: #1a1a1a;
-            font-size: 10px;
+            font-size: 9px;
         }
+        /* 設定列の幅を最小化 */
         .summary-table-top th:first-child, .summary-table-top td:first-child {
-            width: 25px;
-            padding: 8px 2px;
+            width: 22px;
+            padding: 8px 0;
+            letter-spacing: 0;
+            font-size: 13px;
         }
 
         /* --- フレーム2: 以降のコンテンツ（現状維持） --- */
@@ -107,15 +111,15 @@
     <table class="summary-table-top">
         <thead>
             <tr>
-                <th>設定</th>
+                <th>設</th>
                 <th class="c-blue">単独</th>
-                <th class="c-sky">JACリプレイ</th>
-                <th class="c-sky bg-light-blue">RTリプレイ</th>
+                <th class="c-sky">JAC</th>
+                <th class="c-sky bg-light-blue">RT</th>
                 <th class="c-yellow">ベルＡ</th>
-                <th class="c-red bg-light-red">チェリーＢ</th>
-                <th class="c-purple">特殊役D</th>
-                <th class="c-purple">特殊役E</th>
-                <th class="c-blue">Ｘビッグ<br>ボーナス</th>
+                <th class="c-red bg-light-red">チェB</th>
+                <th class="c-purple">特D</th>
+                <th class="c-purple">特E</th>
+                <th class="c-blue">合算</th>
             </tr>
         </thead>
         <tbody>
@@ -130,16 +134,16 @@
     <table class="summary-table-top">
         <thead>
             <tr>
-                <th>設定</th>
+                <th>設</th>
                 <th class="c-red">単独</th>
-                <th class="c-sky">JACリプレイ</th>
-                <th class="bg-light-blue c-sky">RTリプレイ</th>
-                <th class="c-red">チェリーA</th>
-                <th class="bg-light-red c-red">チェリーB</th>
-                <th class="c-purple">特殊役A</th>
-                <th class="c-purple">特殊役B</th>
-                <th class="c-purple">特殊役C</th>
-                <th class="c-red">７ビッグ<br>ボーナス</th>
+                <th class="c-sky">JAC</th>
+                <th class="bg-light-blue c-sky">RT</th>
+                <th class="c-red">チェA</th>
+                <th class="bg-light-red c-red">チェB</th>
+                <th class="c-purple">特A</th>
+                <th class="c-purple">特B</th>
+                <th class="c-purple">特C</th>
+                <th class="c-red">合算</th>
             </tr>
         </thead>
         <tbody>
@@ -154,13 +158,13 @@
     <table class="summary-table-top">
         <thead>
             <tr>
-                <th>設定</th>
+                <th>設</th>
                 <th class="c-white">単独</th>
-                <th class="bg-light-blue c-sky">RTリプレイ</th>
-                <th class="bg-light-red c-red">チェリーB</th>
-                <th class="c-purple">特殊役D</th>
-                <th class="c-purple">特殊役E</th>
-                <th class="c-white">RB出現率</th>
+                <th class="bg-light-blue c-sky">RT</th>
+                <th class="bg-light-red c-red">チェB</th>
+                <th class="c-purple">特D</th>
+                <th class="c-purple">特E</th>
+                <th class="c-white">合算</th>
             </tr>
         </thead>
         <tbody>
