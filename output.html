@@ -38,13 +38,12 @@
         .empty { color: #444; font-size: 20px; }
         .flag-section { margin-bottom: 10px; }
 
-        /* 横並び用コンテナ */
-        .spec-container { display: flex; justify-content: space-around; padding: 10px 0; background: #111; }
+        .spec-container { display: flex; justify-content: space-around; padding: 10px 0; background: #111; flex-wrap: wrap; gap: 10px; }
         .spec-item { text-align: center; }
-        .spec-reel { border-collapse: collapse; margin: 0 auto; }
-        .spec-reel td { border: 1px solid #555; width: 50px; background: #000; }
-        .spec-reel img { width: 50px; display: block; }
-        .spec-name { font-size: 10px; margin-top: 3px; font-weight: bold; }
+        .spec-reel { border-collapse: collapse; margin: 0 auto 5px; }
+        .spec-reel td { border: 1px solid #555; width: 40px; background: #000; }
+        .spec-reel img { width: 40px; display: block; }
+        .spec-name { font-size: 10px; margin-bottom: 3px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -107,8 +106,30 @@
 </div>
 
 <div class="frame-top">
-    <div class="flag-title title-sevenbig" style="width:100%; text-align:center; box-sizing:border-box;">特殊役Ａ / Ｂ / Ｃ</div>
-    <div style="padding:10px; background:#111; text-align:center; font-size:11px; color:#888;">（構成未定）</div>
+    <div class="spec-container">
+        <div class="spec-item">
+            <div class="spec-name">特殊役Ａ</div>
+            <table class="spec-reel">
+                <tr><td><img src="w.png"></td><td><img src="w.png"></td><td><img src="7.png"></td></tr>
+                <tr><td><img src="xy.png"></td><td><img src="xr.png"></td><td><img src="c2.png"></td></tr>
+            </table>
+        </div>
+        <div class="spec-item">
+            <div class="spec-name">特殊役Ｂ</div>
+            <table class="spec-reel">
+                <tr><td><img src="xy.png"></td><td><img src="xr.png"></td><td><img src="7.png"></td></tr>
+                <tr><td><img src="xy.png"></td><td><img src="xr.png"></td><td><img src="c2.png"></td></tr>
+            </table>
+        </div>
+        <div class="spec-item">
+            <div class="spec-name">特殊役Ｃ</div>
+            <table class="spec-reel">
+                <tr><td><img src="w.png"></td><td><img src="w.png"></td><td><img src="7.png"></td></tr>
+                <tr><td><img src="xy.png"></td><td><img src="xr.png"></td><td><img src="7.png"></td></tr>
+                <tr><td><img src="xy.png"></td><td><img src="xr.png"></td><td><img src="c2.png"></td></tr>
+            </table>
+        </div>
+    </div>
 </div>
 
 <div class="frame-top">
