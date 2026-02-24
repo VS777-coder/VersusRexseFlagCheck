@@ -38,10 +38,13 @@
         .empty { color: #444; font-size: 20px; }
         .flag-section { margin-bottom: 10px; }
 
-        .spec-box { padding: 10px; background: #111; text-align: center; }
-        .spec-reel { margin: 0 auto; border-collapse: collapse; }
-        .spec-reel td { border: 1px solid #555; width: 60px; background: #000; }
-        .spec-reel img { width: 60px; display: block; }
+        /* 横並び用コンテナ */
+        .spec-container { display: flex; justify-content: space-around; padding: 10px 0; background: #111; }
+        .spec-item { text-align: center; }
+        .spec-reel { border-collapse: collapse; margin: 0 auto; }
+        .spec-reel td { border: 1px solid #555; width: 50px; background: #000; }
+        .spec-reel img { width: 50px; display: block; }
+        .spec-name { font-size: 10px; margin-top: 3px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -67,28 +70,19 @@
 </div>
 
 <div class="frame-top">
-    <div class="flag-title title-xbig">特殊役Ｄ</div>
-    <div class="spec-box">
-        <table class="spec-reel">
-            <tr>
-                <td><img src="xy.png"></td>
-                <td><img src="7.png"></td>
-                <td><img src="c2.png"></td>
-            </tr>
-        </table>
-    </div>
-</div>
-
-<div class="frame-top">
-    <div class="flag-title title-xbig">特殊役Ｅ</div>
-    <div class="spec-box">
-        <table class="spec-reel">
-            <tr>
-                <td><img src="xy.png"></td>
-                <td><img src="xr.png"></td>
-                <td><img src="7.png"></td>
-            </tr>
-        </table>
+    <div class="spec-container">
+        <div class="spec-item">
+            <div class="spec-name">特殊役Ｄ</div>
+            <table class="spec-reel">
+                <tr><td><img src="xy.png"></td><td><img src="7.png"></td><td><img src="c2.png"></td></tr>
+            </table>
+        </div>
+        <div class="spec-item">
+            <div class="spec-name">特殊役Ｅ</div>
+            <table class="spec-reel">
+                <tr><td><img src="xy.png"></td><td><img src="xr.png"></td><td><img src="7.png"></td></tr>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -113,10 +107,8 @@
 </div>
 
 <div class="frame-top">
-    <div class="flag-title title-sevenbig">特殊役Ａ / Ｂ / Ｃ</div>
-    <div class="spec-box">
-        <div style="font-size: 11px; color: #888;">（構成未定）</div>
-    </div>
+    <div class="flag-title title-sevenbig" style="width:100%; text-align:center; box-sizing:border-box;">特殊役Ａ / Ｂ / Ｃ</div>
+    <div style="padding:10px; background:#111; text-align:center; font-size:11px; color:#888;">（構成未定）</div>
 </div>
 
 <div class="frame-top">
@@ -133,38 +125,26 @@
 </div>
 
 <div class="frame-top">
-    <div class="flag-title title-reg">特殊役Ｄ</div>
-    <div class="spec-box">
-        <table class="spec-reel">
-            <tr>
-                <td><img src="xy.png"></td>
-                <td><img src="7.png"></td>
-                <td><img src="c2.png"></td>
-            </tr>
-        </table>
-    </div>
-</div>
-
-<div class="frame-top">
-    <div class="flag-title title-reg">特殊役Ｅ</div>
-    <div class="spec-box">
-        <table class="spec-reel">
-            <tr>
-                <td><img src="xy.png"></td>
-                <td><img src="xr.png"></td>
-                <td><img src="7.png"></td>
-            </tr>
-        </table>
+    <div class="spec-container">
+        <div class="spec-item">
+            <div class="spec-name">特殊役Ｄ</div>
+            <table class="spec-reel">
+                <tr><td><img src="xy.png"></td><td><img src="7.png"></td><td><img src="c2.png"></td></tr>
+            </table>
+        </div>
+        <div class="spec-item">
+            <div class="spec-name">特殊役Ｅ</div>
+            <table class="spec-reel">
+                <tr><td><img src="xy.png"></td><td><img src="xr.png"></td><td><img src="7.png"></td></tr>
+            </table>
+        </div>
     </div>
 </div>
 
 <div class="frame-top">
     <div class="flag-title title-vc">バーサスチャレンジ詳細</div>
     <table class="vc-table">
-        <colgroup>
-            <col style="width: auto;">
-            <col style="width: 80px;">
-        </colgroup>
+        <colgroup><col style="width: auto;"><col style="width: 80px;"></colgroup>
         <tbody>
             <tr><td style="text-align:left; padding-left:10px;">チェリーＢ＋バーサスチャレンジ</td><td class="c-white">1/479.9</td></tr>
             <tr><td style="text-align:left; padding-left:25px;">はずれ</td><td class="c-white">1/685.6</td></tr>
