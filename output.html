@@ -7,8 +7,8 @@
     <style>
         body { background: #0a0a0a; color: #ffffff; font-family: sans-serif; padding: 5px; margin: 0; line-height: 1.1; overflow-x: hidden; }
         .flag-title { color: #ffffff !important; padding: 3px 8px; font-size: 13px; display: inline-block; margin-bottom: 5px; border-radius: 2px; font-weight: bold; }
-        .summary-table-2tier, .vc-table { border-collapse: collapse; width: 100%; margin-bottom: 10px; background: #111; border: 2px solid #ffffff; table-layout: fixed; }
-        .summary-table-2tier th, .summary-table-2tier td, .vc-table td { border: 1px solid #ffffff; padding: 8px 0; font-weight: bold; text-align: center; vertical-align: middle; font-size: 11px; }
+        .summary-table-2tier, .vc-table { border-collapse: collapse; width: 100%; margin-bottom: 25px; background: #111; border: 2px solid #ffffff; table-layout: fixed; }
+        .summary-table-2tier th, .summary-table-2tier td, .vc-table td, .vc-table th { border: 1px solid #ffffff; padding: 8px 0; font-weight: bold; text-align: center; vertical-align: middle; font-size: 11px; }
         .summary-table-2tier thead th, .tier-header th { background: #1a1a1a !important; font-size: 10px; color: #ffffff; }
         .title-xbig { background: #0056b3; } .title-sevenbig { background: #d50000; }
         .title-reg { background: #333; } .title-vc { background: #000080; }
@@ -17,31 +17,35 @@
         .c-yellow { color: #fff176 !important; } .c-red { color: #ff4081 !important; }
         .c-purple { color: #e1bee7 !important; } .c-white { color: #ffffff !important; }
 
-        .frame-top { width: 100%; border-bottom: 2px solid #444; padding-bottom: 15px; margin-bottom: 15px; }
-        .scroll-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .frame-top { width: 100%; border-bottom: 2px solid #444; padding-bottom: 5px; margin-bottom: 15px; }
+        .frame-bottom { width: 100%; border-top: 2px solid #444; padding-top: 15px; margin-bottom: 20px; }
+        .scroll-container { width: 100vw; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         
         .comparison-table { border-collapse: collapse; background: #111; border: 1px solid #ffffff; width: 100%; table-layout: fixed; }
-        .comparison-table th { padding: 8px; border: 1px solid #ffffff; background: #1a1a1a; font-size: 11px; }
-        .comparison-table td { padding: 4px 1px; border: 1px solid #ffffff; text-align: center; vertical-align: middle; }
+        .comparison-table th { padding: 10px; border: 1px solid #ffffff; background: #1a1a1a; font-size: 12px; }
+        .comparison-table td { padding: 8px 2px; border: 1px solid #ffffff; text-align: center; vertical-align: middle; }
         .mode-label-black { background: #000 !important; font-weight: bold; width: 80px; font-size: 10px; position: sticky; left: 0; z-index: 2; }
         
-        .stop-box { background: #000; padding: 2px; border-radius: 2px; display: inline-block; }
+        .stop-box { background: #000; padding: 5px; border-radius: 2px; display: inline-block; }
         .bg-blue { background: #440011 !important; }
         
-        .reel-unit { border-collapse: collapse; margin-top: 3px; background: #000; margin-left: auto; margin-right: auto; }
-        .reel-unit td { border: 1px solid #555; padding: 0; width: 55px; height: auto; }
-        .reel-unit img { width: 55px; display: block; }
+        .reel-unit { border-collapse: collapse; margin-top: 5px; background: #000; margin-left: auto; margin-right: auto; }
+        .reel-unit td { border: 1px solid #555; padding: 0; width: 60px; height: auto; }
+        .reel-unit img { width: 60px; display: block; }
 
-        .slip-tag { color: #ff4081; font-weight: bold; font-size: 10px; display: block; margin-bottom: 2px; }
+        .slip-tag { color: #ff4081; font-weight: bold; font-size: 10px; display: block; margin-bottom: 3px; }
+        .rep-tag { color: #00b0ff; }
         .empty { color: #444; font-size: 20px; }
+        .flag-section { margin-bottom: 10px; }
 
-        /* 特殊役コンテナ：折り返し許可・中央寄せ */
-        .spec-container { display: flex; flex-wrap: wrap; justify-content: center; padding: 10px 2px; background: #111; margin-top: 5px; gap: 10px 5px; }
-        .spec-item { flex: 0 0 155px; width: 155px; text-align: center; } /* 全特殊役で同じサイズに固定 */
-        .spec-reel { border-collapse: collapse; margin: 0 auto; border: 1px solid #555; width: 100%; table-layout: fixed; }
-        .spec-reel td { border: 1px solid #555; padding: 0; background: #000; height: auto; }
-        .spec-reel img { width: 100%; height: auto; display: block; }
-        .spec-name { font-size: 10px; margin-bottom: 3px; font-weight: bold; color: #fff; }
+        .spec-container { display: flex; justify-content: space-around; padding: 10px 0; background: #111; flex-wrap: wrap; gap: 10px; }
+        .spec-item { text-align: center; }
+        .spec-reel { border-collapse: collapse; margin: 0 auto 5px; }
+        .spec-reel td { border: 1px solid #555; width: 40px; background: #000; }
+        .spec-reel img { width: 40px; display: block; }
+        .spec-name { font-size: 10px; margin-bottom: 3px; font-weight: bold; }
+        
+        .vc-table th { background: #1a1a1a !important; color: #ffffff; }
     </style>
 </head>
 <body>
@@ -64,9 +68,22 @@
             <tr><td>6</td><td class="c-red bg-cherry">1/5461</td><td class="c-purple">1/3641</td><td class="c-purple">1/5461</td><td class="c-blue">1/529</td></tr>
         </tbody>
     </table>
+</div>
+
+<div class="frame-top">
     <div class="spec-container">
-        <div class="spec-item"><div class="spec-name">特殊役Ｄ</div><table class="spec-reel"><tr><td><img src="xy.png"></td><td><img src="7.png"></td><td><img src="c2.png"></td></tr></table></div>
-        <div class="spec-item"><div class="spec-name">特殊役Ｅ</div><table class="spec-reel"><tr><td><img src="xy.png"></td><td><img src="xr.png"></td><td><img src="7.png"></td></tr></table></div>
+        <div class="spec-item">
+            <div class="spec-name">特殊役Ｄ</div>
+            <table class="spec-reel">
+                <tr><td><img src="xy.png"></td><td><img src="7.png"></td><td><img src="c2.png"></td></tr>
+            </table>
+        </div>
+        <div class="spec-item">
+            <div class="spec-name">特殊役Ｅ</div>
+            <table class="spec-reel">
+                <tr><td><img src="xy.png"></td><td><img src="xr.png"></td><td><img src="7.png"></td></tr>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -84,14 +101,36 @@
         <tbody>
             <tr><td>1</td><td class="c-purple">1/8192</td><td class="c-purple">1/5958</td><td class="c-purple">1/1638</td><td colspan="2" class="c-red">1/585</td></tr>
             <tr><td>2</td><td class="c-purple">1/8192</td><td class="c-purple">1/5958</td><td class="c-purple">1/1560</td><td colspan="2" class="c-red">1/570</td></tr>
-            <tr><td>5</td><td class="c-purple">1/8192</td><td class="c-purple">1/5461.3</td><td class="c-purple">1/1524</td><td colspan="2" class="c-red">1/551</td></tr>
-            <tr><td>6</td><td class="c-purple">1/7282</td><td class="c-purple">1/5461.3</td><td class="c-purple">1/1490</td><td colspan="2" class="c-red">1/529</td></tr>
+            <tr><td>5</td><td class="c-purple">1/8192</td><td class="c-purple">1/1524</td><td class="c-purple">1/1524</td><td colspan="2" class="c-red">1/551</td></tr>
+            <tr><td>6</td><td class="c-purple">1/7282</td><td class="c-purple">1/1490</td><td class="c-purple">1/1490</td><td colspan="2" class="c-red">1/529</td></tr>
         </tbody>
     </table>
+</div>
+
+<div class="frame-top">
     <div class="spec-container">
-        <div class="spec-item"><div class="spec-name">特殊役Ａ</div><table class="spec-reel"><tr><td><img src="w.png"></td><td><img src="w.png"></td><td><img src="7.png"></td></tr><tr><td><img src="xy.png"></td><td><img src="xr.png"></td><td><img src="c2.png"></td></tr></table></div>
-        <div class="spec-item"><div class="spec-name">特殊役Ｂ</div><table class="spec-reel"><tr><td><img src="xy.png"></td><td><img src="xr.png"></td><td><img src="7.png"></td></tr><tr><td><img src="xy.png"></td><td><img src="xr.png"></td><td><img src="c2.png"></td></tr></table></div>
-        <div class="spec-item"><div class="spec-name">特殊役Ｃ</div><table class="spec-reel"><tr><td><img src="w.png"></td><td><img src="w.png"></td><td><img src="7.png"></td></tr><tr><td><img src="xy.png"></td><td><img src="xr.png"></td><td><img src="7.png"></td></tr><tr><td><img src="xy.png"></td><td><img src="xr.png"></td><td><img src="c2.png"></td></tr></table></div>
+        <div class="spec-item">
+            <div class="spec-name">特殊役Ａ</div>
+            <table class="spec-reel">
+                <tr><td><img src="w.png"></td><td><img src="w.png"></td><td><img src="7.png"></td></tr>
+                <tr><td><img src="xy.png"></td><td><img src="xr.png"></td><td><img src="c2.png"></td></tr>
+            </table>
+        </div>
+        <div class="spec-item">
+            <div class="spec-name">特殊役Ｂ</div>
+            <table class="spec-reel">
+                <tr><td><img src="xy.png"></td><td><img src="xr.png"></td><td><img src="7.png"></td></tr>
+                <tr><td><img src="xy.png"></td><td><img src="xr.png"></td><td><img src="c2.png"></td></tr>
+            </table>
+        </div>
+        <div class="spec-item">
+            <div class="spec-name">特殊役Ｃ</div>
+            <table class="spec-reel">
+                <tr><td><img src="w.png"></td><td><img src="w.png"></td><td><img src="7.png"></td></tr>
+                <tr><td><img src="xy.png"></td><td><img src="xr.png"></td><td><img src="7.png"></td></tr>
+                <tr><td><img src="xy.png"></td><td><img src="xr.png"></td><td><img src="c2.png"></td></tr>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -106,24 +145,45 @@
             <tr><td>6</td><td class="c-white">1/1150</td><td class="c-sky bg-rt">1/2731</td><td class="c-red bg-cherry">1/2731</td><td class="c-purple">1/1820</td><td class="c-purple">1/790</td><td class="c-white">1/293</td></tr>
         </tbody>
     </table>
+</div>
+
+<div class="frame-top">
     <div class="spec-container">
-        <div class="spec-item"><div class="spec-name">特殊役Ｄ</div><table class="spec-reel"><tr><td><img src="xy.png"></td><td><img src="7.png"></td><td><img src="c2.png"></td></tr></table></div>
-        <div class="spec-item"><div class="spec-name">特殊役Ｅ</div><table class="spec-reel"><tr><td><img src="xy.png"></td><td><img src="xr.png"></td><td><img src="7.png"></td></tr></table></div>
+        <div class="spec-item">
+            <div class="spec-name">特殊役Ｄ</div>
+            <table class="spec-reel">
+                <tr><td><img src="xy.png"></td><td><img src="7.png"></td><td><img src="c2.png"></td></tr>
+            </table>
+        </div>
+        <div class="spec-item">
+            <div class="spec-name">特殊役Ｅ</div>
+            <table class="spec-reel">
+                <tr><td><img src="xy.png"></td><td><img src="xr.png"></td><td><img src="7.png"></td></tr>
+            </table>
+        </div>
     </div>
 </div>
 
 <div class="frame-top">
     <div class="flag-title title-vc">バーサスチャレンジ詳細</div>
     <table class="vc-table">
-        <colgroup><col style="width: auto;"><col style="width: 80px;"></colgroup>
+        <thead>
+            <tr>
+                <th style="width: auto;">項目</th>
+                <th style="width: 70px;">設定 1</th>
+                <th style="width: 70px;">設定 2</th>
+                <th style="width: 70px;">設定 5</th>
+                <th style="width: 70px;">設定 6</th>
+            </tr>
+        </thead>
         <tbody>
-            <tr><td style="text-align:left; padding-left:10px;">チェリーＢ＋バーサスチャレンジ</td><td class="c-white">1/479.9</td></tr>
-            <tr><td style="text-align:left; padding-left:25px;">はずれ</td><td class="c-white">1/685.6</td></tr>
-            <tr class="c-red"><td style="text-align:left; padding-left:25px;">ボーナス同時成立</td><td class="c-red">1/1599.7</td></tr>
-            <tr><td style="text-align:left; padding-left:10px;">リプレイ＋バーサスチャレンジ</td><td class="c-white">1/472.1</td></tr>
-            <tr><td style="text-align:left; padding-left:25px;">はずれ（通常リプレイ）</td><td class="c-white">1/674.4</td></tr>
-            <tr class="c-sky"><td style="text-align:left; padding-left:25px;">ボーナス同時成立（ＲＴリプレイ）</td><td class="c-sky">1/1573.7</td></tr>
-            <tr style="background:#1a1a1a;" class="c-blue"><td>バーサスチャレンジ合算</td><td class="c-blue">1/238.0</td></tr>
+            <tr><td style="text-align:left; padding-left:10px;">チェリーＢ＋バーサスチャレンジ</td><td class="c-white">1/468.1</td><td class="c-white">1/457.2</td><td class="c-white">1/427.4</td><td class="c-white">1/427.4</td></tr>
+            <tr><td style="text-align:left; padding-left:25px;">はずれ</td><td class="c-white">1/668.7</td><td class="c-white">1/653.2</td><td class="c-white">1/610.6</td><td class="c-white">1/610.6</td></tr>
+            <tr class="c-red"><td style="text-align:left; padding-left:25px;">ボーナス同時成立</td><td class="c-red">1/1560.4</td><td class="c-red">1/1524.1</td><td class="c-red">1/1424.7</td><td class="c-red">1/1424.7</td></tr>
+            <tr><td style="text-align:left; padding-left:10px;">リプレイ＋バーサスチャレンジ</td><td class="c-white">1/468.1</td><td class="c-white">1/457.2</td><td class="c-white">1/446.8</td><td class="c-white">1/427.4</td></tr>
+            <tr><td style="text-align:left; padding-left:25px;">はずれ（通常リプレイ）</td><td class="c-white">1/668.7</td><td class="c-white">1/653.2</td><td class="c-white">1/638.4</td><td class="c-white">1/610.6</td></tr>
+            <tr class="c-sky"><td style="text-align:left; padding-left:25px;">ボーナス同時成立（ＲＴリプレイ）</td><td class="c-sky">1/1560.4</td><td class="c-sky">1/1524.1</td><td class="c-sky">1/1489.5</td><td class="c-sky">1/1424.7</td></tr>
+            <tr style="background:#1a1a1a;" class="c-blue"><td>バーサスチャレンジ合算</td><td class="c-blue">1/234.1</td><td class="c-blue">1/228.6</td><td class="c-blue">1/218.5</td><td class="c-blue">1/213.7</td></tr>
         </tbody>
     </table>
 </div>
@@ -148,9 +208,9 @@ function getReelHTML(n) {
 const targetModes = ["Ｘビッグ成立", "Regボーナス成立"];
 const targetS = [17, 7];
 
-document.write('<div class="frame-top"><div class="flag-title title-cherry">チェリーＢ 制御表</div>');
+document.write('<div class="frame-bottom"><div class="flag-section"><div class="flag-title title-cherry">チェリーＢ</div></div>');
 document.write('<div class="scroll-container"><table class="comparison-table"><thead><tr><th class="mode-label-black">状態</th>');
-targetS.forEach(S => document.write('<th>停止位置: ' + S + '</th>'));
+targetS.forEach(S => document.write('<th>' + S + '</th>'));
 document.write('</tr></thead><tbody>');
 targetModes.forEach(m => {
     const modes = RAW_DATA["チェリーＢ"];
