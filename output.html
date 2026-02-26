@@ -28,22 +28,26 @@
         .stop-box { background: #000; padding: 2px; border-radius: 2px; display: inline-block; }
         .bg-blue { background: #440011 !important; }
         
+        /* 制御表画像サイズ固定 */
         .reel-unit { border-collapse: collapse; margin-top: 3px; background: #000; margin-left: auto; margin-right: auto; }
-        .reel-unit td { border: 1px solid #555; padding: 0; width: 55px; height: auto; }
-        .reel-unit img { width: 55px; display: block; }
+        .reel-unit td { border: 1px solid #555; padding: 0; width: 52px; height: auto; }
+        .reel-unit img { width: 52px; display: block; }
 
         .slip-tag { color: #ff4081; font-weight: bold; font-size: 10px; display: block; margin-bottom: 2px; }
         .empty { color: #444; font-size: 20px; }
 
-        .spec-container { display: flex; justify-content: space-between; padding: 10px 2px; background: #111; margin-top: 5px; }
+        /* 特殊役コンテナ共通設定 */
+        .spec-container { display: flex; justify-content: center; padding: 10px 0; background: #111; margin-top: 5px; gap: 8px; }
         .spec-item { text-align: center; }
-        .spec-reel { border-collapse: collapse; margin: 0 auto; border: 1px solid #555; width: 100%; table-layout: fixed; }
+        .spec-reel { border-collapse: collapse; margin: 0 auto; border: 1px solid #555; table-layout: fixed; width: 100%; }
         .spec-reel td { border: 1px solid #555; padding: 0; background: #000; height: auto; }
         .spec-reel img { width: 100%; height: auto; display: block; }
         .spec-name { font-size: 10px; margin-bottom: 3px; font-weight: bold; color: #fff; }
 
-        .double .spec-item { width: 48.5%; }
-        .triple .spec-item { width: 32.5%; }
+        /* X・Reg用 (2つ並び) サイズ固定 */
+        .double .spec-item { width: 145px; }
+        /* 7ビッグ用 (3つ並び) サイズ固定 */
+        .triple .spec-item { width: 108px; }
     </style>
 </head>
 <body>
@@ -152,7 +156,7 @@ const targetS = [17, 7];
 
 document.write('<div class="frame-top"><div class="flag-title title-cherry">チェリーＢ 制御表</div>');
 document.write('<div class="scroll-container"><table class="comparison-table"><thead><tr><th class="mode-label-black">状態</th>');
-targetS.forEach(S => document.write('<th>停止: ' + S + '</th>'));
+targetS.forEach(S => document.write('<th>停止位置: ' + S + '</th>'));
 document.write('</tr></thead><tbody>');
 targetModes.forEach(m => {
     const modes = RAW_DATA["チェリーＢ"];
