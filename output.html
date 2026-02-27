@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Versus Revise - Professional Complete</title>
+    <title>Versus Revise - Professional Edition</title>
     <style>
         body { background: #0a0a0a; color: #ffffff; font-family: sans-serif; padding: 5px; margin: 0; line-height: 1.1; overflow-x: hidden; }
         .flag-title { color: #ffffff !important; padding: 3px 8px; font-size: 13px; display: inline-block; margin-bottom: 5px; border-radius: 2px; font-weight: bold; }
@@ -104,13 +104,20 @@
 <div class="frame-top">
     <div class="flag-title title-vc">バーサスチャレンジ詳細</div>
     <table class="vc-table">
+        <colgroup>
+            <col style="width: auto;">
+            <col style="width: 58px;">
+            <col style="width: 58px;">
+            <col style="width: 58px;">
+            <col style="width: 58px;">
+        </colgroup>
         <thead>
             <tr>
-                <th style="width: auto;">項目</th>
-                <th style="width: 70px;">設定 1</th>
-                <th style="width: 70px;">設定 2</th>
-                <th style="width: 70px;">設定 5</th>
-                <th style="width: 70px;">設定 6</th>
+                <th>項目</th>
+                <th>設定 1</th>
+                <th>設定 2</th>
+                <th>設定 5</th>
+                <th>設定 6</th>
             </tr>
         </thead>
         <tbody>
@@ -126,7 +133,7 @@
 </div>
 
 <script>
-// チェリーB制御表スクリプト（既存コード維持）
+// チェリーB制御表スクリプト
 const IMG_FILES = { "リプレイ":"r.png", "チェリー":"c.png", "赤Ｘ":"xr.png", "ベル":"be.png", "スイカ":"w.png", "７":"7.png", "ＢＡＲ":"ba.png", "黄Ｘ":"xy.png" };
 const REEL_MAP = { 21:"リプレイ", 20:"チェリー", 19:"赤Ｘ", 18:"ベル", 17:"スイカ", 16:"リプレイ", 15:"ベル", 14:"スイカ", 13:"７", 12:"ベル", 11:"リプレイ", 10:"チェリー", 9:"ＢＡＲ", 8:"ベル", 7:"スイカ", 6:"リプレイ", 5:"黄Ｘ", 4:"赤Ｘ", 3:"黄Ｘ", 2:"スイカ", 1:"ベル" };
 const RAW_DATA = { "チェリーＢ": { "ボーナス未成立": {21:4,20:0,19:1,18:0,17:1,16:2,15:3,14:4,13:0,12:1,11:2,10:0,9:1,8:0,7:1,6:2,5:3,4:4,3:1,2:2,1:3}, "Ｘビッグ成立": {21:4,20:0,19:1,18:0,17:1,16:2,15:3,14:4,13:4,12:1,11:2,10:0,9:1,8:0,7:1,6:2,5:3,4:4,3:1,2:2,1:3}, "Regボーナス成立": {21:4,20:0,19:1,18:0,17:1,16:2,15:3,14:4,13:0,12:1,11:2,10:0,9:1,8:0,7:1,6:2,5:3,4:4,3:4,2:2,1:3} } };
