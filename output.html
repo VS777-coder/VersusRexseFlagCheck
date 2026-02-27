@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Versus Revise - Smartphone optimized</title>
+    <title>Versus Revise - Final Smartphone Edition</title>
     <style>
         body { background: #0a0a0a; color: #ffffff; font-family: sans-serif; padding: 5px; margin: 0; line-height: 1.1; overflow-x: hidden; }
         .flag-title { color: #ffffff !important; padding: 3px 8px; font-size: 13px; display: inline-block; margin-bottom: 5px; border-radius: 2px; font-weight: bold; }
@@ -109,7 +109,7 @@
     </table>
     <div class="spec-container">
         <div class="spec-item"><div class="spec-name">特殊役Ｄ</div><table class="spec-reel"><tr><td><img src="xy.png"></td><td><img src="7.png"></td><td><img src="c2.png"></td></tr></table></div>
-        <div class="spec-item"><div class="spec-name">特殊役Ｅ</div><table class="spec-reel"><tr><td><img src="xy.png"></td><td><img src="xr.png"></td><td><img src="7.png"></td></tr></table></div>
+        <div class="spec-item"><div class="spec-name">特殊役Ｅ</div><table class="spec-reel"><tr><td><img src="xr.png"></td><td><img src="xr.png"></td><td><img src="7.png"></td></tr></table></div>
     </div>
 </div>
 
@@ -137,7 +137,7 @@ const RAW_DATA = { "チェリーＢ": { "ボーナス未成立": {21:4,20:0,19:1
 function getReelHTML(n) { let num = ((n - 1) % 21 + 21) % 21 + 1; return '<td><img src="' + IMG_FILES[REEL_MAP[num]] + '"></td>'; }
 const targetModes = ["Ｘビッグ成立", "Regボーナス成立"];
 const targetS = [17, 7];
-document.write('<div class="frame-bottom"><div class="flag-title title-cherry">チェリーＢ 制御表</div><div class="scroll-container"><table class="comparison-table"><thead><tr><th class="mode-label-black">状態</th>');
+document.write('<div class="frame-bottom"><div class="flag-title title-cherry">バーサスチャレンジ発展（チェリーＢ取りこぼし）</div><div class="scroll-container"><table class="comparison-table"><thead><tr><th class="mode-label-black">状態</th>');
 targetS.forEach(S => document.write('<th>' + S + '</th>'));
 document.write('</tr></thead><tbody>');
 targetModes.forEach(m => {
