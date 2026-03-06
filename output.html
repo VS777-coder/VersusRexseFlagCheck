@@ -34,7 +34,7 @@
         .spec-reel img { width: 100%; height: auto; display: block; }
         .spec-name { font-size: 10px; margin-bottom: 3px; font-weight: bold; color: #fff; }
 
-        /* 制御表用（修正箇所：1画面に収めるためのサイズ調整） */
+        /* 制御表用（1画面に収めるためのサイズ調整） */
         .frame-bottom { width: 100%; margin: 0; padding: 0; box-sizing: border-box; }
         .comparison-table { border-collapse: collapse; background: #111; border: 1px solid #ffffff; width: 100%; table-layout: fixed; }
         .comparison-table th { padding: 5px 2px; border: 1px solid #ffffff; background: #1a1a1a; font-size: 10px; }
@@ -47,7 +47,6 @@
         .reel-unit img { width: 100%; max-width: 45px; display: block; margin: 0 auto; }
         .slip-tag { color: #ff4081; font-weight: bold; font-size: 9px; display: block; margin-bottom: 1px; }
         
-        /* 横スクロールを発生させない指定 */
         .frame-bottom .scroll-container { width: 100%; overflow-x: hidden; }
     </style>
 </head>
@@ -89,10 +88,10 @@
         </tbody>
         <thead><tr class="tier-header"><th>設定</th><th class="c-purple">特殊役A</th><th class="c-purple">特殊役B</th><th class="c-purple">特殊役C</th><th colspan="2" class="c-red">合算</th></tr></thead>
         <tbody>
-            <tr><td>1</td><td class="c-purple">1/8192</td><td class="c-purple">1/5958</td><td class="c-purple">1/1638</td><td colspan="2" class="c-red">1/585</td></tr>
-            <tr><td>2</td><td class="c-purple">1/8192</td><td class="c-purple">1/5958</td><td class="c-purple">1/1560</td><td colspan="2" class="c-red">1/570</td></tr>
-            <tr><td>5</td><td class="c-purple">1/8192</td><td class="c-purple">1/1524</td><td class="c-purple">1/1524</td><td colspan="2" class="c-red">1/551</td></tr>
-            <tr><td>6</td><td class="c-purple">1/7282</td><td class="c-purple">1/1490</td><td class="c-purple">1/1490</td><td colspan="2" class="c-red">1/529</td></tr>
+            <tr><td>1</td><td class="c-purple">1/8192.0</td><td class="c-purple">1/5957.8</td><td class="c-purple">1/1638.4</td><td colspan="2" class="c-red">1/585</td></tr>
+            <tr><td>2</td><td class="c-purple">1/8192.0</td><td class="c-purple">1/5957.8</td><td class="c-purple">1/1560.4</td><td colspan="2" class="c-red">1/570</td></tr>
+            <tr><td>5</td><td class="c-purple">1/8192.0</td><td class="c-purple">1/5461.3</td><td class="c-purple">1/1524.1</td><td colspan="2" class="c-red">1/551</td></tr>
+            <tr><td>6</td><td class="c-purple">1/7281.8</td><td class="c-purple">1/5461.3</td><td class="c-purple">1/1489.5</td><td colspan="2" class="c-red">1/529</td></tr>
         </tbody>
     </table>
     <div class="spec-container">
